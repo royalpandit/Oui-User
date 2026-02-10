@@ -1,0 +1,7 @@
+{
+    "editor.fontLigatures": true,
+    "editor.fontSize": 18,
+    "editor.fontFamily": "Fira Code",
+    "editor.cursorStyle": "line-thin",
+    "files.autoSave": "afterDelay"
+}
