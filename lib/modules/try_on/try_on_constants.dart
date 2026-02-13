@@ -1,18 +1,26 @@
 /// Category slugs that are considered "clothing" for virtual try-on.
-/// Add your backend category slugs here so "Try on" shows only for these.
+/// Exact matches (e.g. backend slug is exactly "dresses").
 const List<String> kClothingCategorySlugs = [
   'clothing',
   'fashion',
   'apparel',
   'clothes',
   't-shirt',
+  'shirts',
   'shirt',
+  'dresses',
   'dress',
   'jeans',
   'pants',
   'upper',
   'lower',
   'overall',
+];
+
+/// Keywords: if category slug contains any of these, treat as clothing.
+const List<String> kClothingSlugKeywords = [
+  'dress', 'shirt', 'clothing', 'clothes', 'fashion', 'apparel',
+  'pant', 'jeans', 'top', 'wear', 'jacket', 'sweater', 'blouse',
 ];
 
 /// CatVTON cloth_type: upper (torso), lower (pants), overall (full).
@@ -30,5 +38,10 @@ String clothTypeFromCategorySlug(String? categorySlug) {
 
 bool isClothingCategory(String? categorySlug) {
   if (categorySlug == null || categorySlug.isEmpty) return false;
-  return kClothingCategorySlugs.contains(categorySlug.toLowerCase());
+  final s = categorySlug.toLowerCase();
+  if (kClothingCategorySlugs.contains(s)) return true;
+  for (final keyword in kClothingSlugKeywords) {
+    if (s.contains(keyword)) return true;
+  }
+  return false;
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/remote_urls.dart';
@@ -33,6 +34,15 @@ class _TryOnScreenState extends State<TryOnScreen> {
   bool _loading = false;
   String? _error;
   String? _resultImageBase64;
+
+  /// PNG magic bytes: 89 50 4E 47 0D 0A 1A 0A
+  static bool _isPngBytes(List<int> bytes) {
+    if (bytes.length < 8) return false;
+    return bytes[0] == 0x89 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x4E &&
+        bytes[3] == 0x47;
+  }
 
   Future<void> _pickImage(ImageSource source) async {
     try {
@@ -84,17 +94,26 @@ class _TryOnScreenState extends State<TryOnScreen> {
       request.headers['User-Agent'] = 'Oui-User/1.0';
 
       request.fields['cloth_type'] = widget.clothType;
-      request.files.add(await http.MultipartFile.fromPath(
+      // Backend requires image/jpeg or image/png (rejects application/octet-stream)
+      final personFile = File(_personImagePath!);
+      final personBytes = await personFile.readAsBytes();
+      final personIsPng = _isPngBytes(personBytes);
+      request.files.add(http.MultipartFile.fromBytes(
         'person_image',
-        _personImagePath!,
-        filename: 'person.jpg',
+        personBytes,
+        filename: personIsPng ? 'person.png' : 'person.jpg',
+        contentType: MediaType('image', personIsPng ? 'png' : 'jpeg'),
       ));
 
       final clothBytes = await http.readBytes(Uri.parse(widget.clothImageUrl));
+      // Backend requires image/jpeg or image/png (rejects application/octet-stream)
+      final isPng = _isPngBytes(clothBytes) ||
+          widget.clothImageUrl.toLowerCase().contains('.png');
       request.files.add(http.MultipartFile.fromBytes(
         'cloth_image',
         clothBytes,
-        filename: 'cloth.jpg',
+        filename: isPng ? 'cloth.png' : 'cloth.jpg',
+        contentType: MediaType('image', isPng ? 'png' : 'jpeg'),
       ));
 
       final streamed = await request.send().timeout(
