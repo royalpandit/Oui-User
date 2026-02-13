@@ -6,8 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '/modules/product_details/component/loader_screen.dart';
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
+import '../../core/remote_urls.dart';
 import '../../core/router_name.dart';
 import '../../utils/constants.dart';
+import '../try_on/try_on_constants.dart';
 import '../../utils/utils.dart';
 import '../../widgets/toggle_button_component.dart';
 import '../cart/controllers/cart/cart_cubit.dart';
@@ -147,18 +149,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   Widget _buildBottomButtons(ProductDetailsProductModel product) {
     final cartProducts = context.read<CartCubit>();
+    final showTryOn = isClothingCategory(product.category?.slug);
+    final clothImageUrl = RemoteUrls.imageUrl(product.thumbImage);
+    final clothType = clothTypeFromCategorySlug(product.category?.slug);
+
     return Container(
       padding: Utils.all(value: 20.0),
       decoration: const BoxDecoration(
         color: bottomPanelColor,
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.black.withOpacity(.2),
-        //     offset: const Offset(-9, -1),
-        //     blurRadius: 30,
-        //     spreadRadius: 30,
-        //   )
-        // ],
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30.0),
           topRight: Radius.circular(30.0),
@@ -182,8 +180,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   builder: (context, state) {
                     return CartBadge(
                       count: cartProducts.cartCount.toString(),
-                      // badgeColor: lightningYellowColor,
-                      // countColor: primaryColor,
                       badgeColor: Utils.dynamicPrimaryColor(context),
                     );
                   },
@@ -192,6 +188,47 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
           ),
           const SizedBox(width: 20),
+          if (showTryOn) ...[
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    RouteNames.tryOnScreen,
+                    arguments: {
+                      'productName': product.name,
+                      'clothImageUrl': clothImageUrl,
+                      'clothType': clothType,
+                    },
+                  );
+                },
+                child: Container(
+                  height: 50.0,
+                  padding: const EdgeInsets.only(bottom: 6.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Utils.dynamicPrimaryColor(context), width: 2),
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.checkroom,
+                          color: Utils.dynamicPrimaryColor(context), size: 22),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Try on',
+                        style: simpleTextStyle(Utils.dynamicPrimaryColor(context))
+                            .copyWith(
+                                fontSize: 16.0, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+          ],
           Flexible(
             child: GestureDetector(
               onTap: () {
@@ -212,7 +249,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 height: 50.0,
                 padding: const EdgeInsets.only(bottom: 6.0),
                 decoration: BoxDecoration(
-                    // color: white,
                     color: Utils.dynamicPrimaryColor(context),
                     borderRadius: BorderRadius.circular(30.0)),
                 child: Row(

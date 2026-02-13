@@ -58,3 +58,4 @@ export '../modules/setting/faq_screen.dart';
 export '../modules/setting/privacy_policy_screen.dart';
 export '../modules/setting/setting_screen.dart';
 export '../modules/setting/terms_condition_screen.dart';
+export '../modules/try_on/try_on_screen.dart';

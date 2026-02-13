@@ -58,6 +58,7 @@ class RouteNames {
   static const String profileScreen = '/profileScreen';
   static const String errorScreen = '/errorScreen';
   static const String editAddressScreen = '/editAddressScreen';
+  static const String tryOnScreen = '/tryOnScreen';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -299,6 +300,17 @@ class RouteNames {
       case RouteNames.flashScreen:
         return MaterialPageRoute(
             settings: settings, builder: (_) => const FlashScreen());
+
+      case RouteNames.tryOnScreen:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => TryOnScreen(
+            productName: args['productName'] as String,
+            clothImageUrl: args['clothImageUrl'] as String,
+            clothType: args['clothType'] as String,
+          ),
+        );
 
       default:
         return MaterialPageRoute(
