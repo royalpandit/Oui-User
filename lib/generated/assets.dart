@@ -6,7 +6,7 @@ class Assets {
   static const String assetsIconsNotificationBadge =
       'assets/icons/notification-badge.svg';
   static const String assetsLauncherIcon = 'assets/launcher_icon.png';
-  static const String iconAppLogo = 'assets/icon/app_logo.svg';
+  static const String iconAppLogo = 'assets/icon/app_logo.png';
   static const String iconDeleteIcon = 'assets/icon/delete_icon.svg';
   static const String iconEmptyCart = 'assets/icon/empty_cart.svg';
   static const String iconEnabledLocation = 'assets/icon/enabled_location.svg';
@@ -14,7 +14,7 @@ class Assets {
   static const String iconForgotPassword = 'assets/icon/forgot_password.svg';
   static const String iconHome = 'assets/icon/home.svg';
   static const String iconHomeActive = 'assets/icon/home_active.svg';
-  static const String iconLogoName = 'assets/icon/logo_name.svg';
+  static const String iconLogoName = 'assets/icon/logo_name.png';
   static const String iconOrder = 'assets/icon/order.svg';
   static const String iconOrderActive = 'assets/icon/order_active.svg';
   static const String iconPasswordSuccess = 'assets/icon/password_success.svg';

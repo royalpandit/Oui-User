@@ -106,8 +106,8 @@ class KImages {
   static const String onBoarding03 = "assets/image/on_boarding_03.png";
   static const String onBoardingLocation = "assets/icon/enabled_location.svg";
 
-  static const String logo = "assets/icon/app_logo.svg";
-  static const String logoName = "assets/icon/logo_name.svg";
+  static const String logo = "assets/icon/app_logo.png";
+  static const String logoName = "assets/icon/logo_name.png";
   static const String forgotIcon = "assets/icon/forgot_icon.svg";
   static const String newArrivalFilter = "assets/icons/filter-icon.svg";
 

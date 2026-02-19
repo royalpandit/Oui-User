@@ -16,6 +16,26 @@ class NetworkParser {
       CallClientMethod callClientMethod) async {
     try {
       final response = await callClientMethod();
+      final request = response.request;
+
+      print("========== API REQUEST ==========");
+      print("METHOD: ${request?.method}");
+      print("URL: ${request?.url}");
+      print("HEADERS: ${request?.headers}");
+
+      // 👇 Query params (GET case)
+      print("QUERY PARAMS: ${request?.url.queryParameters}");
+
+      print("========== API RESPONSE ==========");
+      print("STATUS CODE: ${response.statusCode}");
+      print("BODY: ${response.body}");
+      print("===================================");
+
+      log("====================================", name: _className);
+      log("API URL: ${response.request?.url}", name: _className);
+      log("STATUS CODE: ${response.statusCode}", name: _className);
+      log("RESPONSE: ${response.body}", name: _className);
+      log("====================================", name: _className);
       log(response.statusCode.toString(), name: _className);
       log(response.body, name: _className);
       return _responseParser(response);
