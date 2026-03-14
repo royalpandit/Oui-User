@@ -1,10 +1,7 @@
 class RemoteUrls {
-  //static const String rootUrl = "https://app.fahadbazar.com/";
-  // static const String rootUrl = "https://mamunuiux.com/shopus/";
-   static const String rootUrl = "https://oui.corescent.in/";
+     static const String rootUrl = "https://oui.corescent.in/";
    // Product url
-  //static const String rootUrl = "https://shopus.minionionbd.com/";
-  static const String baseUrl = '${rootUrl}api/';
+   static const String baseUrl = '${rootUrl}api/';
   static const String homeUrl = baseUrl;
   static const String userRegister = '${baseUrl}store-register';
   static const String userLogin = '${baseUrl}store-login';
