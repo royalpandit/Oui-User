@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '/utils/constants.dart';
 
 import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
@@ -22,7 +21,7 @@ class SponsorComponent extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 0),
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
       decoration: BoxDecoration(
-        color:   lightningYellowColor.withOpacity(0.1),
+        color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(4),
       ),
       child: ListView.separated(

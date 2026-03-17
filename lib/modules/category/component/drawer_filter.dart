@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/primary_button.dart';
 import '../controller/cubit/category_cubit.dart';
@@ -67,10 +66,10 @@ class _DrawerFilterState extends State<DrawerFilter> {
                           shape: BoxShape.circle,
                           border: Border.all(
                               width: 2,
-                              color: Utils.dynamicPrimaryColor(context))),
+                              color: Colors.black)),
                       child: Icon(
                         Icons.clear,
-                        color: Utils.dynamicPrimaryColor(context),
+                        color: Colors.black,
                         size: 15,
                       ),
                     ),
@@ -81,8 +80,8 @@ class _DrawerFilterState extends State<DrawerFilter> {
                     min: 0,
                     max: 4000,
                     // divisions: 5,
-                    activeColor: Utils.dynamicPrimaryColor(context),
-                    inactiveColor: grayColor,
+                    activeColor: Colors.black,
+                    inactiveColor: Colors.grey,
                     labels: RangeLabels(
                       minValue.round().toString(),
                       maxValue.round().toString(),
@@ -129,8 +128,8 @@ class _DrawerFilterState extends State<DrawerFilter> {
                                 //borderRadius: BorderRadius.circular(20),
                                 color: brands.contains(
                                         filterOptions.brands[index].id)
-                                    ? Utils.dynamicPrimaryColor(context)
-                                    : Utils.dynamicPrimaryColor(context)
+                                    ? Colors.black
+                                    : Colors.black
                                         .withOpacity(0.2),
                               ),
                               child: Padding(
@@ -141,7 +140,7 @@ class _DrawerFilterState extends State<DrawerFilter> {
                                       color: brands.contains(
                                               filterOptions.brands[index].id)
                                           ? Colors.white
-                                          : blackColor),
+                                          : Colors.black),
                                 ),
                               ),
                             ),
@@ -195,10 +194,8 @@ class _DrawerFilterState extends State<DrawerFilter> {
                                                           .activeVariantsItems[
                                                               i]
                                                           .name)
-                                                  ? Utils.dynamicPrimaryColor(
-                                                      context)
-                                                  : Utils.dynamicPrimaryColor(
-                                                          context)
+                                                  ? Colors.black
+                                                  : Colors.black
                                                       .withOpacity(0.2),
                                             ),
                                             child: Padding(
@@ -219,7 +216,7 @@ class _DrawerFilterState extends State<DrawerFilter> {
                                                                   i]
                                                               .name)
                                                       ? Colors.white
-                                                      : blackColor,
+                                                      : Colors.black,
                                                 ),
                                               ),
                                             ),

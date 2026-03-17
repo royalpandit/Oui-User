@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import '/widgets/shimmer_loader.dart';
 import '/modules/animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '/modules/home/component/home_app_bar.dart';
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
-import '../../utils/constants.dart';
 import '../../utils/utils.dart';
 import '../../widgets/please_sign_in_widget.dart';
-import '../../widgets/rounded_app_bar.dart';
 import 'component/add_to_cart_component.dart';
 import 'component/panel_widget.dart';
 import 'controllers/cart/cart_cubit.dart';
@@ -33,10 +34,21 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: cardBgColor,
-      appBar: RoundedAppBar(
-        titleText: Language.cart.capitalizeByWord(),
-        bgColor: scaffoldBGColor,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: Text(
+          Language.cart.capitalizeByWord(),
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+        ),
       ),
       body: BlocConsumer<CartCubit, CartState>(
         listener: (_, state) {
@@ -54,7 +66,11 @@ class _CartScreenState extends State<CartScreen> {
         },
         builder: (context, state) {
           if (state is CartStateLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: SizedBox(
+                    height: 28,
+                    width: 120,
+                    child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is CartStateError) {
             if (state.statusCode == 401) {
               return const PleaseSignInWidget();
@@ -62,7 +78,7 @@ class _CartScreenState extends State<CartScreen> {
             return Center(
               child: Text(
                 state.message,
-                style: const TextStyle(color: redColor),
+                style: GoogleFonts.inter(fontSize: 14, color: Colors.red),
               ),
             );
           }
@@ -187,13 +203,12 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
               children: [
                 CartBadge(
                     count: count,
-                    iconColor: blackColor,
-                    badgeColor: Utils.dynamicPrimaryColor(context)),
+                    iconColor: Colors.white,
+                    badgeColor: Colors.black),
                 const SizedBox(width: 20),
                 Text(
                   _getText(),
-                  style: headlineTextStyle(16.0)
-                    ..copyWith(fontWeight: FontWeight.w700),
+                  style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
                 ),
               ],
             ),

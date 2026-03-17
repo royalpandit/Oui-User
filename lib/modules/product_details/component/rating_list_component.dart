@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../model/details_product_reviews_model.dart';
 import 'signle_review_card_component.dart';
@@ -33,7 +32,7 @@ class ReviewListComponent extends StatelessWidget {
                 },
                 child: const Text(
                   "See all reviews",
-                  style: TextStyle(color: redColor),
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
             )
@@ -45,8 +44,8 @@ class ReviewListComponent extends StatelessWidget {
   Widget _buildRatingHeader() {
     return Container(
       alignment: Alignment.center,
-      decoration: const BoxDecoration(
-        color: borderColor,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
         //borderRadius: BorderRadius.circular(50.0)
       ),
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25.0),
@@ -79,7 +78,7 @@ class ReviewListComponent extends StatelessWidget {
               // const SizedBox(height: 12),
               Text(
                 '${productReviews.length} Review',
-                style: const TextStyle(fontSize: 16, color: textGreyColor),
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               )
             ],
           ),

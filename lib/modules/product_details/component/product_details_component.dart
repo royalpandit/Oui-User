@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/utils/language_string.dart';
 import 'package:shop_us/widgets/capitalized_word.dart';
 
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../../category/component/price_card_widget.dart';
@@ -109,14 +109,14 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
                   children: [
                     Text(
                       widget.product.category!.name.toUpperCase(),
-                      style: paragraphTextStyle(12.0),
+                      style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade500),
                     ),
                     const SizedBox(height: 10.0),
                     Text(
                       widget.product.name.capitalizeByWord(),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                      style: headlineTextStyle(18.0),
+                      style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black),
                     ),
                   ],
                 ),
@@ -154,25 +154,25 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0)
                 .copyWith(bottom: 6.0),
             decoration: BoxDecoration(
-              color: greenColor.withOpacity(0.1),
+              color: Colors.green.withOpacity(0.1),
               borderRadius: BorderRadius.circular(4.0),
             ),
             child: Text.rich(TextSpan(children: [
               TextSpan(
                   text: '${Language.availability.capitalizeByWord()}: ',
-                  style: paragraphTextStyle(14.0)),
+                  style: GoogleFonts.inter(fontSize: 14, color: Colors.grey)),
               TextSpan(
                   text: availability
                       ? Language.stockOut
                       : '${widget.product.qty} ${Language.productsAvailable}',
-                  style: headlineTextStyle(15.0))
+                  style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black))
             ])),
           ),
           const SizedBox(height: 10.0),
           Text(
             widget.product.shortDescription,
             textAlign: TextAlign.justify,
-            style: paragraphTextStyle(14.0),
+            style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 26),
         ],
@@ -202,11 +202,11 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
             width: 1,
             margin: const EdgeInsets.symmetric(horizontal: 6),
             height: 24,
-            color: borderColor),
+            color: Colors.grey.shade300),
         Text(
           Utils.getRating(widget.detailsModel.productReviews)
               .toStringAsFixed(1),
-          style: headlineTextStyle(13.0),
+          style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black),
         )
       ],
     );
@@ -226,7 +226,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
                   Text(
                     Utils.formatPrice(offerPrice, context),
                     style: const TextStyle(
-                        color: redColor,
+                        color: Colors.black,
                         height: 1.5,
                         fontSize: 22,
                         fontWeight: FontWeight.w600),
@@ -247,7 +247,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
               Text(
                 Utils.formatPrice(mainPrice, context),
                 style: const TextStyle(
-                    color: redColor,
+                    color: Colors.black,
                     height: 1.5,
                     fontSize: 22,
                     fontWeight: FontWeight.w600),
@@ -256,7 +256,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
             const SizedBox(height: 6),
             Text(
               widget.product.brand!.name,
-              style: const TextStyle(fontSize: 16, color: iconGreyColor),
+              style: const TextStyle(fontSize: 16, color: Color(0xff85959E)),
             ),
           ],
         ),
@@ -270,7 +270,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
       children: [
         Text(
           Language.size.capitalizeByWord(),
-          style: simpleTextStyle(textGreyColor).copyWith(fontSize: 15.0),
+          style: GoogleFonts.inter(fontSize: 15, color: Colors.grey.shade600),
         ),
         const SizedBox(height: 14.0),
         Container(
@@ -279,7 +279,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4.0),
-              border: Border.all(color: const Color(0xFFFAE8F7))),
+              border: Border.all(color: Colors.grey.shade200)),
           child: DropdownButton<String>(
             onChanged: (String? val) => setState(() => weight = val!),
             value: weight,
@@ -293,7 +293,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
                   value: e,
                   child: Text(
                     e,
-                    style: simpleTextStyle(textGreyColor),
+                    style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
                   ));
             }).toList(),
           ),
@@ -308,7 +308,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
       children: [
         Text(
           'COLOR',
-          style: simpleTextStyle(textGreyColor).copyWith(fontSize: 15.0),
+          style: GoogleFonts.inter(fontSize: 15, color: Colors.grey.shade600),
         ),
         const SizedBox(height: 14.0),
         Container(
@@ -317,7 +317,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4.0),
             border: Border.all(
-              color: const Color(0xFFFAE8F7),
+              color: Colors.grey.shade200,
             ),
           ),
           child: Row(

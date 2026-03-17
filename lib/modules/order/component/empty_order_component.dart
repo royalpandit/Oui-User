@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/k_images.dart';
 import '../../../widgets/custom_image.dart';
 
 class EmptyOrderComponent extends StatelessWidget {
   const EmptyOrderComponent(
-      {super.key, this.iconColor = primaryColor, this.emptySubTitle});
+      {super.key, this.iconColor = Colors.black54, this.emptySubTitle});
 
   final Color iconColor;
   final String? emptySubTitle;
@@ -25,22 +25,15 @@ class EmptyOrderComponent extends StatelessWidget {
             const SizedBox(height: 34),
             Text(
               Language.noItemsFound.capitalizeByWord(),
-              style: headlineTextStyle(22.0),
+              style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black),
             ),
             const SizedBox(height: 9),
             Text(
               text,
               textAlign: TextAlign.center,
-              style: paragraphTextStyle(16.0),
+              style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
             ),
             const SizedBox(height: 30),
-            // SizedBox(
-            //   width: 200,
-            //   child: PrimaryButton(
-            //     text: 'Order Products Now',
-            //     onPressed: () {},
-            //   ),
-            // )
           ],
         ),
       ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/widgets/capitalized_word.dart';
 
 import '/utils/k_images.dart';
 import '/widgets/custom_image.dart';
 import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/language_string.dart';
 import '../../../utils/utils.dart';
 import '../model/order_model.dart';
@@ -17,58 +17,46 @@ class OrderedListComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 14),
-      margin: const EdgeInsets.symmetric(vertical: 9, horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
       decoration: BoxDecoration(
-          color: white,
-          //borderRadius: BorderRadius.circular(6.0),
-          border: Border.all(color: borderColor)),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade200)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _totalItem(context),
           const SizedBox(height: 10),
           _buildOrderNumber(context),
-          const SizedBox(height: 10),
-          // ...orderedItem.orderProducts.map((e) => SingleOrderDetailsComponent(
-          //     orderItem: e, isOrdered: orderedItem.orderStatus == '3')),
-          const SizedBox(height: 10),
+          const SizedBox(height: 14),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                        foregroundColor: deepGreenColor,
+                        foregroundColor: Colors.black,
                         backgroundColor: Colors.white,
-                        side: BorderSide(
-                            color: Utils.dynamicPrimaryColor(context),
-                            width: 1.2),
-                        shape: const RoundedRectangleBorder()),
+                        side: const BorderSide(color: Colors.black, width: 1.2),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                     onPressed: () {
                       Navigator.pushNamed(context, RouteNames.singleOrderScreen,
                           arguments: orderedItem.orderId);
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 0),
-                      child: Text(
-                        Language.viewDetails.capitalizeByWord(),
-                        style: paragraphTextStyle(14.0).copyWith(
-                            color: Utils.dynamicPrimaryColor(context)),
-                      ),
+                    child: Text(
+                      Language.viewDetails.capitalizeByWord(),
+                      style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.black),
                     )),
                 Text(
                   Utils.orderStatus(orderedItem.orderStatus.toString()),
-                  style: headlineTextStyle(16.0).copyWith(
+                  style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                       color: orderedItem.orderStatus.toString() == '4'
-                          ? Utils.dynamicPrimaryColor(context)
-                          : deepGreenColor),
-                  // style: TextStyle(
-                  //     fontWeight: FontWeight.w600,
-                  //     color: orderedItem.orderStatus == '4'
-                  //         ? redColor
-                  //         : deepGreenColor),
+                          ? Colors.red
+                          : const Color(0xFF2E7D32)),
                 )
               ],
             ),
@@ -82,7 +70,7 @@ class OrderedListComponent extends StatelessWidget {
     final total = Utils.formatPriceIcon(orderedItem.totalAmount, context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -96,24 +84,24 @@ class OrderedListComponent extends StatelessWidget {
                   Text.rich(
                     TextSpan(
                       text: "${Language.quantity.capitalizeByWord()}: ",
-                      style: headlineTextStyle(16.0),
+                      style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
                       children: [
                         TextSpan(
                           text: orderedItem.productQty.toString(),
-                          style: headlineTextStyle(18.0),
+                          style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 2.0),
+                  const SizedBox(height: 2),
                   Text.rich(
                     TextSpan(
                       text: "${Language.totalAmount.capitalizeByWord()}: ",
-                      style: paragraphTextStyle(16.0),
+                      style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
                       children: [
                         TextSpan(
                           text: total,
-                          style: headlineTextStyle(16.0),
+                          style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
                         ),
                       ],
                     ),
@@ -123,15 +111,14 @@ class OrderedListComponent extends StatelessWidget {
               Container(
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF222222).withOpacity(0.1),
-                  //borderRadius: BorderRadius.circular(16.0),
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 child: Text(
                   Utils.formatDate(orderedItem.createdAt),
-                  style: paragraphTextStyle(12.0)
-                      .copyWith(color: const Color(0xff85959E)),
+                  style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade600),
                 ),
               )
             ],
@@ -143,14 +130,12 @@ class OrderedListComponent extends StatelessWidget {
 
   Widget buildImage() {
     return Container(
-      width: 70.0,
-      height: 60.0,
+      width: 70,
+      height: 60,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6.0),
-        border: Border.all(
-          color: borderColor,
-        ),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: const CustomImage(path: KImages.female),
     );
@@ -159,32 +144,15 @@ class OrderedListComponent extends StatelessWidget {
   Widget _buildOrderNumber(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 10.0),
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: Utils.dynamicPrimaryColor(context).withOpacity(0.1),
-        // borderRadius: BorderRadius.circular(4.0),
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /* Text.rich(
-            TextSpan(
-              text: "Order No: ",
-              style: GoogleFonts.inter(
-                  fontSize: 16, fontWeight: FontWeight.w400, color: blackColor),
-              children: [
-                TextSpan(
-                  text: orderedItem.id.toString(),
-                  style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: blackColor),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 6.0),*/
           _buildTrackingNumber(),
         ],
       ),
@@ -195,19 +163,16 @@ class OrderedListComponent extends StatelessWidget {
     return Text.rich(
       TextSpan(
         text: "${Language.orderTrackingNumber.capitalizeByWord()}: ",
-        // style: GoogleFonts.inter(
-        //   fontSize: 16,
-        //   fontWeight: FontWeight.w400,
-        //   color: textGreyColor,
-        //   decoration: TextDecoration.underline,
-        // ),
-        style: paragraphTextStyle(16.0)
-            .copyWith(decoration: TextDecoration.underline),
+        style: GoogleFonts.inter(
+          fontSize: 14,
+          color: Colors.grey.shade600,
+          decoration: TextDecoration.underline,
+        ),
         children: [
           TextSpan(
             text: ' ${orderedItem.orderId}',
-            style: headlineTextStyle(16.0)
-                .copyWith(decoration: TextDecoration.none),
+            style: GoogleFonts.inter(
+                fontSize: 15, fontWeight: FontWeight.w700, color: Colors.black, decoration: TextDecoration.none),
           ),
         ],
       ),

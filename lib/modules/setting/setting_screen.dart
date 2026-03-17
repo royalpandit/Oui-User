@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../utils/constants.dart';
 import '../../utils/k_images.dart';
 import '../../widgets/custom_image.dart';
 import '../../widgets/rounded_app_bar.dart';
@@ -46,10 +45,10 @@ class _SettingScreenState extends State<SettingScreen> {
         children: [
           ListTile(
             leading: const CustomImage(path: KImages.profileNotificationIcon,
-            color: lightningYellowColor,),
+            color: Colors.black,),
             title: const Text('Notifications'),
             trailing: Switch.adaptive(
-                activeTrackColor: greenColor,
+                activeTrackColor: Colors.black,
                 value: true,
                 inactiveTrackColor: const Color(0xff374557).withOpacity(.6),
                 activeColor: Colors.white,
@@ -57,10 +56,10 @@ class _SettingScreenState extends State<SettingScreen> {
           ),
           border,
           ListTile(
-            leading: const CustomImage(path: KImages.themeIcon,color: lightningYellowColor,),
+            leading: const CustomImage(path: KImages.themeIcon,color: Colors.black,),
             title: const Text('Dark Mode'),
             trailing: Switch.adaptive(
-                activeTrackColor: greenColor,
+                activeTrackColor: Colors.black,
                 value: false,
                 inactiveTrackColor: const Color(0xff374557).withOpacity(.6),
                 activeColor: Colors.white,
@@ -68,10 +67,10 @@ class _SettingScreenState extends State<SettingScreen> {
           ),
           border,
           ListTile(
-            leading: const CustomImage(path: KImages.activeLocationIcon,color: lightningYellowColor,),
+            leading: const CustomImage(path: KImages.activeLocationIcon,color: Colors.black,),
             title: const Text('Active Location'),
             trailing: Switch.adaptive(
-                activeTrackColor: greenColor,
+                activeTrackColor: Colors.black,
                 value: false,
                 inactiveTrackColor: const Color(0xff374557).withOpacity(.6),
                 activeColor: Colors.white,
@@ -79,10 +78,10 @@ class _SettingScreenState extends State<SettingScreen> {
           ),
           border,
           ListTile(
-            leading: const CustomImage(path: KImages.languageIcon,color: lightningYellowColor,),
+            leading: const CustomImage(path: KImages.languageIcon,color: Colors.black,),
             title: const Text('Language'),
             trailing: Switch.adaptive(
-                activeTrackColor: greenColor,
+                activeTrackColor: Colors.black,
                 value: true,
                 inactiveTrackColor: const Color(0xff374557).withOpacity(.6),
                 activeColor: Colors.white,
@@ -90,10 +89,10 @@ class _SettingScreenState extends State<SettingScreen> {
           ),
           border,
           ListTile(
-            leading: const CustomImage(path: KImages.onClickIcon,color: lightningYellowColor,),
+            leading: const CustomImage(path: KImages.onClickIcon,color: Colors.black,),
             title: const Text('One ClicK Login'),
             trailing: Switch.adaptive(
-                activeTrackColor: greenColor,
+                activeTrackColor: Colors.black,
                 value: false,
                 inactiveTrackColor: const Color(0xff374557).withOpacity(.6),
                 activeColor: Colors.white,
@@ -105,5 +104,5 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  final border = Container(height: 1, color: borderColor.withOpacity(.34));
+  final border = Container(height: 1, color: Colors.grey.shade300);
 }

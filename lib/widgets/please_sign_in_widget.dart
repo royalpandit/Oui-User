@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../core/router_name.dart';
-import '../utils/constants.dart';
 import 'primary_button.dart';
 
 class PleaseSignInWidget extends StatelessWidget {
@@ -18,7 +17,7 @@ class PleaseSignInWidget extends StatelessWidget {
             children: [
               const Text(
                 "Sign in please",
-                style: TextStyle(color: redColor),
+                style: TextStyle(color: Colors.red),
               ),
               const SizedBox(height: 20),
               PrimaryButton(

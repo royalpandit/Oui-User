@@ -69,8 +69,8 @@ class CheckoutSingleItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        //borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: borderColor),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
         color: Colors.white,
       ),
       child: Row(
@@ -108,8 +108,7 @@ class CheckoutSingleItem extends StatelessWidget {
                     product.product.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style:
-                        headlineTextStyle(16.0).copyWith(color: primaryColor),
+                    style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black),
                   ),
                 ),
                 Row(
@@ -118,18 +117,18 @@ class CheckoutSingleItem extends StatelessWidget {
                     Text(
                       Utils.formatPrice(
                           Utils.cartProductPrice(context, product), context),
-                      style: const TextStyle(
-                          color: primaryColor,
-                          fontSize: 16.0,
+                      style: GoogleFonts.inter(
+                          color: Colors.black,
+                          fontSize: 16,
                           fontWeight: FontWeight.w700),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 20),
                       child: Text(
                         'x ${product.qty}',
-                        style: GoogleFonts.jost(
-                            fontSize: 16.0,
-                            color: blackColor,
+                        style: GoogleFonts.inter(
+                            fontSize: 16,
+                            color: Colors.black87,
                             fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -140,7 +139,7 @@ class CheckoutSingleItem extends StatelessWidget {
                       .map(
                         (e) => Text(
                           '${e.varientItem!.name} : ${e.varientItem!.price}, ',
-                          style: headlineTextStyle(10.0),
+                          style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w500, color: Colors.grey.shade600),
                         ),
                       )
                       .toList(),

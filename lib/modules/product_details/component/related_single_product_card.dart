@@ -7,7 +7,6 @@ import '/modules/category/component/price_card_widget.dart';
 import '/widgets/favorite_button.dart';
 import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
@@ -35,10 +34,10 @@ class RelatedSingleProductCard extends StatelessWidget {
       children: [
         Container(
           width: width,
-          height: singleProductHeight,
+          height: 244.0,
           margin: Utils.only(bottom: 10.0),
           decoration: const BoxDecoration(
-            color: cardBgColor,
+            color: Color(0xFFF6F6F6),
             // color: white,
             //  borderRadius: BorderRadius.circular(5.0),
             // border: borderSide,
@@ -147,7 +146,7 @@ class RelatedSingleProductCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               maxFontSize: 15,
               minFontSize: 13,
-              style: headlineTextStyle(15.0)),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.black)),
           const SizedBox(height: 0),
           if (isFlashSale) ...[
             PriceCardWidget(
@@ -232,7 +231,7 @@ class RelatedSingleProductCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 5),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-            color: lightningYellowColor.withOpacity(0.6),
+            color: const Color(0xFFFFBB38).withOpacity(0.6),
             borderRadius:
                 const BorderRadius.only(topRight: Radius.circular(2))),
         child: Text(
@@ -240,7 +239,7 @@ class RelatedSingleProductCard extends StatelessWidget {
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: blackColor,
+            color: Colors.black,
           ),
         ),
       ),
@@ -277,7 +276,7 @@ class RelatedSingleProductCard extends StatelessWidget {
             )),
             child: Icon(
               Icons.add,
-              color: Utils.dynamicPrimaryColor(context),
+              color: Colors.black,
               size: 30.0,
             ),
           ),

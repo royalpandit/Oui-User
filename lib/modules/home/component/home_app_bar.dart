@@ -2,16 +2,12 @@ import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/utils/language_string.dart';
 import 'package:shop_us/widgets/capitalized_word.dart';
 
-import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
-import '../../../dummy_data/all_dummy_data.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/k_images.dart';
-import '../../../utils/utils.dart';
-import '../../../widgets/custom_image.dart';
 import '../../cart/controllers/cart/cart_cubit.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -26,21 +22,20 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     return SliverAppBar(
       toolbarHeight: 140.0,
       pinned: true,
+      backgroundColor: Colors.black,
       title: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 16.0),
           Row(
             children: [
-              //const Spacer(),
-              Flexible(
-                fit: FlexFit.loose,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: CustomImage(
-                    path: RemoteUrls.imageUrl(logo),
-                    color: Utils.dynamicPrimaryColor(context),
-                  ),
+              Text(
+                'OUI',
+                style: GoogleFonts.inter(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  letterSpacing: 2,
                 ),
               ),
               const Spacer(),
@@ -51,15 +46,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   builder: (context, state) {
                     return CartBadge(
                       count: cartProducts.cartCount.toString(),
-                      iconColor: blackColor,
-                      badgeColor: Utils.dynamicPrimaryColor(context),
-                      //countColor: Utils.dynamicPrimaryColor(context),
-                      countColor: white,
+                      iconColor: Colors.white,
+                      badgeColor: Colors.white,
+                      countColor: Colors.black,
                     );
                   },
                 ),
               ),
-              const SizedBox(width: 5.0),
+              const SizedBox(width: 12.0),
             ],
           ),
           GestureDetector(
@@ -68,23 +62,20 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Container(
               margin: const EdgeInsets.only(top: 16.0),
               padding:
-                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+                  const EdgeInsets.symmetric(vertical: 14.0, horizontal: 16.0),
               decoration: BoxDecoration(
-                color: inputFieldBgColor,
-                border: Border.all(color: borderColor),
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  const Padding(
-                      padding: EdgeInsets.only(top: 2.0),
-                      child:
-                          Icon(Icons.search, color: textGreyColor, size: 20.0)),
+                  const Icon(Icons.search, color: Colors.white70, size: 20.0),
                   const SizedBox(width: 10.0),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4.0),
-                    child: Text(
-                      Language.searchProduct.capitalizeByWord(),
-                      style: simpleTextStyle(textGreyColor),
+                  Text(
+                    Language.searchProduct.capitalizeByWord(),
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: Colors.white70,
                     ),
                   ),
                 ],
@@ -104,9 +95,9 @@ class CartBadge extends StatelessWidget {
   const CartBadge({
     super.key,
     required this.count,
-    this.iconColor = white,
-    this.badgeColor = lightningYellowColor,
-    this.countColor = white,
+    this.iconColor = Colors.white,
+    this.badgeColor = Colors.black,
+    this.countColor = Colors.white,
   });
 
   final String? count;
@@ -129,49 +120,3 @@ class CartBadge extends StatelessWidget {
   }
 }
 
-class LocationSelector extends StatefulWidget {
-  const LocationSelector({
-    super.key,
-  });
-
-  @override
-  State<LocationSelector> createState() => _LocationSelectorState();
-}
-
-class _LocationSelectorState extends State<LocationSelector> {
-  String selectCity = "Select Location";
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const CustomImage(path: KImages.locationIcon),
-        const SizedBox(width: 8),
-        DropdownButton<String>(
-            icon: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              child: SvgPicture.asset(KImages.expandIcon, height: 8),
-            ),
-            underline: const SizedBox(),
-            hint: Text(
-              selectCity,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-              ),
-            ),
-            items: dropDownItem
-                .map((e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e),
-                    ))
-                .toList(),
-            onChanged: (v) {
-              setState(() {
-                selectCity = v!;
-              });
-            }),
-      ],
-    );
-  }
-}

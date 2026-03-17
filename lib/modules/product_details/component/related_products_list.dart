@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shop_us/utils/language_string.dart';
 import 'package:shop_us/widgets/capitalized_word.dart';
 
-import '../../../utils/constants.dart';
 import '../../home/component/section_header.dart';
 import '../model/product_details_product_model.dart';
 import 'related_single_product_card.dart';
@@ -27,7 +26,7 @@ class RelatedProductsList extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: singleProductHeight + 60.0,
+          height: 304.0,
           child: ListView.separated(
             separatorBuilder: (context, index) => const SizedBox(width: 16),
             scrollDirection: Axis.horizontal,

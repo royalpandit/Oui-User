@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/utils/language_string.dart';
 import 'package:shop_us/widgets/capitalized_word.dart';
 
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../../cart/controllers/cart/add_to_cart/add_to_cart_cubit.dart';
@@ -56,7 +56,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             variantItem: variantItems,
           ),
           Container(
-            color: borderColor,
+            color: Colors.grey.shade200,
             height: 1,
             width: double.infinity,
             margin: const EdgeInsets.only(bottom: 15),
@@ -100,8 +100,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                 padding: const EdgeInsets.only(right: 20),
                 child: Text(
                   Language.quantity.capitalizeByWord(),
-                  style: const TextStyle(
-                      fontSize: 18, color: white, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.inter(
+                      fontSize: 18, color: Colors.black, fontWeight: FontWeight.w600),
                 ),
               ),
               InkWell(
@@ -113,11 +113,11 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                 },
                 child: CircleAvatar(
                   radius: 12,
-                  foregroundColor: transparent,
-                  backgroundColor: white,
-                  child: Icon(
+                  foregroundColor: Colors.transparent,
+                  backgroundColor: Colors.grey.shade200,
+                  child: const Icon(
                     Icons.remove,
-                    color: Utils.dynamicPrimaryColor(context),
+                    color: Colors.black,
                   ),
                 ),
               ),
@@ -125,8 +125,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                 padding: const EdgeInsets.symmetric(horizontal: 9),
                 child: Text(
                   quantity.toString(),
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w600, color: white),
+                  style: GoogleFonts.inter(
+                      fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
                 ),
               ),
               InkWell(
@@ -136,10 +136,10 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                 },
                 child: CircleAvatar(
                   radius: 12,
-                  foregroundColor: transparent,
-                  backgroundColor: white,
-                  child: Icon(Icons.add,
-                      color: Utils.dynamicPrimaryColor(context)),
+                  foregroundColor: Colors.transparent,
+                  backgroundColor: Colors.grey.shade200,
+                  child: const Icon(Icons.add,
+                      color: Colors.black),
                 ),
               ),
             ],
@@ -149,7 +149,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             children: [
               Text(
                 "${Language.totalPrice.capitalizeByWord()} : ${totalPrice()}",
-                style: const TextStyle(color: redColor),
+                style: GoogleFonts.inter(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -170,23 +170,17 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             child: Container(
               width: double.infinity,
               height: 50.0,
-              padding: const EdgeInsets.only(bottom: 6.0),
               decoration: BoxDecoration(
-                  color: Utils.dynamicPrimaryColor(context),
-                  borderRadius: BorderRadius.circular(30.0)),
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(12)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 4.0, right: 6.0),
-                    child: Icon(Icons.add, color: white, size: 30.0),
-                  ),
+                  const Icon(Icons.add, color: Colors.white, size: 24.0),
+                  const SizedBox(width: 6),
                   Text(
                     Language.addToCart.capitalizeByWord(),
-                    style: simpleTextStyle(white).copyWith(
-                        fontSize: 18.0,
-                        color: white,
-                        fontWeight: FontWeight.w700),
+                    style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
                   )
                 ],
               ),
@@ -345,7 +339,7 @@ class _VarientItemsWidget extends StatelessWidget {
               child: Text(
                 "${singleVarient.name} : ",
                 style: const TextStyle(
-                    fontWeight: FontWeight.w600, fontSize: 16.0, color: white),
+                    fontWeight: FontWeight.w600, fontSize: 16.0, color: Colors.black),
               ),
             ),
             Flexible(
@@ -376,15 +370,14 @@ class _VarientItemsWidget extends StatelessWidget {
         margin: Utils.symmetric(h: 4.0),
         padding: Utils.symmetric(h: 4.0, v: 4.0),
         decoration: BoxDecoration(
-          color: variantItems.contains(varient) ? redColor : null,
+          color: variantItems.contains(varient) ? Colors.black : null,
           borderRadius: BorderRadius.circular(3),
-          border: Border.all(color: borderColor),
+          border: Border.all(color: Colors.grey.shade200),
         ),
         child: Text(
           itemModel.name.capitalizeByWord(),
-          style: const TextStyle(
-            color: white,
-            // color: variantItems.contains(varient) ? white : white,
+          style: TextStyle(
+            color: variantItems.contains(varient) ? Colors.white : Colors.black,
           ),
         ),
       ),

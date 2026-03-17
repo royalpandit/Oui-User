@@ -1,17 +1,17 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '/modules/profile/controllers/address/cubit/edit_address_cubit.dart';
 import '/modules/profile/model/edit_address_model.dart';
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
-import '../../utils/constants.dart';
 import '../../utils/utils.dart';
 import '../../widgets/field_error_text.dart';
-import '../../widgets/primary_button.dart';
-import '../../widgets/rounded_app_bar.dart';
 import '../profile/controllers/address/address_cubit.dart';
 import '../profile/controllers/country_state_by_id/country_state_by_id_cubit.dart';
 import '../profile/model/city_model.dart';
@@ -65,7 +65,6 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
     for (var element in editAddressModel.countries) {
       if (element.id == editAddressModel.address.countryId) {
         _countryModel = element;
-        print("_country $_countryModel");
         break;
       }
     }
@@ -143,10 +142,61 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
     addressCtr.text = editAddressModel.address.address ?? '';
   }
 
+  InputDecoration _inputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400),
+      filled: true,
+      fillColor: Colors.grey.shade50,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.shade200, width: 1.5),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      ),
+    );
+  }
+
+  Widget _fieldLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black87),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: RoundedAppBar(titleText: 'Edit Address'),
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
+          centerTitle: true,
+          title: Text(
+            'Edit Address',
+            style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+          ),
+        ),
         body: BlocConsumer<AddressCubit, AddressState>(
           listener: (context, state) {
             if (state is AddressStateUpdating) {
@@ -159,9 +209,8 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
               }
               if (state is AddressStateUpdated) {
                 Utils.closeDialog(context);
-                context.read<AddressCubit>().getAddress(); //added this line
+                context.read<AddressCubit>().getAddress();
                 Navigator.of(context).pop();
-                print('address00');
               }
               // else if (state is AddressStateInvalidDataError) {
               //   context.read<AddressCubit>().getAddress();
@@ -172,7 +221,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
             return BlocConsumer<EditAddressCubit, EditAddressState>(
                 listener: (_, state) {
               if (state is EditAddressStateLoaded) {
-                print('edit loaded');
+                // loaded
               }
               if (state is EditAddressStateUpdateError) {
                 if (state.statusCode == 503) {
@@ -194,7 +243,8 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
               }
             }, builder: (context, editState) {
               if (editState is EditAddressLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                    child: CircularProgressIndicator(color: Colors.black));
               } else if (editState is EditAddressStateLoaded) {
                 if (_countryModel == null) {
                   context.read<CountryStateByIdCubit>().countryList =
@@ -229,27 +279,19 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                     }
 
                     return SingleChildScrollView(
-                      padding: const EdgeInsets.all(20),
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       child: Form(
                         key: _formkey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Edit Address',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.5),
-                            ),
-                            const SizedBox(height: 9),
+                            _fieldLabel(Language.name.capitalizeByWord()),
                             TextFormField(
                               controller: nameCtr,
                               keyboardType: TextInputType.name,
-                              decoration: InputDecoration(
-                                hintText: Language.name.capitalizeByWord(),
-                                fillColor: borderColor.withOpacity(.10),
-                              ),
+                              style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                              decoration: _inputDecoration(Language.name.capitalizeByWord()),
                             ),
                             if (addressState
                                 is AddressStateInvalidDataError) ...[
@@ -258,14 +300,12 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                                     text: addressState.errorMsg.name.first),
                             ],
                             const SizedBox(height: 16),
+                            _fieldLabel(Language.emailAddress.capitalizeByWord()),
                             TextFormField(
                               controller: emailCtr,
                               keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                hintText:
-                                    Language.emailAddress.capitalizeByWord(),
-                                fillColor: borderColor.withOpacity(.10),
-                              ),
+                              style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                              decoration: _inputDecoration(Language.emailAddress.capitalizeByWord()),
                             ),
                             if (addressState
                                 is AddressStateInvalidDataError) ...[
@@ -274,14 +314,12 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                                     text: addressState.errorMsg.email.first),
                             ],
                             const SizedBox(height: 16),
+                            _fieldLabel(Language.phoneNumber.capitalizeByWord()),
                             TextFormField(
                               controller: phoneCtr,
                               keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                hintText:
-                                    Language.phoneNumber.capitalizeByWord(),
-                                fillColor: borderColor.withOpacity(.10),
-                              ),
+                              style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                              decoration: _inputDecoration(Language.phoneNumber.capitalizeByWord()),
                             ),
                             if (addressState
                                 is AddressStateInvalidDataError) ...[
@@ -290,6 +328,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                                     text: addressState.errorMsg.phone.first),
                             ],
                             const SizedBox(height: 16),
+                            _fieldLabel(Language.country.capitalizeByWord()),
                             _countryField(countries),
                             if (addressState
                                 is AddressStateInvalidDataError) ...[
@@ -298,6 +337,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                                     text: addressState.errorMsg.country.first),
                             ],
                             const SizedBox(height: 16),
+                            _fieldLabel(Language.state.capitalizeByWord()),
                             stateField(),
                             if (addressState
                                 is AddressStateInvalidDataError) ...[
@@ -306,6 +346,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                                     text: addressState.errorMsg.state.first),
                             ],
                             const SizedBox(height: 16),
+                            _fieldLabel(Language.city.capitalizeByWord()),
                             cityField(),
                             if (addressState
                                 is AddressStateInvalidDataError) ...[
@@ -314,13 +355,12 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                                     text: addressState.errorMsg.city.first),
                             ],
                             const SizedBox(height: 16),
+                            _fieldLabel(Language.address.capitalizeByWord()),
                             TextFormField(
                               controller: addressCtr,
                               keyboardType: TextInputType.streetAddress,
-                              decoration: InputDecoration(
-                                fillColor: borderColor.withOpacity(.10),
-                                hintText: Language.address.capitalizeByWord(),
-                              ),
+                              style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                              decoration: _inputDecoration(Language.address.capitalizeByWord()),
                             ),
                             if (addressState
                                 is AddressStateInvalidDataError) ...[
@@ -330,28 +370,39 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                             ],
                             const SizedBox(height: 16),
                             const SizedBox(height: 30),
-                            PrimaryButton(
-                              text: Language.updateAddress.capitalizeByWord(),
-                              onPressed: () {
-                                final dataMap = {
-                                  'name': nameCtr.text.trim(),
-                                  'email': emailCtr.text.trim(),
-                                  'phone': phoneCtr.text.trim(),
-                                  'country': _countryModel!.id.toString(),
-                                  'state': _countryStateModel!.id.toString(),
-                                  'type': 'home',
-                                  'city': _cityModel!.id.toString(),
-                                  // 'zip_code': zipCtr.text.trim(),
-                                  'address': addressCtr.text.trim(),
-                                };
-                                // print("DataMap");
-                                // print(dataMap.toString());
-                                context.read<AddressCubit>().updateAddress(
-                                    editState.editAddressModel.address.id
-                                        .toString(),
-                                    dataMap);
-                              },
-                            )
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  final dataMap = {
+                                    'name': nameCtr.text.trim(),
+                                    'email': emailCtr.text.trim(),
+                                    'phone': phoneCtr.text.trim(),
+                                    'country': _countryModel!.id.toString(),
+                                    'state': _countryStateModel!.id.toString(),
+                                    'type': 'home',
+                                    'city': _cityModel!.id.toString(),
+                                    'address': addressCtr.text.trim(),
+                                  };
+                                  context.read<AddressCubit>().updateAddress(
+                                      editState.editAddressModel.address.id
+                                          .toString(),
+                                      dataMap);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(vertical: 18),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: Text(
+                                  Language.updateAddress.capitalizeByWord(),
+                                  style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 30),
                           ],
                         ),
                       ),
@@ -388,14 +439,10 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CountryModel>(
       value: _countryModel,
-      hint: Text(Language.country.capitalizeByWord()),
-      decoration: const InputDecoration(
-        isDense: true,
-        border: OutlineInputBorder(
-          // borderSide: BorderSide(width: 1, color: CustomColors.lineColor),
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
-      ),
+      hint: Text(Language.country.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400)),
+      decoration: _inputDecoration(''),
+      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+      dropdownColor: Colors.white,
       onTap: () async {
         Utils.closeKeyBoard(context);
       },
@@ -420,14 +467,10 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CountryStateModel>(
       value: _countryStateModel,
-      hint: Text(Language.state.capitalizeByWord()),
-      decoration: const InputDecoration(
-        isDense: true,
-        border: OutlineInputBorder(
-          // borderSide: BorderSide(width: 1, color: CustomColors.lineColor),
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
-      ),
+      hint: Text(Language.state.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400)),
+      decoration: _inputDecoration(''),
+      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+      dropdownColor: Colors.white,
       onTap: () async {
         Utils.closeKeyBoard(context);
       },
@@ -455,13 +498,10 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CityModel>(
       value: _cityModel,
-      hint: Text(Language.city.capitalizeByWord()),
-      decoration: const InputDecoration(
-        isDense: true,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
-      ),
+      hint: Text(Language.city.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400)),
+      decoration: _inputDecoration(''),
+      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+      dropdownColor: Colors.white,
       onTap: () {
         Utils.closeKeyBoard(context);
       },

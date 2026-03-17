@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 import '../../core/router_name.dart';
-import '../../utils/constants.dart';
 import '../../widgets/custom_image.dart';
-import '../../widgets/primary_button.dart';
 import '../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
-import 'model/onboarding_data.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({super.key});
@@ -19,163 +17,208 @@ class OnBoardingScreen extends StatefulWidget {
 }
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
-  late int _numPages;
   late PageController _pageController;
   int _currentPage = 0;
+  final int _numPages = 3;
 
   @override
   void initState() {
     super.initState();
-
-    _numPages = onBoardingList.length;
-    _pageController = PageController(initialPage: _currentPage);
+    _pageController = PageController(initialPage: 0);
   }
-
-  Widget getContent() {
-    final item = onBoardingList[_currentPage];
-    return Column(
-      key: ValueKey('$_currentPage'),
-      children: [
-        Text(
-          item.title,
-          style: headlineTextStyle(30.0),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          item.paragraph,
-          textAlign: TextAlign.center,
-          style: paragraphTextStyle(16.0),
-        ),
-      ],
-    );
-  }
-
-  late Size size;
 
   @override
   Widget build(BuildContext context) {
-    size = MediaQuery.of(context).size;
-    return Scaffold(
-      body: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(
-              height:
-                  _currentPage == 0 ? size.height * 0.58 : size.height * 0.62,
-              width: _currentPage == 0 ? size.width * 0.88 : size.width,
-              child: _buildImagesSlider(),
-            ),
-            _buildBottomContent(),
-          ],
+    final size = MediaQuery.of(context).size;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              // Top Image Section - Minimalist & Large
+              Expanded(
+                flex: 5,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    PageView.builder(
+                      controller: _pageController,
+                      onPageChanged: (int page) {
+                        setState(() {
+                          _currentPage = page;
+                        });
+                      },
+                      itemCount: _numPages,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Center(
+                            child: CustomImage(
+                              path: 'assets/icon/${index + 1}.png',
+                              fit: BoxFit.contain,
+                              width: size.width * 0.7,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    // Skip Button - Professional Grey
+                    Positioned(
+                      top: 60,
+                      right: 20,
+                      child: TextButton(
+                        onPressed: _navigateToLogin,
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white.withOpacity(0.5),
+                        ),
+                        child: Text(
+                          Language.skipForNow.capitalizeByWord(),
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Bottom Content Section - Integrated Look
+              Expanded(
+                flex: 4,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  decoration: const BoxDecoration(
+                    color: Colors.black, // Kept black for a seamless OLED look
+                  ),
+                  child: Column(
+                    children: [
+                      // Step Indicator - iOS Style Pill
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          _numPages,
+                          (index) => _buildDot(index),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      
+                      // Animated Text Content
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Text(
+                              _getTitle(_currentPage),
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.inter(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700,
+                              color: Colors.black,
+                                letterSpacing: -0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              _getSubtitle(_currentPage),
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                color: Colors.black.withOpacity(0.7),
+                                height: 1.6,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Action Button - Updated to Premium White-on-Black style
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_currentPage == _numPages - 1) {
+                              _navigateToLogin();
+                            } else {
+                              _pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOutCubic,
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            _currentPage == _numPages - 1
+                                ? "Get Started"
+                                : Language.next.capitalizeByWord(),
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildBottomContent() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-      child: Column(
-        children: [
-          AnimatedSwitcher(
-            duration: kDuration,
-            transitionBuilder: (Widget child, Animation<double> anim) {
-              return FadeTransition(opacity: anim, child: child);
-            },
-            child: getContent(),
-          ),
-          const SizedBox(height: 25.0),
-          PrimaryButton(
-            // text: _currentPage == _numPages - 1
-            //     ? Language.enabledLocation.capitalizeByWord()
-            //     : Language.next.capitalizeByWord(),
-            text: Language.next.capitalizeByWord(),
-            onPressed: () {
-              if (_currentPage == _numPages - 1) {
-                context.read<AppSettingCubit>().cachOnBoarding();
-                Navigator.pushNamedAndRemoveUntil(
-                    context, RouteNames.authenticationScreen, (route) => false);
-                return;
-              }
-              _pageController.nextPage(
-                  duration: kDuration, curve: Curves.easeInOut);
-            },
-            fontSize: 18.0,
-          ),
-          TextButton(
-            onPressed: () {
-              context.read<AppSettingCubit>().cachOnBoarding();
-              Navigator.pushNamedAndRemoveUntil(
-                  context, RouteNames.authenticationScreen, (route) => false);
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(transparent),
-              overlayColor: MaterialStateProperty.all(transparent),
-            ),
-            child: Text(
-              // _currentPage == 3
-              //     ? Language.notNow.capitalizeByWord()
-              //     : Language.skipForNow.capitalizeByWord(),
-              Language.skipForNow.capitalizeByWord(),
-              //'Skip For Now',
-              style: GoogleFonts.roboto(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16.0,
-                  color: textGreyColor),
-            ),
-          ),
-        ],
+  void _navigateToLogin() {
+    context.read<AppSettingCubit>().cachOnBoarding();
+    Navigator.pushNamedAndRemoveUntil(
+        context, RouteNames.authenticationScreen, (route) => false);
+  }
+
+  Widget _buildDot(int index) {
+    bool isSelected = _currentPage == index;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      height: 4,
+      width: isSelected ? 24 : 8,
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.black : Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(2),
       ),
     );
   }
 
-  Widget _buildImagesSlider() {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Positioned(
-          child: Padding(
-            padding: EdgeInsets.only(left: _currentPage == 2 ? 30.0 : 0),
-            child: PageView(
-              physics: const ClampingScrollPhysics(),
-              controller: _pageController,
-              onPageChanged: (int page) {
-                setState(() {
-                  _currentPage = page;
-                });
-              },
-              children: onBoardingList
-                  .map((e) => Padding(
-                        padding: _currentPage == 3
-                            ? const EdgeInsets.only(left: 50.0, right: 50.0)
-                            : EdgeInsets.zero,
-                        child: CustomImage(path: e.image),
-                      ))
-                  .toList(),
-            ),
-          ),
-        ),
-      ],
-    );
+  String _getTitle(int index) {
+    List<String> titles = [
+      "Find Your Favorites",
+      "Easy Payment",
+      "Fast Delivery"
+    ];
+    return titles[index];
   }
 
-  SizedBox sizedBox() {
-    return SizedBox(
-      width: size.width,
-      height: size.height * 0.65,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Positioned(child: CustomImage(path: onBoardingList[2].image)),
-        ],
-      ),
-    );
+  String _getSubtitle(int index) {
+    List<String> subs = [
+      "Discover the best groceries and daily essentials from your favorite local stores.",
+      "Secure and seamless checkout with multiple payment options for your convenience.",
+      "Get your groceries delivered to your doorstep within minutes, fresh and safe."
+    ];
+    return subs[index];
   }
-
-  ///image 0 height 0.62 ,width 90,,StackFit.expand,
-  ///image 1 height 0.62 ,width 100,,StackFit.expand,
-  ///image 2 height 0.65 ,width 100,,StackFit.expand,
 }

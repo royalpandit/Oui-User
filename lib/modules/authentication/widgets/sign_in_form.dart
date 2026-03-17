@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import '/widgets/capitalized_word.dart';
 import '/widgets/field_error_text.dart';
-import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
-import '../../../utils/language_string.dart';
 import '../../../utils/utils.dart';
-import '../../../widgets/primary_button.dart';
 import '../controller/login/login_bloc.dart';
 import 'guest_button.dart';
 
@@ -19,145 +15,150 @@ class SigninForm extends StatefulWidget {
 }
 
 class _SigninFormState extends State<SigninForm> {
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     final loginBloc = context.read<LoginBloc>();
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: [
-          const SizedBox(height: 12),
-          BlocBuilder<LoginBloc, LoginModelState>(
-            //buildWhen: (previous, current) => previous.email != current.email,
-            builder: (context, state) {
-              final loginState = state.state;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    initialValue: state.email,
-                    onChanged: (value) =>
-                        loginBloc.add(LoginEventUserName(value)),
-                    decoration: InputDecoration(
-                      hintText: Language.usernameOrEmail.capitalizeByWord(),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            BlocBuilder<LoginBloc, LoginModelState>(
+              builder: (context, state) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      style: const TextStyle(color: Colors.white),
+                      initialValue: state.email,
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: (value) => loginBloc.add(LoginEventUserName(value)),
+                      validator: (value) => (value == null || value.isEmpty) ? "Email is required" : null,
+                      decoration: _premiumInput("Email Address", Icons.email_outlined),
                     ),
-                  ),
-                  if (loginState is LoginStateFormError) ...[
-                    if (loginState.errors.email.isNotEmpty)
-                      ErrorText(text: loginState.errors.email.first)
-                  ]
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-          BlocBuilder<LoginBloc, LoginModelState>(
-            builder: (context, state) {
-              final loginState = state.state;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    keyboardType: TextInputType.visiblePassword,
-                    initialValue: state.password,
-                    onChanged: (value) =>
-                        loginBloc.add(LoginEventPassword(value)),
-                    obscureText: state.showPassword,
-                    decoration: InputDecoration(
-                      hintText: Language.password.capitalizeByWord(),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          state.showPassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: blackColor,
+                    if (state.state is LoginStateFormError)
+                      ErrorText(text: (state.state as LoginStateFormError).errors.email.first),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            BlocBuilder<LoginBloc, LoginModelState>(
+              builder: (context, state) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      style: const TextStyle(color: Colors.white),
+                      obscureText: state.showPassword,
+                      initialValue: state.password,
+                      onChanged: (value) => loginBloc.add(LoginEventPassword(value)),
+                      validator: (value) => (value == null || value.isEmpty) ? "Password is required" : null,
+                      decoration: _premiumInput("Password", Icons.lock_outline_rounded).copyWith(
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            state.showPassword ? Icons.visibility_off : Icons.visibility,
+                            color: Colors.white.withOpacity(0.4),
+                          ),
+                          onPressed: () => loginBloc.add(LoginEventShowPassword(state.showPassword)),
                         ),
-                        onPressed: () => loginBloc
-                            .add(LoginEventShowPassword(state.showPassword)),
                       ),
                     ),
-                  ),
-                  if (loginState is LoginStateFormError) ...[
-                    if (loginState.errors.password.isNotEmpty)
-                      ErrorText(text: loginState.errors.password.first)
-                  ]
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 8),
-          _rememberMe(),
-          const SizedBox(height: 20),
-          BlocBuilder<LoginBloc, LoginModelState>(
-            buildWhen: (previous, current) => previous.state != current.state,
-            builder: (context, state) {
-              if (state.state is LoginStateLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return PrimaryButton(
-                text: Language.login.capitalizeByWord(),
-                onPressed: () {
-                  Utils.closeKeyBoard(context);
-                  loginBloc.add(const LoginEventSubmit());
-                },
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-          //  Text(
-          //    Language.socialLogin.capitalizeByWord(),
-          //   style: simpleTextStyle(textGreyColor),
-          // ),
-          // const SizedBox(height: 12),
-          // const SocialButtons(),
-          // const SizedBox(height: 28),
-          const GuestButton(),
-        ],
+                    if (state.state is LoginStateFormError)
+                      ErrorText(text: (state.state as LoginStateFormError).errors.password.first),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _buildRememberMe(loginBloc),
+            const SizedBox(height: 32),
+            _buildSubmitButton(loginBloc),
+            const GuestButton(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _rememberMe() {
-    final loginBloc = context.read<LoginBloc>();
+  Widget _buildRememberMe(LoginBloc bloc) {
     return BlocBuilder<LoginBloc, LoginModelState>(
       builder: (context, state) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Theme(
-                  data: ThemeData(
-                      checkboxTheme: CheckboxThemeData(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(110.0)))),
-                  child: Checkbox(
-                      value: state.active,
-                      onChanged: (bool? v) {
-                        if (v == null) return;
-                        loginBloc.add(LoginEventActive(state.active));
-                      }),
-                ),
-                const SizedBox(width: 10.0),
-                Text(
-                  Language.rememberMe.capitalizeByWord(),
-                  style: TextStyle(color: blackColor.withOpacity(.5)),
-                ),
-              ],
-            ),
-            InkWell(
-              onTap: () =>
-                  Navigator.pushNamed(context, RouteNames.forgotScreen),
-              child: Text(
-                '${Language.forgotPassword.capitalizeByWord()}?',
-                style: simpleTextStyle(redColor),
+            GestureDetector(
+              onTap: () => bloc.add(LoginEventActive(state.active)),
+              child: Row(
+                children: [
+                  Checkbox(
+                    value: state.active,
+                    activeColor: Colors.white,
+                    checkColor: Colors.black,
+                    side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                    onChanged: (v) => bloc.add(LoginEventActive(state.active)),
+                  ),
+                  const Text("Remember me", style: TextStyle(color: Colors.white70, fontSize: 13)),
+                ],
               ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/forgotScreen'),
+              child: const Text("Forgot Password?", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildSubmitButton(LoginBloc loginBloc) {
+    return BlocBuilder<LoginBloc, LoginModelState>(
+      builder: (context, state) {
+        if (state.state is LoginStateLoading) {
+          return const Center(child: CircularProgressIndicator(color: Colors.white));
+        }
+        return SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
+            onPressed: () {
+              if (_formKey.currentState?.validate() ?? true) {
+                loginBloc.add(const LoginEventSubmit());
+              }
+            },
+            child: const Text("Sign In", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          ),
+        );
+      },
+    );
+  }
+
+  InputDecoration _premiumInput(String hint, IconData icon) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
+      prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.4), size: 20),
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.05),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Colors.white),
+      ),
     );
   }
 }

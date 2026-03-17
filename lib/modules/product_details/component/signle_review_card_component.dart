@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/remote_urls.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../model/details_product_reviews_model.dart';
 
@@ -36,11 +36,11 @@ class SingleReviewCardComponent extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Text(reviewModel.user.name,
-                          maxLines: 2, style: headlineTextStyle(18.0)),
+                          maxLines: 2, style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black)),
                     ),
                     Text(
                       Utils.timeAgo(reviewModel.createdAt),
-                      style: paragraphTextStyle(12.0),
+                      style: GoogleFonts.inter(fontSize: 12, color: Colors.grey),
                     )
                   ],
                 ),
@@ -62,7 +62,7 @@ class SingleReviewCardComponent extends StatelessWidget {
                 ),
                 Text(
                   reviewModel.review,
-                  style: paragraphTextStyle(14.0),
+                  style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
                 )
               ],
             ),

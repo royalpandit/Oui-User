@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.oui.app"
-        minSdk = flutter.minSdkVersion
+        minSdkVersion = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -23,6 +23,42 @@ android {
 
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    lint {
+        // Disable lint errors coming from third-party libraries (e.g., Stripe) during release builds.
+        // See: https://developer.android.com/studio/write/lint#disable
+        abortOnError false
+        checkReleaseBuilds false
+        disable "NullSafeMutableLiveData"
+    }
+
+    signingConfigs {
+        release {
+            def keystorePropertiesFile = rootProject.file('key.properties')
+            if (keystorePropertiesFile.exists()) {
+                def keystoreProperties = new Properties()
+                keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            } else {
+                // Fallback to debug signing when key.properties is not available
+                storeFile = debug.storeFile
+                storePassword = debug.storePassword
+                keyAlias = debug.keyAlias
+                keyPassword = debug.keyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+        }
     }
 }
 

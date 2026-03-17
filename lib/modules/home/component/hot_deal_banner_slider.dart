@@ -2,8 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 
-import '../../../utils/constants.dart';
-import '../../../utils/utils.dart';
 import '../model/banner_model.dart';
 import 'hot_deal_banner.dart';
 
@@ -53,8 +51,8 @@ class _CombineBannerSliderState extends State<CombineBannerSlider> {
           dotsCount: widget.banners.length,
           key: UniqueKey(),
           decorator: DotsDecorator(
-            activeColor: Utils.dynamicPrimaryColor(context),
-            color: borderColor,
+            activeColor: Colors.black,
+            color: Colors.grey.shade300,
             activeSize: const Size(18.0, 4.0),
             size: const Size(18.0, 4.0),
             activeShape: RoundedRectangleBorder(

@@ -217,10 +217,9 @@ class AddressCardComponent extends StatelessWidget {
   }
 }*/
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
-import '../../../utils/utils.dart';
 import '../../profile/model/address_model.dart';
 
 class AddressCardComponent extends StatelessWidget {
@@ -243,29 +242,30 @@ class AddressCardComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = pWidth ?? MediaQuery.of(context).size.width * 0.8;
+    final isSelected = selectAddress == addressModel.id;
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-      width: width,
+      padding: const EdgeInsets.all(16),
+      width: pWidth ?? MediaQuery.of(context).size.width * 0.75,
       decoration: BoxDecoration(
-        color: selectAddress == addressModel.id
-            ? Utils.dynamicPrimaryColor(context).withOpacity(0.05)
-            : Colors.white,
-        //borderRadius: BorderRadius.circular(6.0),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: selectAddress == addressModel.id
-                ? Utils.dynamicPrimaryColor(context)
-                : borderColor),
+          color: isSelected ? Colors.black : Colors.grey.shade200,
+          width: isSelected ? 1.5 : 1,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 4, bottom: 10.0),
-            child: Icon(Icons.location_on_outlined,
-                color: Utils.dynamicPrimaryColor(context)),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.location_on_outlined, color: Colors.black, size: 22),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,57 +278,46 @@ class AddressCardComponent extends StatelessWidget {
                         addressModel.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: headlineTextStyle(16.0),
+                        style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black),
                       ),
                     ),
-                    isEditButtonShow
-                        ? const SizedBox()
-                        : InkWell(
-                            onTap: () async {
-                              // Navigator.pushNamed(
-                              //   context,
-                              //   RouteNames.addAddressScreen,
-                              //   arguments: {
-                              //     "type": addressModel.type,
-                              //     "address_id": addressModel.id
-                              //   },
-                              // );
-                              Navigator.pushNamed(
-                                context,
-                                RouteNames.editAddressScreen,
-                                arguments: {"address_id": addressModel.id},
-                              );
-                            },
-                            child: CircleAvatar(
-                              radius: 13,
-                              backgroundColor:
-                                  Utils.dynamicPrimaryColor(context),
-                              child: const Icon(Icons.edit,
-                                  size: 16, color: white),
-                            ),
+                    if (!isEditButtonShow)
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            RouteNames.editAddressScreen,
+                            arguments: {"address_id": addressModel.id},
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            shape: BoxShape.circle,
                           ),
+                          child: const Icon(Icons.edit_outlined, size: 16, color: Colors.black54),
+                        ),
+                      ),
                   ],
                 ),
-                Text(
-                  addressModel.email,
-                  style: paragraphTextStyle(14.0),
-                ),
-                Text(
-                  addressModel.phone,
-                  style: paragraphTextStyle(14.0),
+                const SizedBox(height: 4),
+                Text(addressModel.email, style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade500)),
+                Text(addressModel.phone, style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade500)),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    addressModel.type == '1' ? 'Office' : 'Home',
+                    style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.black87, letterSpacing: 0.5),
+                  ),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  addressModel.type == '1' ? 'Office' : "Home",
-                  style: headlineTextStyle(14)
-                      .copyWith(color: Utils.dynamicPrimaryColor(context)),
-                ),
-                Text(
-                  addressModel.address,
-                  style: paragraphTextStyle(14.0),
-                ),
-                //Text("${Language.zipCode} : ${addressModel.address}",style: paragraphTextStyle(14.0),),
-                const SizedBox(height: 10.0),
+                Text(addressModel.address, style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade600)),
               ],
             ),
           ),

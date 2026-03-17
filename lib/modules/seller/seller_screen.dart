@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import '../../core/remote_urls.dart';
-import '../../utils/constants.dart';
+import '../../utils/utils.dart';
 import '../../widgets/custom_image.dart';
 import '../category/component/product_card.dart';
 
 import '../category/controller/cubit/category_cubit.dart';
-import '/widgets/rounded_app_bar.dart';
 import 'model/single_seller_model.dart';
 
 class BestSellerInformation extends StatefulWidget {
@@ -31,12 +32,30 @@ class _BestSellerInformationState extends State<BestSellerInformation> {
     context.read<CategoryCubit>().getSellerProduct(keyword);
 
     return Scaffold(
-      backgroundColor: scaffoldBGColor ,
-      appBar: RoundedAppBar(titleText: name,bgColor: scaffoldBGColor),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: Text(
+          name,
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+        ),
+      ),
       body: BlocBuilder<CategoryCubit, CategoryState>(
         builder: (context, state) {
           if (state is CategoryLoadingState) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: SizedBox(
+                height: 28,
+                width: 120,
+                child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is SellerProductState) {
             if (state.sellerModel.products.isEmpty) {
               return const Center(
@@ -57,7 +76,7 @@ class _BestSellerInformationState extends State<BestSellerInformation> {
               child: Text(
                 // Language.somethingWentWrong.capitalizeByWord(),
                 'Something Went Wrong',
-                style: GoogleFonts.openSans(color: Colors.red),
+                  style: GoogleFonts.inter(color: Colors.red),
               ),
             ),
           );
@@ -125,7 +144,7 @@ class SingleSellerInfo extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontWeight: FontWeight.w400,
                         fontSize: 12.0,
-                        color: blackColor,
+                        color: Colors.black,
                       ),
                     )
                   ],

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/widgets/custom_text.dart';
 
 import '/modules/animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '/widgets/capitalized_word.dart';
 import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/language_string.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
@@ -37,19 +37,19 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
       height: height,
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        //borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: borderColor),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
         color: Colors.white,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            margin: const EdgeInsets.all(8.0).copyWith(right: 4.0),
+            margin: const EdgeInsets.all(8).copyWith(right: 4),
             decoration: BoxDecoration(
-                color: cardBgColor, borderRadius: BorderRadius.circular(6.0)),
-            height: 110.0,
-            width: 110.0,
+                color: Colors.grey.shade50, borderRadius: BorderRadius.circular(8)),
+            height: 110,
+            width: 110,
             child: Padding(
               padding: const EdgeInsets.all(4.0),
               child: GestureDetector(
@@ -72,9 +72,9 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
               children: [
                 CustomText(
                   text: widget.product.product.name.capitalizeByWord(),
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.w700,
-                  color: primaryColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
                   maxLine: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -92,8 +92,8 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
                       text: Utils.formatPrice(
                           Utils.cartProductPrice(context, widget.product),
                           context),
-                      color: blackColor,
-                      fontSize: 16.0,
+                      color: Colors.black,
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ],
@@ -152,11 +152,11 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
                 );
               },
               child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Icon(
-                  Icons.delete,
+                  Icons.delete_outline_rounded,
                   size: 20,
-                  color: redColor,
+                  color: Colors.red,
                 ),
               )),
           // IconButton(
@@ -190,14 +190,14 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
               : null,
           child: Icon(
             Icons.remove_circle,
-            color: Utils.dynamicPrimaryColor(context),
+            color: Colors.black,
           ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
           child: CustomText(
               text: widget.product.qty.toString(),
-              fontSize: 16.0,
+              fontSize: 16,
               fontWeight: FontWeight.w700),
         ),
         InkWell(
@@ -212,7 +212,7 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
             });
           },
           child:
-              Icon(Icons.add_circle, color: Utils.dynamicPrimaryColor(context)),
+              Icon(Icons.add_circle, color: Colors.black),
         ),
       ],
     );

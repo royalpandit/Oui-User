@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../utils/constants.dart';
-import '../utils/utils.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ToggleButtonScrollComponent extends StatefulWidget {
   const ToggleButtonScrollComponent({
@@ -44,30 +42,28 @@ class _ToggleButtonScrollComponentState
   }
 
   Widget _buildSingleBtn(int key, String value) {
+    final isSelected = initialLabelIndex == key;
     return InkWell(
       onTap: () => setState(() {
         initialLabelIndex = key;
         widget.onChange(initialLabelIndex);
       }),
       child: AnimatedContainer(
-        duration: kDuration,
+        duration: const Duration(milliseconds: 300),
         padding:
-            const EdgeInsets.symmetric(horizontal: 14).copyWith(bottom: 5.0),
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         alignment: Alignment.center,
-        margin: EdgeInsets.only(right: textList.length - 1 == key ? 0.0 : 10.0),
+        margin: EdgeInsets.only(right: textList.length - 1 == key ? 0.0 : 8),
         decoration: BoxDecoration(
-          color: initialLabelIndex == key
-              ? Utils.dynamicPrimaryColor(context)
-              : Utils.dynamicPrimaryColor(context).withOpacity(0.1),
-          // borderRadius: BorderRadius.circular(30.0),
+          color: isSelected ? Colors.black : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
           value,
-          style: TextStyle(
-            fontSize: 14,
-            color: initialLabelIndex != key
-                ? Utils.dynamicPrimaryColor(context)
-                : white,
+          style: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: isSelected ? Colors.white : Colors.grey.shade600,
           ),
         ),
       ),
@@ -77,12 +73,9 @@ class _ToggleButtonScrollComponentState
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 36,
+      height: 40,
       width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(2),
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(

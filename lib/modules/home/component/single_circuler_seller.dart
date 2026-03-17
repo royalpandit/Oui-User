@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop_us/utils/constants.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/widgets/custom_image.dart';
 
 import '/core/remote_urls.dart';
@@ -35,7 +35,7 @@ class SingleCircularSeller extends StatelessWidget {
         margin: const EdgeInsets.only(right: 12.0),
         padding: const EdgeInsets.all(5.0),
         decoration: BoxDecoration(
-            color: cardBgColor, borderRadius: BorderRadius.circular(4.0)),
+            color: const Color(0xFFF6F6F6), borderRadius: BorderRadius.circular(4.0)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -44,7 +44,7 @@ class SingleCircularSeller extends StatelessWidget {
               width: 54.0,
               alignment: Alignment.center,
               decoration: const BoxDecoration(
-                color: white,
+                color: Colors.white,
                 shape: BoxShape.circle,
               ),
               child: CustomImage(
@@ -59,7 +59,7 @@ class SingleCircularSeller extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: headlineTextStyle(14.0),
+              style: GoogleFonts.inter(fontSize: 14.0, fontWeight: FontWeight.w700, color: Colors.black),
             ),
           ],
         ),

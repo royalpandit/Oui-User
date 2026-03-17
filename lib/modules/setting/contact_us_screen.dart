@@ -1,14 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
-import '../../utils/constants.dart';
-import '../../utils/utils.dart';
-import '../../widgets/rounded_app_bar.dart';
 import 'component/contact_us_form_widget.dart';
 import 'controllers/contact_us_cubit/contact_us_cubit.dart';
 import 'model/contact_us_mode.dart';
@@ -23,23 +19,39 @@ class ContactUsScreen extends StatefulWidget {
 class _ContactUsScreenState extends State<ContactUsScreen> {
   @override
   void initState() {
-    Future.microtask(
-        () => context.read<ContactUsCubit>().getContactUsContent());
+    Future.microtask(() => context.read<ContactUsCubit>().getContactUsContent());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RoundedAppBar(
-          titleText: Language.contactUs.capitalizeByWord(),
-          bgColor: scaffoldBGColor),
-      body: const SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: Text(
+          Language.contactUs.capitalizeByWord(),
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+        ),
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ContactUsFormWidget(),
-            ContactUsContentWidget(),
+            const ContactUsFormWidget(),
+            const SizedBox(height: 40),
+            const ContactUsContentWidget(),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -47,85 +59,80 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   }
 }
 
-class ContactUsContentWidget extends StatefulWidget {
+class ContactUsContentWidget extends StatelessWidget {
   const ContactUsContentWidget({super.key});
-
-  @override
-  State<ContactUsContentWidget> createState() => _ContactUsContentWidgetState();
-}
-
-class _ContactUsContentWidgetState extends State<ContactUsContentWidget> {
-  late WebViewController controller;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ContactUsCubit, ContactUsState>(
       builder: (context, state) {
         if (state is ContactUsStateLoaded) {
-          final aboutUsData = state.contactUsModel;
-          return _buildLoadedWidget(aboutUsData);
+          return _buildInfoGrid(context, state.contactUsModel);
         } else if (state is ContactUsStateLoading) {
-          return const Padding(
-            padding: EdgeInsets.all(18.0),
-            child: Center(child: CircularProgressIndicator()),
-          );
-        } else if (state is ContactUsStateError) {
-          return Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Center(
-              child: Text(
-                state.errorMessage,
-                style: const TextStyle(color: redColor),
-              ),
-            ),
-          );
+          return const Center(child: CircularProgressIndicator(color: Colors.black));
         }
         return const SizedBox();
       },
     );
   }
 
-  Widget _buildLoadedWidget(ContactUsModel aboutUsData) {
+  Widget _buildInfoGrid(BuildContext context, ContactUsModel data) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 30, width: double.infinity),
-        _buildSingleInfo(Language.emailAddress.capitalizeByWord(), Icons.email,
-            aboutUsData.email),
-        const Divider(height: 40),
-        _buildSingleInfo(Language.phoneNumber.capitalizeByWord(), Icons.call,
-            aboutUsData.phone),
-        const Divider(height: 40),
-        _buildSingleInfo(Language.address.capitalizeByWord(), Icons.location_on,
-            aboutUsData.address),
-        const SizedBox(height: 20),
+        _buildInfoCard(context, Icons.email_outlined, Language.emailAddress, data.email),
+        _buildInfoCard(context, Icons.phone_outlined, Language.phoneNumber, data.phone),
+        _buildInfoCard(context, Icons.location_on_outlined, Language.address, data.address),
       ],
     );
   }
 
-  void loadMap(String iframe) {
-    final uri = Uri.dataFromString(
-      iframe,
-      mimeType: 'text/html',
-      encoding: Encoding.getByName('utf-8'),
-    ).toString();
-
-    controller.loadHtmlString(uri);
-  }
-
-  Widget _buildSingleInfo(String header, IconData icon, content) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 30, color: Utils.dynamicPrimaryColor(context)),
-        Text(header, style: const TextStyle(fontSize: 16)),
-        Text(
-          content,
-          style: const TextStyle(
-              fontWeight: FontWeight.w600, color: iconGreyColor),
-        ),
-      ],
+  Widget _buildInfoCard(BuildContext context, IconData icon, String title, String content) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade100, width: 1.5),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: Colors.black, size: 24),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title.capitalizeByWord(),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade500,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  content,
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

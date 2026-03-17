@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
 import '../../utils/utils.dart';
+import '../../../utils/notifications.dart';
 import '../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../cart/controllers/cart/add_to_cart/add_to_cart_cubit.dart';
 import '../cart/controllers/cart/cart_cubit.dart';
@@ -21,6 +23,7 @@ import 'component/populer_product_component.dart';
 import 'controller/cubit/home_controller_cubit.dart';
 import 'model/banner_model.dart';
 import 'model/home_model.dart';
+import '/widgets/shimmer_loader.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -30,22 +33,22 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<AddToCartCubit, AddToCartState>(
       listenWhen: (previous, current) => true,
-      listener: (context, state) {
+          listener: (context, state) {
         if (state is AddToCartStateLoading) {
           Utils.loadingDialog(context);
         } else {
           Utils.closeDialog(context);
           if (state is AddToCartStateAdded) {
             context.read<CartCubit>().getCartProducts();
-            Utils.showSnackBar(context, state.message);
+            showBottomPopup(context, message: state.message, success: true);
           } else if (state is AddToCartStateError) {
-            Utils.errorSnackBar(context, state.message);
+            showBottomPopup(context, message: state.message, success: false);
           }
         }
       },
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: scaffoldBGColor,
+          backgroundColor: Colors.white,
           // appBar: HomeAppBar(
           //   logo: context.read<AppSettingCubit>().settingModel!.setting!.logo,
           // ),
@@ -53,7 +56,11 @@ class HomeScreen extends StatelessWidget {
             builder: (context, state) {
               log(state.toString(), name: _className);
               if (state is HomeControllerLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                    child: SizedBox(
+                        height: 28,
+                        width: 120,
+                        child: ShimmerLoader.rect(height: 12, width: 120)));
               }
               if (state is HomeControllerError) {
                 return Center(
@@ -62,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Text(
                         state.errorMessage,
-                        style: const TextStyle(color: redColor),
+                        style: GoogleFonts.inter(fontSize: 14, color: Colors.red),
                       ),
                       const SizedBox(height: 10),
                       IconButton(

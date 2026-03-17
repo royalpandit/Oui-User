@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,8 +13,6 @@ import '../../core/router_name.dart';
 import '../../dummy_data/all_dummy_data.dart';
 import '../../utils/constants.dart';
 import '../../utils/utils.dart';
-import '../../widgets/primary_button.dart';
-import '../../widgets/rounded_app_bar.dart';
 import '../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../profile/controllers/address/address_cubit.dart';
 import '../profile/model/address_model.dart';
@@ -53,16 +53,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final addressCubit = context.read<AddressCubit>();
-    print('nullAddress: ${addressCubit.address}');
     if (addressCubit.address == null) {
       log('address re-loaded');
       addressCubit.getAddress();
     }
     return Scaffold(
-      backgroundColor: cardBgColor,
-      appBar: RoundedAppBar(
-          titleText: Language.checkout.capitalizeByWord(),
-          bgColor: scaffoldBGColor),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: Text(
+          Language.checkout.capitalizeByWord(),
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+        ),
+      ),
       body: BlocConsumer<CheckoutCubit, CheckoutState>(
         listener: (_, state) {
           //   if (state is CheckoutStateLoading) {
@@ -76,12 +87,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         },
         builder: (context, state) {
           if (state is CheckoutStateLoading || state is CheckoutStateInitial) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: SizedBox(
+                height: 28,
+                width: 120,
+                child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is CheckoutStateError) {
             return Center(
               child: Text(
                 state.message,
-                style: const TextStyle(color: redColor),
+                style: GoogleFonts.inter(fontSize: 14, color: Colors.red),
               ),
             );
           }
@@ -173,7 +188,6 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
                               .read<ShippingChargesCubit>()
                               .getShippingCharge(totalPrice);
                         }
-                        print('Total Price $totalPrice');
                       }
                     },
                   ),
@@ -184,11 +198,11 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
                   controlAffinity: ListTileControlAffinity.leading,
                   title: Text(
                     Language.agreeTermAndCondition.capitalizeByWord(),
-                    style: paragraphTextStyle(14.0),
+                    style: GoogleFonts.inter(fontSize: 14, color: Colors.black87),
                   ),
                   value: agreeTermsCondition == 1 ? true : false,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                  activeColor: Utils.dynamicPrimaryColor(context),
+                  activeColor: Colors.black,
                   onChanged: (v) {
                     if (v != null) {
                       agreeTermsCondition = agreeTermsCondition == 1 ? 0 : 1;
@@ -208,19 +222,17 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
 
   Widget _bottomBtn() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      decoration: const BoxDecoration(
-          color: bottomPanelColor,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-          )),
-      height: 100.0,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: Colors.grey.shade200)),
+      ),
       child: Row(
         children: [
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 BlocBuilder<ShippingChargesCubit, ShippingChargesState>(
                   builder: (context, state) {
@@ -230,50 +242,55 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
                       final value =
                           context.read<ShippingChargesCubit>().initialPrice;
                       return Text(
-                        "${Language.total.capitalizeByWord()}: ${Utils.formatPrice(value, context)} ",
-                        style: headlineTextStyle(20.0).copyWith(color: white),
-                        // style: headlineTextStyle(20.0).copyWith(color: Utils.dynamicPrimaryColor(context)),
+                        "${Language.total.capitalizeByWord()}: ${Utils.formatPrice(value, context)}",
+                        style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black),
                       );
                     }
                     return const SizedBox();
                   },
                 ),
                 Text(
-                  " +${Language.shippingCost.capitalizeByWord()}",
-                  style: paragraphTextStyle(12.0).copyWith(color: white),
+                  "+${Language.shippingCost.capitalizeByWord()}",
+                  style: GoogleFonts.inter(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 16),
           Flexible(
-            child: PrimaryButton(
-              text: Language.placeOrderNow.capitalizeByWord(),
-              // bgColor: primaryColor,
-              // textColor: white,
-              borderRadiusSize: Utils.radius(40.0),
-              onPressed: () {
-                if (agreeTermsCondition != 1) {
-                  Utils.errorSnackBar(context,
-                      Language.agreeTermAndCondition.capitalizeByWord());
-                  return;
-                } else if (shippingAddressId < 1 ||
-                    billingAddressId < 1 ||
-                    shippingMethod < 1) {
-                  Utils.errorSnackBar(context, Language.selectLocation);
-                } else {
-                  body['shipping_address_id'] = shippingAddressId.toString();
-                  body['billing_address_id'] = billingAddressId.toString();
-                  body['shipping_method_id'] = shippingMethod.toString();
-                  debugPrint(body.toString());
-                  Navigator.pushNamed(context, RouteNames.placeOrderScreen,
-                      arguments: {
-                        'body': body,
-                        'payment_status': checkoutResponseModel,
-                      });
-                }
-              },
+            child: ElevatedButton(
+            onPressed: () {
+              if (agreeTermsCondition != 1) {
+                Utils.errorSnackBar(context,
+                    Language.agreeTermAndCondition.capitalizeByWord());
+                return;
+              } else if (shippingAddressId < 1 ||
+                  billingAddressId < 1 ||
+                  shippingMethod < 1) {
+                Utils.errorSnackBar(context, Language.selectLocation);
+              } else {
+                body['shipping_address_id'] = shippingAddressId.toString();
+                body['billing_address_id'] = billingAddressId.toString();
+                body['shipping_method_id'] = shippingMethod.toString();
+                Navigator.pushNamed(context, RouteNames.placeOrderScreen,
+                    arguments: {
+                      'body': body,
+                      'payment_status': checkoutResponseModel,
+                    });
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
+            child: Text(
+              Language.placeOrderNow.capitalizeByWord(),
+              style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
+          ),
           ),
         ],
       ),
@@ -291,26 +308,19 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(Language.deliveryLocation.capitalizeByWord(),
-                  style: headlineTextStyle(18.0)),
+                  style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black)),
               InkWell(
                 onTap: () {
                   Navigator.pushNamed(context, RouteNames.addressScreen);
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  height: 22,
-                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Utils.dynamicPrimaryColor(context),
-                    borderRadius: BorderRadius.circular(2.0),
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
-                      child: Text(Language.add.capitalizeByWord(),
-                          style: const TextStyle(fontSize: 12.0, color: white)),
-                    ),
-                  ),
+                  child: Text(Language.add.capitalizeByWord(),
+                      style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white)),
                 ),
               ),
             ],
@@ -320,12 +330,15 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
         BlocBuilder<AddressCubit, AddressState>(
           builder: (context, state) {
             if (state is AddressStateLoading) {
-              return Text(Language.loading.capitalizeByWord());
+              return Text(Language.loading.capitalizeByWord(),
+                  style: GoogleFonts.inter(fontSize: 14, color: Colors.grey));
             } else if (state is AddressStateError) {
-              return Text(state.message);
+              return Text(state.message,
+                  style: GoogleFonts.inter(fontSize: 14, color: Colors.red));
             } else if (state is AddressStateLoaded) {
               if (state.address.addresses.isEmpty) {
-                return Text(Language.noAddress.capitalizeByWord());
+                return Text(Language.noAddress.capitalizeByWord(),
+                    style: GoogleFonts.inter(fontSize: 14, color: Colors.grey));
               } else {
                 return singleAddressCard(context, state.address.addresses);
               }
@@ -339,46 +352,57 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
   }
 
   Widget singleAddressCard(BuildContext context, List<AddressModel> address) {
+    // Auto-select first address if not yet selected
+    if (address.isNotEmpty) {
+      if (billingAddressId == 0) billingAddressId = address.first.id;
+      if (shippingAddressId == 0) shippingAddressId = address.first.id;
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: [
-            ...addressType.asMap().entries.map(
-                  (e) => InkWell(
-                    onTap: () {
-                      setState(() {
-                        addressTypeSelect = e.value;
-                        pageController.animateToPage(e.key,
-                            duration: const Duration(microseconds: 500),
-                            curve: Curves.ease);
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(microseconds: 300),
-                      curve: Curves.ease,
-                      decoration: BoxDecoration(
-                          color: addressTypeSelect == e.value
-                              ? Utils.dynamicPrimaryColor(context)
-                              : transparent,
-                          borderRadius: BorderRadius.circular(30.0)),
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 8),
-                      padding: const EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 10.0)
-                          .copyWith(bottom: 12.0),
-                      child: Text(
-                        e.value,
-                        style: TextStyle(
-                          color: addressTypeSelect == e.value
-                              ? white
-                              : textGreyColor,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          child: Row(
+            children: [
+              ...addressType.asMap().entries.map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () {
+                          setState(() {
+                            addressTypeSelect = e.value;
+                            pageController.animateToPage(e.key,
+                                duration: const Duration(microseconds: 500),
+                                curve: Curves.ease);
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(microseconds: 300),
+                          curve: Curves.ease,
+                          decoration: BoxDecoration(
+                              color: addressTypeSelect == e.value
+                                  ? Colors.black
+                                  : Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 10),
+                          child: Text(
+                            e.value,
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: addressTypeSelect == e.value
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-          ],
+            ],
+          ),
         ),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.24,
@@ -499,12 +523,12 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
         children: [
           CartBadge(
               count: totalProduct,
-              badgeColor: Utils.dynamicPrimaryColor(context),
-              iconColor: blackColor),
+              badgeColor: Colors.black,
+              iconColor: Colors.white),
           const SizedBox(width: 20),
           Text(
             "$totalProduct ${Language.products.capitalizeByWord()}",
-            style: headlineTextStyle(16.0),
+            style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
           ),
         ],
       ),

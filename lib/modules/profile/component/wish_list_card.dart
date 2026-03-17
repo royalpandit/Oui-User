@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../profile_offer/controllers/wish_list/wish_list_cubit.dart';
@@ -39,9 +38,9 @@ class _WishListCardState extends State<WishListCard> {
       child: Container(
         height: height,
         decoration: BoxDecoration(
-          color: white,
-          //border: Border.all(color: primaryColor.withOpacity(0.6)),
-          //borderRadius: BorderRadius.circular(10.0),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade200),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 4.0),
         child: Row(
@@ -65,13 +64,13 @@ class _WishListCardState extends State<WishListCard> {
                   widget.product.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.jost(
+                  style: GoogleFonts.inter(
                       height: 1.4, fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 subtitle: Text(
                   Utils.formatPrice(widget.product.price, context),
-                  style: const TextStyle(
-                      color: redColor,
+                  style: GoogleFonts.inter(
+                      color: Colors.black,
                       fontSize: 16,
                       fontWeight: FontWeight.w600),
                 ),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
-import '../../../utils/utils.dart';
 
 class SearchField extends StatelessWidget {
   const SearchField({super.key});
@@ -13,21 +11,27 @@ class SearchField extends StatelessWidget {
       height: 60.0,
       // width: double.infinity,
       decoration: const BoxDecoration(
-        color: scaffoldBGColor,
+        color: Colors.white,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
       child: TextFormField(
         onTap: () {
-          Utils.closeKeyBoard(context);
+          FocusScope.of(context).unfocus();
           Navigator.pushNamed(context, RouteNames.productSearchScreen);
         },
-        decoration: inputDecorationTheme.copyWith(
-          prefixIcon: Icon(Icons.search_rounded, color: grayColor, size: 20),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.grey.shade100,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none,
+          ),
+          prefixIcon: Icon(Icons.search_rounded, color: Colors.grey, size: 20),
           hintText: 'Search Products',
           hintStyle: Theme.of(context)
               .textTheme
               .labelMedium!
-              .copyWith(color: grayColor),
+              .copyWith(color: Colors.grey),
           contentPadding: const EdgeInsets.symmetric(
             vertical: 40.0,
             horizontal: 16,

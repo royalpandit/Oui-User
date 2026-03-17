@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '/core/remote_urls.dart';
-import '../../../utils/constants.dart';
 
 
 class WidthBannerComponent extends StatelessWidget {
@@ -31,7 +30,7 @@ class WidthBannerComponent extends StatelessWidget {
             textDirection: TextDirection.rtl,
             child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
-                    foregroundColor: lightningYellowColor, backgroundColor: Colors.white,
+                    foregroundColor: Colors.black, backgroundColor: Colors.white,
 
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,

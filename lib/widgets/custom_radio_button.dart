@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../utils/constants.dart';
-
 class CustomRadioButton extends StatelessWidget {
   const CustomRadioButton({
     super.key,
@@ -19,12 +17,12 @@ class CustomRadioButton extends StatelessWidget {
         height: 24,
         width: 24,
         decoration: BoxDecoration(
-            border: Border.all(color: paragraphColor),
+            border: Border.all(color: Colors.grey),
             color: Colors.white,
             borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.all(4),
         child: isSelected
-            ? const CircleAvatar(backgroundColor: paragraphColor)
+            ? const CircleAvatar(backgroundColor: Colors.grey)
             : null,
       ),
     );

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '/core/remote_urls.dart';
 import '/modules/animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
-import '/utils/constants.dart';
 import '/widgets/custom_image.dart';
+import '/widgets/shimmer_loader.dart';
 
 class ErrorScreen extends StatelessWidget {
   const ErrorScreen({super.key});
@@ -19,7 +20,11 @@ class ErrorScreen extends StatelessWidget {
       body: BlocBuilder<AppSettingCubit, AppSettingState>(
         builder: (context, state) {
           if (state is AppSettingStateLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: SizedBox(
+                    height: 28,
+                    width: 120,
+                    child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is AppSettingStateError) {
             return Center(child: Text(state.meg));
           } else if (state is AppSettingStateLoaded) {
@@ -32,7 +37,7 @@ class ErrorScreen extends StatelessWidget {
                   const SizedBox(height: 20.0),
                   Text(
                     result.description,
-                    style: GoogleFonts.jost(fontSize: 18.0, color: blackColor),
+                    style: GoogleFonts.jost(fontSize: 18.0, color: Colors.black),
                     textAlign: TextAlign.center,
                   ),
                 ],

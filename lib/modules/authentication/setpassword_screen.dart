@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
@@ -91,7 +92,11 @@ class _SetpasswordScreenState extends State<SetpasswordScreen> {
         BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
           builder: (context, state) {
             if (state is ForgotPasswordStateLoading) {
-              return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: SizedBox(
+                    height: 28,
+                    width: 120,
+                    child: ShimmerLoader.rect(height: 12, width: 120)));
             }
 
             return PrimaryButton(

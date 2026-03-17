@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '/modules/cart/model/checkout_response_model.dart';
 import '/modules/place_order/controllers/bank/bank_cubit.dart';
@@ -10,9 +12,7 @@ import '/widgets/capitalized_word.dart';
 import '/widgets/custom_image.dart';
 import '../../core/remote_urls.dart';
 import '../../core/router_name.dart';
-import '../../utils/constants.dart';
 import '../../utils/utils.dart';
-import '../../widgets/rounded_app_bar.dart';
 import '../authentication/controller/login/login_bloc.dart';
 import 'controllers/cash_on_payment/cash_on_payment_cubit.dart';
 import 'controllers/payment/payment_cubit.dart';
@@ -158,17 +158,29 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         }),
       ],
       child: Scaffold(
-        backgroundColor: scaffoldBGColor,
-        appBar: RoundedAppBar(
-            titleText: Language.placeOrderNow.capitalizeByWord(),
-            bgColor: scaffoldBGColor),
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
+          centerTitle: true,
+          title: Text(
+            Language.placeOrderNow.capitalizeByWord(),
+            style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+          ),
+        ),
         body: ListView(
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(20),
           children: [
             Text(
               Language.selectPaymentOption.capitalizeByWord(),
-              style: headlineTextStyle(18.0),
+              style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
             ),
             const SizedBox(height: 18),
             PaymentCard(
@@ -330,7 +342,6 @@ class PaymentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // bool isPng = icon!.split(".").last.toString() == "png" ? true : false;
     return Visibility(
       visible: status,
       child: InkWell(
@@ -341,26 +352,16 @@ class PaymentCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 24),
           margin: const EdgeInsets.only(bottom: 15),
           decoration: BoxDecoration(
-              color: borderColor,
-              //borderRadius: BorderRadius.circular(40),
-              border: Border.all(color: borderColor, width: 1)),
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade200, width: 1)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: CustomImage(path: icon!),
               ),
-              // const SizedBox(width: 8),
-              // Expanded(
-              //   flex: 3,
-              //   child: Text(
-              //     title!,
-              //     style:
-              //         const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-              //   ),
-              // ),
-
-              const Icon(Icons.arrow_forward),
+              Icon(Icons.arrow_forward_ios_rounded, size: 18, color: Colors.grey.shade600),
             ],
           ),
         ),

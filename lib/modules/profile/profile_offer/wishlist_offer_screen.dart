@@ -1,13 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
-import '../../../widgets/rounded_app_bar.dart';
 import '../../order/component/empty_order_component.dart';
 import '../component/wish_list_card.dart';
 import 'controllers/wish_list/wish_list_cubit.dart';
@@ -35,10 +35,22 @@ class _WishlistOfferScreenState extends State<WishlistOfferScreen> {
   Widget build(BuildContext context) {
     final wishCubit = context.read<WishListCubit>();
     return Scaffold(
-      backgroundColor: cardBgColor,
-      appBar: RoundedAppBar(
-          titleText: Language.wishlist.capitalizeByWord(),
-          bgColor: cardBgColor),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: Text(
+          Language.wishlist.capitalizeByWord(),
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+        ),
+      ),
       body: BlocConsumer<WishListCubit, WishListState>(
         listener: (context, state) {
           if (state is WishListStateAddRemoveError) {
@@ -72,7 +84,7 @@ class _WishlistOfferScreenState extends State<WishlistOfferScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         alignment: Alignment.centerRight,
         child: TextButton(
-          style: TextButton.styleFrom(foregroundColor: redColor),
+          style: TextButton.styleFrom(foregroundColor: Colors.red),
           onPressed: () {
             context.read<WishListCubit>().clearWishList();
           },
@@ -80,7 +92,7 @@ class _WishlistOfferScreenState extends State<WishlistOfferScreen> {
             wishCubit.wishList.isNotEmpty
                 ? Language.clearWishlist.capitalizeByWord()
                 : '',
-            style: const TextStyle(fontSize: 13),
+            style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500),
           ),
         ),
       ),
@@ -114,12 +126,12 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
             children: [
-              const Icon(Icons.favorite, color: redColor),
+              const Icon(Icons.favorite, color: Colors.red),
               const SizedBox(width: 10),
               Text(
                 _getText(productList.length),
                 style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
               ),
             ],
           ),
@@ -129,7 +141,7 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(Language.swipeToDelete.capitalizeByWord(),
-                style: const TextStyle(fontSize: 13)),
+                style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade600)),
           ),
         if (productList.isNotEmpty) ...[
           Expanded(
@@ -161,8 +173,8 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
                   },
                   background: Container(
                     decoration: BoxDecoration(
-                      color: redColor,
-                      borderRadius: BorderRadius.circular(4),
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     padding: const EdgeInsets.only(right: 40),
                     alignment: Alignment.centerRight,

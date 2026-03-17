@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shop_us/utils/constants.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
-import '../../widgets/rounded_app_bar.dart';
 import 'component/profile_edit_form.dart';
 import 'controllers/updated_info/updated_info_cubit.dart';
 
@@ -19,20 +19,32 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RoundedAppBar(
-          titleText: Language.editProfile.capitalizeByWord(),
-          bgColor: scaffoldBGColor),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: Text(
+          Language.editProfile.capitalizeByWord(),
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+        ),
+      ),
       body: BlocBuilder<UserProfileInfoCubit, UserProfilenfoState>(
         builder: (context, state) {
           if (state is UpdatedLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Colors.black));
           }
           if (state is UpdatedError) {
-            // Utils.closeDialog(context);
-            // Utils.errorSnackBar(context, state.message);
-            return Center(child: Text(state.message));
+            return Center(child: Text(state.message, style: GoogleFonts.inter(color: Colors.red.shade400)));
           } else if (state is UpdatedLoaded) {
             return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
               child: ProfileEditForm(
                 userData: state.updatedInfo,

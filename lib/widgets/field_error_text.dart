@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../utils/constants.dart';
-
 class ErrorText extends StatelessWidget {
   const ErrorText({
     super.key,
@@ -18,7 +16,7 @@ class ErrorText extends StatelessWidget {
       child: Text(
         "* $text",
         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-              color: redColor,
+              color: Colors.red,
             ),
       ),
     );

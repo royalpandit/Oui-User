@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../utils/constants.dart';
-
 class CustomText extends StatelessWidget {
   const CustomText({
     super.key,
@@ -11,7 +9,7 @@ class CustomText extends StatelessWidget {
     this.fontSize = 14.0,
     this.height = 1.4,
     this.maxLine = 6,
-    this.color = blackColor,
+    this.color = Colors.black,
     this.decoration = TextDecoration.none,
     this.overflow = TextOverflow.ellipsis,
     this.textAlign = TextAlign.start,

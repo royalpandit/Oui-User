@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '/widgets/capitalized_word.dart';
 import '../../core/router_name.dart';
-import '../../utils/constants.dart';
 import '../../utils/language_string.dart';
-import '../../utils/utils.dart';
 import '../../widgets/rounded_app_bar.dart';
 import 'component/drawer_filter.dart';
 import 'component/product_card.dart';
@@ -46,7 +45,11 @@ class _SingleCategoryProductScreenState
         body: BlocBuilder<CategoryCubit, CategoryState>(
           builder: (context, state) {
             if (state is CategoryLoadingState) {
-              return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: SizedBox(
+                    height: 28,
+                    width: 120,
+                    child: ShimmerLoader.rect(height: 12, width: 120)));
             } else if (state is CategoryLoadedState) {
               if (state.categoryProducts.isEmpty) {
                 return Center(
@@ -91,7 +94,7 @@ class CategoryLoad extends StatelessWidget {
                     onTap: () => Scaffold.of(context).openEndDrawer(),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Utils.dynamicPrimaryColor(context),
+                        color: Colors.black,
                         borderRadius: BorderRadius.circular(2.0),
                       ),
                       padding:
@@ -99,7 +102,7 @@ class CategoryLoad extends StatelessWidget {
                               .copyWith(bottom: 4),
                       child: Text(
                         Language.filter.capitalizeByWord(),
-                        style: GoogleFonts.roboto(color: white),
+                        style: GoogleFonts.roboto(color: Colors.white),
                       ),
                     ),
                   ),
@@ -112,7 +115,7 @@ class CategoryLoad extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                mainAxisExtent: singleProductHeight + 60.0,
+                mainAxisExtent: 304.0,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {

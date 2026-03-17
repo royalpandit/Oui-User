@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../utils/k_images.dart';
@@ -59,7 +60,10 @@ class CustomImage extends StatelessWidget {
         height: height,
         width: width,
         progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-            child: CircularProgressIndicator(value: downloadProgress.progress)),
+          child: SizedBox(
+            height: 48,
+            width: 48,
+            child: ShimmerLoader.rect(height: 48, width: 48))),
         errorWidget: (context, url, error) => const Icon(Icons.error),
       );
     }

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shop_us/widgets/custom_text.dart';
 
-import '../../../utils/constants.dart';
-import '../../../utils/utils.dart';
 import '../model/faq_model.dart';
 
 class FaqListWidget extends StatefulWidget {
@@ -20,81 +17,64 @@ class FaqListWidget extends StatefulWidget {
 }
 
 class _FaqListWidgetState extends State<FaqListWidget> {
+  int _expandedIndex = -1;
+
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          final tile = widget.faqList[index];
-          return Theme(
-            data: ThemeData(dividerColor: transparent),
-            child: Container(
-              margin: Utils.symmetric(h: 16.0).copyWith(bottom: 10.0),
-              decoration: BoxDecoration(border: Border.all(color: borderColor)),
-              child: ExpansionTile(
-                onExpansionChanged: (bool val) {},
-                title: CustomText(
-                  text: tile.question,
-                  fontSize: 16.0,
+    return Column(
+      children: List.generate(widget.faqList.length, (index) {
+        final tile = widget.faqList[index];
+        final isExpanded = _expandedIndex == index;
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isExpanded ? Colors.black : Colors.grey.shade200,
+              width: isExpanded ? 1.5 : 1,
+            ),
+          ),
+          child: Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              onExpansionChanged: (val) {
+                setState(() => _expandedIndex = val ? index : -1);
+              },
+              initiallyExpanded: isExpanded,
+              trailing: Icon(
+                isExpanded ? Icons.remove_rounded : Icons.add_rounded,
+                color: Colors.black,
+                size: 20,
+              ),
+              title: Text(
+                tile.question,
+                style: GoogleFonts.inter(
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
+                  color: Colors.black87,
                 ),
-                iconColor: Utils.dynamicPrimaryColor(context),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 20.0)
-                        .copyWith(top: 0.0),
-                    child: Html(data: tile.answer),
-                  ),
-                ],
               ),
+              children: [
+                Html(
+                  data: tile.answer,
+                  style: {
+                    'body': Style(
+                      margin: Margins.zero,
+                      padding: HtmlPaddings.zero,
+                      fontSize: FontSize(14),
+                      color: Colors.grey.shade600,
+                      lineHeight: LineHeight.number(1.6),
+                    ),
+                  },
+                ),
+              ],
             ),
-          );
-        },
-        itemCount: widget.faqList.length,
-      ),
-    );
-  }
-
-  Widget _previousExpansion(BuildContext context) {
-    return ExpansionPanelList(
-      expansionCallback: ((panelIndex, isExpanded) {
-        widget.faqList.asMap().forEach((key, value) {
-          widget.faqList[key] = widget.faqList[key].copyWith(isExpanded: false);
-        });
-        widget.faqList[panelIndex] =
-            widget.faqList[panelIndex].copyWith(isExpanded: !isExpanded);
-        setState(() {});
+          ),
+        );
       }),
-      expandedHeaderPadding: EdgeInsets.zero,
-      dividerColor: borderColor.withOpacity(.4),
-      elevation: 0,
-      children: widget.faqList
-          .map(
-            (e) => ExpansionPanel(
-              isExpanded: e.isExpanded,
-              backgroundColor: e.isExpanded
-                  ? Utils.dynamicPrimaryColor(context).withOpacity(.1)
-                  : null,
-              canTapOnHeader: true,
-              headerBuilder: (_, bool isExpended) => ListTile(
-                title: Text(
-                  e.question,
-                  maxLines: 1,
-                  style: GoogleFonts.jost(fontWeight: FontWeight.w500),
-                ),
-                // contentPadding: EdgeInsets.zero,
-              ),
-              body: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20.0)
-                        .copyWith(top: 0.0),
-                child: Html(data: e.answer),
-              ),
-            ),
-          )
-          .toList(),
     );
   }
 }

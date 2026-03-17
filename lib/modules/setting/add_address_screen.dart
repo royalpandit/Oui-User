@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
-import '../../utils/constants.dart';
 import '../../utils/utils.dart';
 import '../../widgets/field_error_text.dart';
-import '../../widgets/primary_button.dart';
-import '../../widgets/rounded_app_bar.dart';
 import '../profile/controllers/address/address_cubit.dart';
 import '../profile/controllers/country_state_by_id/country_state_by_id_cubit.dart';
 import '../profile/model/address_model.dart';
@@ -55,8 +54,6 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         context.read<CountryStateByIdCubit>().stateLoadIdCountryId;
 
     stateLoadIdCountryId(countryModel.id.toString());
-    print('state-load');
-    print('state-load-value $stateLoadIdCountryId');
   }
 
   void _loadCity(CountryStateModel countryStateModel) {
@@ -69,17 +66,65 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     cityLoadIdStateId(countryStateModel.id.toString());
   }
 
+  InputDecoration _inputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400),
+      filled: true,
+      fillColor: Colors.grey.shade50,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.shade200, width: 1.5),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      ),
+    );
+  }
+
+  Widget _fieldLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black87),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RoundedAppBar(
-        titleText: Language.addNewAddress.capitalizeByWord(),
-        onTap: () {
-          context.read<AddressCubit>().getAddress();
-        },
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          onPressed: () {
+            context.read<AddressCubit>().getAddress();
+            Navigator.pop(context);
+          },
+        ),
+        centerTitle: true,
+        title: Text(
+          Language.addNewAddress.capitalizeByWord(),
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+        ),
       ),
       body: BlocConsumer<AddressCubit, AddressState>(
-        // listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
           if (state is AddressStateUpdating) {
             Utils.loadingDialog(context);
@@ -93,9 +138,6 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               Utils.closeDialog(context);
               Navigator.pop(context);
             }
-            // else if (state is AddressStateInvalidDataError) {
-            //   context.read<AddressCubit>().getAddress();
-            // }
           }
         },
         builder: (context, addressState) {
@@ -106,7 +148,6 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                   _countryStateModel = context
                       .read<CountryStateByIdCubit>()
                       .filterState(addressModel!.stateId.toString());
-                  print('state-id ${addressModel!.stateId}');
                   if (_countryStateModel != null) {
                     _cityModel = context
                         .read<CountryStateByIdCubit>()
@@ -115,151 +156,118 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                 }
               }
               return SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Form(
                   key: _formkey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        Language.addNewAddress.capitalizeByWord(),
-                        style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            height: 1.5),
-                      ),
-                      const SizedBox(height: 9),
+                      _fieldLabel(Language.name.capitalizeByWord()),
                       TextFormField(
                         controller: nameCtr,
-                        // validator: (s) {
-                        //   if (s == null || s.isEmpty) return '*Name Required';
-                        //   return null;
-                        // },
                         keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          hintText: Language.name.capitalizeByWord(),
-                          fillColor: borderColor.withOpacity(.10),
-                        ),
+                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        decoration: _inputDecoration(Language.name.capitalizeByWord()),
                       ),
                       if (addressState is AddressStateInvalidDataError) ...[
                         if (addressState.errorMsg.name.isNotEmpty)
                           ErrorText(text: addressState.errorMsg.name.first),
                       ],
                       const SizedBox(height: 16),
+                      _fieldLabel(Language.emailAddress.capitalizeByWord()),
                       TextFormField(
                         controller: emailCtr,
-                        // validator: (s) {
-                        //   if (s == null || s.isEmpty) {
-                        //     return '*Valid Email Required';
-                        //   }
-                        //   if (!Utils.isEmail(s)) return "*Valid Email Required";
-                        //   return null;
-                        // },
                         keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          hintText: Language.emailAddress.capitalizeByWord(),
-                          fillColor: borderColor.withOpacity(.10),
-                        ),
+                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        decoration: _inputDecoration(Language.emailAddress.capitalizeByWord()),
                       ),
                       if (addressState is AddressStateInvalidDataError) ...[
                         if (addressState.errorMsg.email.isNotEmpty)
                           ErrorText(text: addressState.errorMsg.email.first),
                       ],
                       const SizedBox(height: 16),
+                      _fieldLabel(Language.phoneNumber.capitalizeByWord()),
                       TextFormField(
                         controller: phoneCtr,
-                        // validator: (s) {
-                        //   if (s == null || s.isEmpty) {
-                        //     return '*Phone Number Required';
-                        //   }
-                        //   return null;
-                        // },
                         keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                          hintText: Language.phoneNumber.capitalizeByWord(),
-                          fillColor: borderColor.withOpacity(.10),
-                        ),
+                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        decoration: _inputDecoration(Language.phoneNumber.capitalizeByWord()),
                       ),
                       if (addressState is AddressStateInvalidDataError) ...[
                         if (addressState.errorMsg.phone.isNotEmpty)
                           ErrorText(text: addressState.errorMsg.phone.first),
                       ],
                       const SizedBox(height: 16),
+                      _fieldLabel(Language.country.capitalizeByWord()),
                       _countryField(countries),
                       if (addressState is AddressStateInvalidDataError) ...[
                         if (addressState.errorMsg.country.isNotEmpty)
                           ErrorText(text: addressState.errorMsg.country.first),
                       ],
                       const SizedBox(height: 16),
+                      _fieldLabel(Language.state.capitalizeByWord()),
                       stateField(),
                       if (addressState is AddressStateInvalidDataError) ...[
                         if (addressState.errorMsg.state.isNotEmpty)
                           ErrorText(text: addressState.errorMsg.state.first),
                       ],
                       const SizedBox(height: 16),
+                      _fieldLabel(Language.city.capitalizeByWord()),
                       cityField(),
                       if (addressState is AddressStateInvalidDataError) ...[
                         if (addressState.errorMsg.city.isNotEmpty)
                           ErrorText(text: addressState.errorMsg.city.first),
                       ],
                       const SizedBox(height: 16),
+                      _fieldLabel(Language.address.capitalizeByWord()),
                       TextFormField(
                         controller: addressCtr,
-                        // validator: (s) {
-                        //   if (s == null || s.isEmpty) return '*Address Required';
-                        //   return null;
-                        // },
                         keyboardType: TextInputType.streetAddress,
-                        decoration: InputDecoration(
-                          fillColor: borderColor.withOpacity(.10),
-                          hintText: Language.address.capitalizeByWord(),
-                        ),
+                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        decoration: _inputDecoration(Language.address.capitalizeByWord()),
                       ),
                       if (addressState is AddressStateInvalidDataError) ...[
                         if (addressState.errorMsg.address.isNotEmpty)
                           ErrorText(text: addressState.errorMsg.address.first),
                       ],
-                      const SizedBox(height: 16),
-                      // TextFormField(
-                      //   controller: zipCtr,
-                      //   validator: (s) {
-                      //     if (s == null || s.isEmpty) {
-                      //       return '* Zip Code Required';
-                      //     }
-                      //     return null;
-                      //   },
-                      //   keyboardType: TextInputType.number,
-                      //   decoration: InputDecoration(
-                      //     fillColor: borderColor.withOpacity(.10),
-                      //     hintText: 'ZipCode',
-                      //   ),
-                      // ),
                       const SizedBox(height: 30),
-                      PrimaryButton(
-                        text: Language.addNewAddress.capitalizeByWord(),
-                        onPressed: () {
-                          // if (!_formkey.currentState!.validate()) return;
-
-                          final dataMap = {
-                            'name': nameCtr.text.trim(),
-                            'email': emailCtr.text.trim(),
-                            'phone': phoneCtr.text.trim(),
-                            'country': _countryModel != null
-                                ? _countryModel!.id.toString()
-                                : "",
-                            'state': _countryStateModel != null
-                                ? _countryStateModel!.id.toString()
-                                : "",
-                            'type': 'home',
-                            'city': _cityModel != null
-                                ? _cityModel!.id.toString()
-                                : "",
-                            // 'zip_code': zipCtr.text.trim(),
-                            'address': addressCtr.text.trim(),
-                          };
-                          context.read<AddressCubit>().addAddress(dataMap);
-                        },
-                      )
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final dataMap = {
+                              'name': nameCtr.text.trim(),
+                              'email': emailCtr.text.trim(),
+                              'phone': phoneCtr.text.trim(),
+                              'country': _countryModel != null
+                                  ? _countryModel!.id.toString()
+                                  : "",
+                              'state': _countryStateModel != null
+                                  ? _countryStateModel!.id.toString()
+                                  : "",
+                              'type': 'home',
+                              'city': _cityModel != null
+                                  ? _cityModel!.id.toString()
+                                  : "",
+                              'address': addressCtr.text.trim(),
+                            };
+                            context.read<AddressCubit>().addAddress(dataMap);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: Text(
+                            Language.addNewAddress.capitalizeByWord(),
+                            style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
                     ],
                   ),
                 ),
@@ -275,23 +283,17 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CountryModel>(
       value: _countryModel,
-      hint: Text(Language.country.capitalizeByWord()),
-      decoration: const InputDecoration(
-        isDense: true,
-        border: OutlineInputBorder(
-          // borderSide: BorderSide(width: 1, color: CustomColors.lineColor),
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
-      ),
+      hint: Text(Language.country.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400)),
+      decoration: _inputDecoration(''),
+      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+      dropdownColor: Colors.white,
       onTap: () async {
         Utils.closeKeyBoard(context);
       },
       onChanged: (value) {
         if (value == null) return;
-        print('country-value ${value.id}');
         _loadState(value);
       },
-      // validator: (value) => value == null ? '*Country Required' : null,
       isDense: true,
       isExpanded: true,
       items: addressBl.countryList.isNotEmpty
@@ -308,26 +310,19 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CountryStateModel>(
       value: _countryStateModel,
-      hint: Text(Language.state.capitalizeByWord()),
-      decoration: const InputDecoration(
-        isDense: true,
-        border: OutlineInputBorder(
-          // borderSide: BorderSide(width: 1, color: CustomColors.lineColor),
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
-      ),
+      hint: Text(Language.state.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400)),
+      decoration: _inputDecoration(''),
+      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+      dropdownColor: Colors.white,
       onTap: () async {
         Utils.closeKeyBoard(context);
       },
       onChanged: (value) {
         if (value == null) return;
-        // _cityModel = null;
-        print('state-value ${value.id}');
         _countryStateModel = value;
         _loadCity(value);
         addressBl.cityStateChangeCityFilter(value);
       },
-      // validator: (value) => value == null ? '*State Required' : null,
       isDense: true,
       isExpanded: true,
       items: addressBl.stateList.isNotEmpty
@@ -344,13 +339,10 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CityModel>(
       value: _cityModel,
-      hint: Text(Language.city.capitalizeByWord()),
-      decoration: const InputDecoration(
-        isDense: true,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
-      ),
+      hint: Text(Language.city.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400)),
+      decoration: _inputDecoration(''),
+      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+      dropdownColor: Colors.white,
       onTap: () {
         Utils.closeKeyBoard(context);
       },

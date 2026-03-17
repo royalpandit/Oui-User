@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import '../utils/constants.dart';
 import '../utils/utils.dart';
 
 class ToggleButtonComponent extends StatefulWidget {
@@ -50,24 +50,24 @@ class _ToggleButtonComponentState extends State<ToggleButtonComponent> {
           widget.onChange(initialLabelIndex);
         }),
         child: AnimatedContainer(
-          duration: kDuration,
+          duration: const Duration(milliseconds: 300),
           margin: const EdgeInsets.symmetric(horizontal: 4),
           // padding: const EdgeInsets.symmetric(vertical: 8).copyWith(bottom: 10.0),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: initialLabelIndex == key
-                ? Utils.dynamicPrimaryColor(context)
-                : transparent,
+                ? Colors.black
+                : Colors.transparent,
             //borderRadius: BorderRadius.circular(20.0),
           ),
           child: Padding(
             padding: Utils.only(bottom: 6.0),
             child: Text(
               value,
-              style: paragraphTextStyle(14.0).copyWith(
+              style: GoogleFonts.inter(fontSize: 14.0, color: Colors.grey.shade600).copyWith(
                   color: initialLabelIndex != key
                       ? const Color(0xFF6E6D79)
-                      : white),
+                      : Colors.white),
             ),
           ),
         ),

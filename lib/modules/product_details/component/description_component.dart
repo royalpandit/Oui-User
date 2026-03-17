@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:shop_us/utils/constants.dart';
 
 class DescriptionComponent extends StatelessWidget {
   const DescriptionComponent(this.description, {super.key});
@@ -21,7 +20,7 @@ class DescriptionComponent extends StatelessWidget {
             data: description,
             style: {
               '*': Style(
-                color: textGreyColor,
+                color: Colors.grey.shade600,
                 textAlign: TextAlign.justify,
                 fontFeatureSettings: [
                   const FontFeature('kern'),

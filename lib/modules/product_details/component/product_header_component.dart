@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/remote_urls.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../../../widgets/favorite_button.dart';
@@ -54,7 +53,7 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
           height: Utils.vSize(300.0),
           width: double.infinity,
           decoration: const BoxDecoration(
-            color: cardBgColor,
+            color: Color(0xFFF6F6F6),
           ),
           child: PageView.builder(
               itemCount: allImages.length,
@@ -75,7 +74,7 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
             children: List.generate(
               allImages.length,
               (index) => AnimatedContainer(
-                duration: kDuration,
+                duration: const Duration(milliseconds: 300),
                 margin: Utils.only(
                     top: 10.0,
                     right: index == allImages.length - 1 ? 16.0 : 8.0,
@@ -83,8 +82,8 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
                 height: Utils.vSize(3.0),
                 width: Utils.hSize(60.0),
                 color: _currentIndex == index
-                    ? Utils.dynamicPrimaryColor(context)
-                    : carouselColor,
+                    ? Colors.black
+                    : Colors.grey.shade300,
               ),
             ),
           ),

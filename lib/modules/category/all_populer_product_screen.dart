@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shop_us/utils/constants.dart';
+
 
 import '../../widgets/rounded_app_bar.dart';
 import '../home/controller/cubit/products_cubit.dart';
@@ -17,10 +18,10 @@ class AllPopularProductScreen extends StatelessWidget {
     final keyword = receivedValue['keyword'] as String;
     context.read<ProductsCubit>().getHighlightedProduct(keyword);
     return Scaffold(
-      backgroundColor: cardBgColor,
+      backgroundColor: Colors.white,
       appBar: RoundedAppBar(
         titleText: appBarName,
-        bgColor: scaffoldBGColor,
+        bgColor: Colors.white,
         onTap: () {
           Navigator.pop(context);
         },
@@ -28,7 +29,11 @@ class AllPopularProductScreen extends StatelessWidget {
       body: BlocBuilder<ProductsCubit, ProductsState>(
         builder: (context, state) {
           if (state is ProductsStateLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: SizedBox(
+                height: 28,
+                width: 120,
+                child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is ProductsStateError) {
           } else if (state is ProductsStateLoaded) {
             return ListView.builder(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../utils/constants.dart';
 import '../../../widgets/custom_image.dart';
 import '../../home/model/product_model.dart';
 
@@ -49,13 +48,13 @@ class FeedbackProductCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      color: redColor,
+                      color: Colors.black,
                       fontSize: 18,
                       fontWeight: FontWeight.w600),
                 ),
                 const Row(
                   children: [
-                    Icon(Icons.star, color: redColor),
+                    Icon(Icons.star, color: Colors.amber),
                     SizedBox(width: 5),
                     // Text(
                     //   product.rating.toStringAsFixed(1),

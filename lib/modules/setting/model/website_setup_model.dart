@@ -55,7 +55,6 @@ class WebsiteSetupModel extends Equatable {
   }
 
   factory WebsiteSetupModel.fromMap(Map<String, dynamic> map) {
-    print('MaintainText : ${map['maintainance_text']}');
     return WebsiteSetupModel(
       setting: map['setting'] != null
           ? SettingModel.fromMap(map['setting'] as Map<String, dynamic>)

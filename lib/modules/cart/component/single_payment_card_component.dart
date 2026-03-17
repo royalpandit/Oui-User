@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/constants.dart';
 import '../../../widgets/custom_radio_button.dart';
 
 class SinglePaymentCardComponent extends StatelessWidget {
@@ -11,7 +10,7 @@ class SinglePaymentCardComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(border: Border.all(color: borderColor)),
+      decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300)),
       child: const ListTile(
         horizontalTitleGap: 0,
         leading: CustomRadioButton(isSelected: true),
@@ -26,10 +25,10 @@ class SinglePaymentCardComponent extends StatelessWidget {
         ),
         subtitle: Text('874 ****** 8372'),
         trailing: CircleAvatar(
-          backgroundColor: Color(0xffC1D4DF),
+          backgroundColor: const Color(0xFFC1D4DF),
           radius: 13,
-          child: Icon(Icons.arrow_forward_ios_rounded,
-              size: 16, color: blackColor),
+          child: const Icon(Icons.arrow_forward_ios_rounded,
+              size: 16, color: Colors.black),
         ),
       ),
     );

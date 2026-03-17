@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '/utils/lazy_loader.dart';
-import '../../../utils/constants.dart';
 
 class DetailsPageLoading extends StatelessWidget {
   const DetailsPageLoading({super.key});
@@ -10,7 +9,7 @@ class DetailsPageLoading extends StatelessWidget {
     return CustomScrollView(
       slivers: [
         SliverAppBar(
-          backgroundColor: borderColor.withOpacity(.2),
+          backgroundColor: Colors.grey.shade200,
           title: const Text('Products Details'),
         ),
         SliverPadding(

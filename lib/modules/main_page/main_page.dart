@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '/widgets/capitalized_word.dart';
-import '../../utils/constants.dart';
 import '../../utils/language_string.dart';
 import '../../utils/utils.dart';
 import '../cart/controllers/cart/cart_cubit.dart';
@@ -58,7 +57,7 @@ class _MainPageState extends State<MainPage> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   decoration: const BoxDecoration(
-                      color: blackColor,
+                      color: Colors.black,
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(12))),
                   child: Text(
@@ -75,8 +74,8 @@ class _MainPageState extends State<MainPage> {
                 children: [
                   OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: blackColor,
-                        side: const BorderSide(color: lightningYellowColor),
+                        foregroundColor: Colors.black,
+                        side: const BorderSide(color: Colors.grey),
                       ),
                       onPressed: () {
                         Navigator.pop(context);
@@ -88,8 +87,8 @@ class _MainPageState extends State<MainPage> {
                   const SizedBox(width: 10),
                   OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: blackColor,
-                        side: const BorderSide(color: lightningYellowColor),
+                        foregroundColor: Colors.black,
+                        side: const BorderSide(color: Colors.grey),
                       ),
                       onPressed: () {
                         SystemNavigator.pop();

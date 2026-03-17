@@ -5,7 +5,6 @@ import 'package:shop_us/modules/home/model/home_categories_model.dart';
 import 'package:shop_us/widgets/custom_image.dart';
 
 import '../../../core/router_name.dart';
-import '../../../utils/utils.dart';
 
 class CategoryCircleCard extends StatelessWidget {
   const CategoryCircleCard({
@@ -30,7 +29,7 @@ class CategoryCircleCard extends StatelessWidget {
         margin: const EdgeInsets.only(right: 14.0),
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         decoration: BoxDecoration(
-            color: Utils.dynamicPrimaryColor(context).withOpacity(0.08),
+            color: Colors.grey.shade100,
             borderRadius: BorderRadius.circular(4.0)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

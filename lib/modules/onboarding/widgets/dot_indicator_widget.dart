@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/constants.dart';
-
-class DotIndicatiorWidget extends StatelessWidget {
-  const DotIndicatiorWidget({
+class DotIndicatorWidget extends StatelessWidget {
+  const DotIndicatorWidget({
     super.key,
     required this.currentIndex,
     required this.dotNumber,
@@ -14,26 +12,24 @@ class DotIndicatiorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> list = [];
-    for (int i = 0; i < dotNumber; i++) {
-      list.add(_singleDot(i == currentIndex));
-    }
+    final dots = List.generate(
+      dotNumber,
+      (index) => _singleDot(index == currentIndex),
+    );
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: list,
+      children: dots,
     );
   }
 
   Widget _singleDot(bool isActive) {
     return AnimatedContainer(
-      duration: kDuration,
+      duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.only(right: 5),
       height: 10.0,
       width: 10.0,
       decoration: BoxDecoration(
-        color: isActive
-            ? lightningYellowColor
-            : lightningYellowColor.withOpacity(.3),
+        color: isActive ? Colors.black : Colors.grey.shade300,
         borderRadius: BorderRadius.circular(5),
       ),
     );

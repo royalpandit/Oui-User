@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +8,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '/modules/cart/model/cart_response_model.dart';
 import '/widgets/capitalized_word.dart';
+import '/widgets/shimmer_loader.dart';
 import '../modules/animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../modules/cart/model/cart_product_model.dart';
 import '../modules/home/model/product_model.dart';
@@ -374,7 +376,11 @@ class Utils {
             child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircularProgressIndicator(),
+            const SizedBox(
+              height: 36,
+              width: 36,
+              child: ShimmerLoader.rect(height: 36, width: 36),
+            ),
             const SizedBox(height: 15),
             Text(Language.pleaseWaitAMoment.capitalizeByWord())
           ],

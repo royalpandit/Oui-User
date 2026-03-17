@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,10 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 import '/widgets/field_error_text.dart';
-import '../../utils/constants.dart';
 import '../../utils/utils.dart';
-import '../../widgets/primary_button.dart';
-import '../../widgets/rounded_app_bar.dart';
 import '../order/model/product_order_model.dart';
 import 'controller/review/review_cubit.dart';
 
@@ -58,10 +56,18 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
         }
       },
       child: Scaffold(
-        appBar: RoundedAppBar(
-          bgColor: Colors.white,
-          titleText: Language.backToShop,
-          textColor: grayColor,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
+          centerTitle: true,
+          title: Text(Language.backToShop,
+              style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black)),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -100,7 +106,7 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
                           Text(
                             'X ${widget.orderItem.qty}',
                             style: GoogleFonts.inter(
-                                color: grayColor.withOpacity(.6)),
+                                color: Colors.grey.shade500),
                           ),
                         ],
                       ),
@@ -160,17 +166,17 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(4),
                             borderSide: BorderSide(
-                                color: Utils.dynamicPrimaryColor(context)),
+                                color: Colors.grey.shade300),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(4),
                             borderSide: BorderSide(
-                                color: Utils.dynamicPrimaryColor(context)),
+                                color: Colors.grey.shade300),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(4),
                             borderSide: BorderSide(
-                                color: Utils.dynamicPrimaryColor(context)),
+                                color: Colors.grey.shade300),
                           ),
                         ),
                       ),
@@ -188,9 +194,21 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
                   if (state is ReviewStateLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  return PrimaryButton(
-                    text: Language.submitReview,
-                    onPressed: submit,
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(Language.submitReview,
+                          style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600)),
+                    ),
                   );
                 },
               ),
@@ -199,7 +217,7 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
                 onTap: () => Navigator.pop(context),
                 child: Text(
                   Language.notNow.capitalizeByWord(),
-                  style: GoogleFonts.roboto(
+                  style: GoogleFonts.inter(
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),

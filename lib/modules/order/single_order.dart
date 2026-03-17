@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '/utils/language_string.dart';
@@ -38,7 +39,11 @@ class _SingleOrderDetailsState extends State<SingleOrderDetails> {
       body: BlocBuilder<OrderCubit, OrderState>(
         builder: (context, state) {
           if (state is OrderStateLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: SizedBox(
+                height: 28,
+                width: 120,
+                child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is OrderStateError) {
             if (state.statusCode == 401) {
               return const PleaseSignInWidget();

@@ -1,5 +1,8 @@
 /*
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
+import '/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/core/remote_urls.dart';
 import '/modules/flash/controller/cubit/flash_cubit.dart';
@@ -19,7 +22,11 @@ class FlashScreen extends StatelessWidget {
         body: BlocBuilder<FlashCubit, FlashState>(builder: (context, state) {
           print(state);
           if (state is FlashSaleLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: SizedBox(
+                height: 28,
+                width: 120,
+                child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is FlashSaleError) {
             return Center(child: Text(state.errorMessage));
           } else if (state is FlashSaleLoaded) {
@@ -76,6 +83,7 @@ class FlashScreen extends StatelessWidget {
 */
 
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -83,7 +91,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '/core/remote_urls.dart';
 import '/modules/flash/controller/cubit/flash_cubit.dart';
-import '/utils/constants.dart';
 import '/widgets/custom_image.dart';
 import '../../utils/language_string.dart';
 import '../category/component/product_card.dart';
@@ -98,11 +105,15 @@ class FlashScreen extends StatelessWidget {
     return Scaffold(
         // appBar: AppBar(title: Text('Flash Products'),backgroundColor: Colors.white.withOpacity(0.5),),
         extendBodyBehindAppBar: true,
-        backgroundColor: scaffoldBGColor,
+        backgroundColor: Colors.white,
         body: BlocBuilder<FlashCubit, FlashState>(builder: (context, state) {
           debugPrint('FLASH SALE SCREEN ${state.toString()}');
           if (state is FlashSaleLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: SizedBox(
+                height: 28,
+                width: 120,
+                child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is FlashSaleError) {
             return Center(child: Text(state.errorMessage));
           } else if (state is FlashSaleLoaded) {
@@ -130,7 +141,7 @@ class FlashScreen extends StatelessWidget {
                           top: 10,
                           child: CircleAvatar(
                             radius: 20,
-                            backgroundColor: primaryColor,
+                            backgroundColor: Colors.black,
                             // backgroundColor: greenColor.withOpacity(0.5),
                             child: IconButton(
                               onPressed: () {
@@ -158,7 +169,7 @@ class FlashScreen extends StatelessWidget {
                       crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      mainAxisExtent: singleProductHeight + 60.0,
+                      mainAxisExtent: 304.0,
                     ),
                     itemCount: state.flashModel.products.length,
                     itemBuilder: (context, index) {
@@ -270,7 +281,7 @@ class _MyCircularProgressCustomValue extends StatelessWidget {
               fontSize: 12.0,
               fontWeight: FontWeight.w500,
               height: 1,
-              color: blackColor,
+              color: Colors.black,
             ),
           ),
         ],

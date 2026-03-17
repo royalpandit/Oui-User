@@ -6,9 +6,7 @@ import 'package:shop_us/widgets/capitalized_word.dart';
 
 import '/modules/cart/model/cart_calculation_model.dart';
 import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
-import '../../../widgets/primary_button.dart';
 import '../controllers/cart/cart_cubit.dart';
 import '../model/cart_response_model.dart';
 
@@ -23,68 +21,61 @@ class PanelCollaspComponent extends StatelessWidget {
   final double height;
   final double totalPrice;
 
-  TextStyle headingTextStyle() => GoogleFonts.jost(
-      fontWeight: FontWeight.w700, fontSize: 18.0, color: white);
-
   @override
   Widget build(BuildContext context) {
     return Container(
       height: height,
       width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
-          color: bottomPanelColor,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: Colors.grey.shade200)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
             decoration: BoxDecoration(
-              color: white,
+              color: Colors.grey.shade300,
               borderRadius: BorderRadius.circular(2),
             ),
             height: 4,
             width: 60,
           ),
-          // const SizedBox(height: 9),
+          const SizedBox(height: 6),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 Language.orderAmount.capitalizeByWord(),
-                style: headlineTextStyle(16.0).copyWith(color: Colors.white),
+                style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
               ),
               Text(
                 Utils.formatPriceIcon(totalPrice.toString(), context),
-                style: headlineTextStyle(16.0).copyWith(color: Colors.white),
+                style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              // Container(
-              //   //height: Utils.vSize(50.0),
-              //   padding: Utils.all(value: 10.0),
-              //   margin: Utils.only(right: 10.0),
-              //   decoration: BoxDecoration(
-              //     color: greenColor,
-              //     borderRadius: Utils.borderRadius(r: 8.0),
-              //   ),
-              //   child: const CustomImage(
-              //     path: KImages.whatsAppIcon,
-              //   ),
-              // ),
-              Expanded(
-                child: PrimaryButton(
-                  text: Language.placeOrderNow.capitalizeByWord(),
-                  borderRadiusSize: Utils.radius(40.0),
-                  onPressed: () {
-                    Navigator.pushNamed(context, RouteNames.checkoutScreen);
-                  },
-                ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, RouteNames.checkoutScreen);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-            ],
-          )
+              child: Text(
+                Language.placeOrderNow.capitalizeByWord(),
+                style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -117,40 +108,29 @@ class _PanelComponentState extends State<PanelComponent> {
     textController.dispose();
   }
 
-  TextStyle panelTextStyle(FontWeight? fw, double? fs) => GoogleFonts.roboto(
-      fontWeight: fw ?? FontWeight.w700, fontSize: fs ?? 18.0, color: white);
-
-  TextStyle headingTextStyle() => GoogleFonts.jost(
-      fontWeight: FontWeight.w700, fontSize: 18.0, color: white);
-
   @override
   Widget build(BuildContext context) {
     final couponCubit = context.read<CartCubit>().couponResponseModel;
-    // double total = double.parse(widget.cartCalculation!.total);
-    // print('nullCoupon $couponCubit');
-    // if (couponCubit != null) {
-    //   double maxPrice = double.parse(couponCubit.minPurchasePrice);
-    // }
-    // // print('couponnnnn $couponCubit');
     return Container(
-      decoration: const BoxDecoration(
-          color: bottomPanelColor,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: Colors.grey.shade200)),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           )),
       child: ListView(
         controller: widget.controller,
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         children: [
           Text(Language.applyCoupon.capitalizeByWord(),
-              style: panelTextStyle(FontWeight.w400, 16.0)),
+              style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600)),
           const SizedBox(height: 7),
           _buildTextField(),
           const SizedBox(height: 8),
           Text(
             Language.billDetails.capitalizeByWord(),
-            style: panelTextStyle(FontWeight.w700, 20.0),
+            style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black),
           ),
           const SizedBox(height: 8),
           Row(
@@ -158,12 +138,12 @@ class _PanelComponentState extends State<PanelComponent> {
             children: [
               Text(
                 Language.subTotal.capitalizeByWord(),
-                style: panelTextStyle(FontWeight.w400, 16.0),
+                style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
               ),
               Text(
                 Utils.formatPriceIcon(
                     widget.cartCalculation!.subTotal, context),
-                style: panelTextStyle(FontWeight.w400, 16.0),
+                style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
               )
             ],
           ),
@@ -173,7 +153,7 @@ class _PanelComponentState extends State<PanelComponent> {
             children: [
               Text(
                 Language.discountCoupon.capitalizeByWord(),
-                style: const TextStyle(fontSize: 16, color: redColor),
+                style: GoogleFonts.inter(fontSize: 14, color: Colors.red),
               ),
               BlocConsumer<CartCubit, CartState>(listener: (context, state) {
                 if (state is CartCouponStateLoading) {
@@ -195,74 +175,50 @@ class _PanelComponentState extends State<PanelComponent> {
                     widget.cartCalculation!
                         .copyWith(total: (total - coupon).toString());
                   }
-                  print('totalll ${widget.cartCalculation!}');
 
                   return Text(
                       Utils.formatPriceIcon(
                           state.couponResponseModel.discount, context),
-                      style: panelTextStyle(FontWeight.w400, 16.0)
-                          .copyWith(color: redColor));
+                      style: GoogleFonts.inter(fontSize: 14, color: Colors.red));
                 }
                 return const SizedBox();
               }),
             ],
           ),
           const SizedBox(height: 8),
-          // Container(
-          //   height: 1,
-          //   color: borderColor,
-          // ),
-          // const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 Language.orderAmount.capitalizeByWord(),
-                style: headingTextStyle(),
+                style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
               ),
               Text(
                 Utils.formatPriceIcon(widget.cartCalculation!.total, context),
-                style: headingTextStyle(),
+                style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
               )
             ],
           ),
           const SizedBox(height: 14),
-          Row(
-            children: [
-              // Container(
-              //   //height: Utils.vSize(50.0),
-              //   padding: Utils.all(value: 10.0),
-              //   margin: Utils.only(right: 10.0),
-              //   decoration: BoxDecoration(
-              //     color: greenColor,
-              //     borderRadius: Utils.borderRadius(r: 8.0),
-              //   ),
-              //   child: const CustomImage(
-              //     path: KImages.whatsAppIcon,
-              //   ),
-              // ),
-              Expanded(
-                child: PrimaryButton(
-                  text: Language.checkout.capitalizeByWord(),
-                  // bgColor: white,
-                  // textColor: blackColor,
-                  borderRadiusSize: Utils.radius(40.0),
-                  onPressed: () {
-                    Navigator.pushNamed(context, RouteNames.checkoutScreen);
-                  },
-                ),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, RouteNames.checkoutScreen);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-            ],
+              child: Text(
+                Language.checkout.capitalizeByWord(),
+                style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+            ),
           ),
-          // SizedBox(
-          //   height: 50,
-          //   child: PrimaryButton(
-          //     text: Language.checkout.capitalizeByWord(),
-          //     onPressed: () {
-          //       Navigator.pushNamed(context, RouteNames.checkoutScreen);
-          //     },
-          //   ),
-          // )
         ],
       ),
     );
@@ -270,11 +226,10 @@ class _PanelComponentState extends State<PanelComponent> {
 
   Widget _buildTextField() {
     return Container(
-      height: 55.0,
-      width: 335.0,
+      height: 52,
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFD9D9D9)),
-        borderRadius: BorderRadius.circular(55.0),
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
@@ -286,12 +241,12 @@ class _PanelComponentState extends State<PanelComponent> {
                 focusedBorder: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 hintText: Language.promoCode.capitalizeByWord(),
-                hintStyle: panelTextStyle(FontWeight.w400, 16.0),
+                hintStyle: GoogleFonts.inter(fontSize: 14, color: Colors.grey),
                 isDense: true,
-                fillColor: transparent,
+                fillColor: Colors.transparent,
                 filled: true,
               ),
-              style: headingTextStyle(),
+              style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
             ),
           ),
           GestureDetector(
@@ -299,10 +254,6 @@ class _PanelComponentState extends State<PanelComponent> {
               if (textController.text.isEmpty) {
                 return;
               }
-              // else if (total < maxPrice) {
-              //   Utils.errorSnackBar(
-              //       context, 'Minimum price for applying coupon $maxPrice');
-              // }
               else {
                 context
                     .read<CartCubit>()
@@ -311,17 +262,15 @@ class _PanelComponentState extends State<PanelComponent> {
               setState(() {});
             },
             child: Container(
-              height: 52.0,
-              width: 102.0,
+              height: 50,
+              width: 100,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                // color: primaryColor,
-                color: Utils.dynamicPrimaryColor(context),
-                borderRadius: BorderRadius.circular(55.0),
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Text(Language.apply.capitalizeByWord(),
-                  style: panelTextStyle(FontWeight.w600, 16.0)
-                      .copyWith(color: blackColor)),
+                  style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
             ),
           ),
         ],

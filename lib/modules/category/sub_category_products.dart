@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../widgets/shimmer_loader.dart';
 import '../../widgets/rounded_app_bar.dart';
 import 'component/product_card.dart';
 import 'controller/cubit/cubit/sub_category_cubit.dart';
@@ -25,7 +27,11 @@ class SubCategoryProductScreen extends StatelessWidget {
       body: BlocBuilder<SubCategoryCubit, SubCategoryState>(
         builder: (context, state) {
           if (state is SubCategoryLoadingState) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: SizedBox(
+                    height: 28,
+                    width: 120,
+                    child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is SubCategoryProductsLoadedState) {
             if (state.subCategoryProducts.isEmpty) {
               return const Center(child: Text("No Items"));

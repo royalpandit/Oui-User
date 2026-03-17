@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 import '../../../core/remote_urls.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../model/product_details_model.dart';
 import 'related_single_product_card.dart';
@@ -49,7 +49,7 @@ class SellerInfo extends StatelessWidget {
                         crossAxisCount: 2,
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
-                        mainAxisExtent: singleProductHeight + 60.0,
+                        mainAxisExtent: 304.0,
                       ),
                       itemCount:
                           productDetailsModel!.thisSellerProducts.length < 4
@@ -94,7 +94,7 @@ class SellerProfile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
       margin: const EdgeInsets.only(bottom: 16.0),
       decoration: BoxDecoration(
-          color: borderColor, borderRadius: BorderRadius.circular(22.0)),
+          color: Colors.grey.shade100, borderRadius: BorderRadius.circular(22.0)),
       child: Column(
         children: [
           Row(
@@ -104,7 +104,7 @@ class SellerProfile extends StatelessWidget {
                 width: 74.0,
                 decoration: BoxDecoration(
                   border: Border.all(
-                      color: Utils.dynamicPrimaryColor(context), width: 1.2),
+                      color: Colors.black, width: 1.2),
                   shape: BoxShape.circle,
                 ),
                 child: CircleAvatar(
@@ -133,7 +133,7 @@ class SellerProfile extends StatelessWidget {
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
                         height: 1.5,
-                        color: iconGreyColor,
+                        color: Colors.grey,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -160,7 +160,7 @@ class SellerProfile extends StatelessWidget {
                             width: 1,
                             margin: const EdgeInsets.symmetric(horizontal: 6),
                             height: 24,
-                            color: borderColor),
+                            color: Colors.grey.shade300),
                         Text(
                           productDetailsModel!.sellerTotalReview.toString(),
                           style: const TextStyle(
@@ -195,11 +195,11 @@ class SellerProducts extends StatelessWidget {
       child: RichText(
         text: TextSpan(
           text: "$title: ",
-          style: headlineTextStyle(15.0),
+          style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.black),
           children: [
             TextSpan(
               text: "$value",
-              style: paragraphTextStyle(15.0),
+              style: GoogleFonts.inter(fontSize: 15, color: Colors.grey.shade600),
             ),
           ],
         ),

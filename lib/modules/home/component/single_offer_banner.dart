@@ -135,10 +135,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '/utils/constants.dart';
 import '/utils/language_string.dart';
 import '../../../core/remote_urls.dart';
-import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../model/slider_model.dart';
 
@@ -165,7 +163,7 @@ class SingleOfferBanner extends StatelessWidget {
           top: 10.0,
           child: Text(
             slider.titleOne,
-            style: paragraphTextStyle(14.0),
+            style: GoogleFonts.inter(fontSize: 14.0, color: Colors.grey.shade600),
           ),
         ),
         Positioned(
@@ -181,9 +179,9 @@ class SingleOfferBanner extends StatelessWidget {
               minFontSize: 12.0,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
-              style: GoogleFonts.jost(
+              style: GoogleFonts.inter(
                 fontWeight: FontWeight.w600,
-                color: blackColor,
+                color: Colors.black,
                 fontSize: 15.0,
               ),
             ),
@@ -200,7 +198,7 @@ class SingleOfferBanner extends StatelessWidget {
               margin: const EdgeInsets.only(top: 12.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: Utils.dynamicPrimaryColor(context),
+                color: Colors.black,
                 borderRadius: BorderRadius.circular(30.0),
               ),
               child: Padding(
@@ -211,14 +209,14 @@ class SingleOfferBanner extends StatelessWidget {
                   children: [
                     Text(
                       Language.shopNow,
-                      style: paragraphTextStyle(10.0).copyWith(color: white),
+                      style: GoogleFonts.inter(fontSize: 10.0, color: Colors.white),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 6, left: 2.0),
                       child: Icon(
                         Icons.arrow_forward_ios_outlined,
                         size: 10.0,
-                        color: white,
+                        color: Colors.white,
                       ),
                     ),
                   ],

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '/widgets/capitalized_word.dart';
-import '../../utils/constants.dart';
 import '../../utils/language_string.dart';
 import '../../utils/utils.dart';
 import '../category/component/product_card.dart';
@@ -89,7 +88,7 @@ class ProductSearchScreenState extends State<ProductSearchScreen> {
                 Center(
                   child: Text(
                     state.message,
-                    style: const TextStyle(color: redColor),
+                    style: const TextStyle(color: Colors.red),
                   ),
                 ),
               ],
@@ -106,7 +105,7 @@ class ProductSearchScreenState extends State<ProductSearchScreen> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
-                    mainAxisExtent: singleProductHeight + 60.0,
+                    mainAxisExtent: 304.0,
                   ),
                   itemCount: products.length,
                   itemBuilder: (BuildContext context, int index) {

@@ -13,228 +13,126 @@ import '../../../utils/k_images.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
+import '../../main_page/main_controller.dart';
 
 class ProfileAppBar extends StatelessWidget {
   final double height;
-
-  const ProfileAppBar({
-    super.key,
-    this.height = 160,
-    required this.userUpdateInfo,
-    required this.logo,
-  });
   final String logo;
   final UserProfileInfo userUpdateInfo;
+
+  const ProfileAppBar({super.key, this.height = 240, required this.userUpdateInfo, required this.logo});
 
   @override
   Widget build(BuildContext context) {
     void gotoNext(String route) => Navigator.pushNamed(context, route);
-    final image = context.read<UserProfileInfoCubit>().updatedInfo;
-    String profileImage = image.updateUserInfo!.image.isNotEmpty
-        ? RemoteUrls.imageUrl(image.updateUserInfo!.image)
-        : RemoteUrls.imageUrl(image.defaultImage!.image);
-
+    
     final List<Map<String, dynamic>> headerItem = [
-      {
-        "image": KImages.profileOrderIcon,
-        "title": Language.other.capitalizeByWord(),
-        "on_tap": () => gotoNext(RouteNames.orderScreen)
-      },
-      {
-        "image": KImages.profileCartIcon,
-        "title": Language.cart.capitalizeByWord(),
-        "on_tap": () => gotoNext(RouteNames.cartScreen)
-      },
-      {
-        "image": KImages.profileofferIcon,
-        "title": Language.offers,
-        "on_tap": () => gotoNext(RouteNames.flashScreen),
-        // "on_tap": () => gotoNext(RouteNames.profileOfferScreen),
-      },
-      {
-        "image": KImages.profileWishListIcon,
-        "title": Language.wishlist,
-        "on_tap": () => gotoNext(RouteNames.wishlistOfferScreen)
-      },
+      {"icon": Icons.receipt_long_outlined, "title": "Orders", "on_tap": () => MainController().naveListener.sink.add(1)},
+      {"icon": Icons.shopping_bag_outlined, "title": "Cart", "on_tap": () => gotoNext(RouteNames.cartScreen)},
+      {"icon": Icons.local_offer_outlined, "title": "Offers", "on_tap": () => gotoNext(RouteNames.flashScreen)},
+      {"icon": Icons.favorite_outline, "title": "Wishlist", "on_tap": () => gotoNext(RouteNames.wishlistOfferScreen)},
     ];
-    return SafeArea(
-      child: SizedBox(
-        height: height,
-        child: Stack(
-          fit: StackFit.expand,
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.black,
+        border: Border(bottom: BorderSide(color: Colors.white10, width: 1)),
+      ),
+      child: SafeArea(
+        child: Column(
           children: [
-            _buildUserInfo(context),
-            // Positioned(
-            //     top: 40.0,
-            //     left: 20.0,
-            //     child: CustomImage(
-            //       path: RemoteUrls.imageUrl(context
-            //           .read<AppSettingCubit>()
-            //           .settingModel!
-            //           .setting!
-            //           .logo),
-            //       height: 30,
-            //       width: 130,
-            //       color: redColor.withOpacity(0.5),
-            //     )),
-            // Positioned(
-            //   top: 32.0,
-            //   right: 20.0,
-            //   child: Row(
-            //     // crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       Text(
-            //         userUpdateInfo.updateUserInfo!.name,
-            //         style: const TextStyle(
-            //             fontSize: 16,
-            //             fontWeight: FontWeight.w600,
-            //             color: Colors.white),
-            //       ),
-            //       const SizedBox(width: 10.0),
-            //       InkWell(
-            //         onTap: () {
-            //           // context.read<CountryStateByIdCubit>().stateLoadIdCountryId(userUpdateInfo.updateUserInfo.countryId);
-            //           // context.read<CountryStateByIdCubit>().cityLoadIdStateId(userUpdateInfo.updateUserInfo.stateId);
-            //
-            //           Navigator.pushNamed(
-            //             context,
-            //             RouteNames.profileEditScreen,
-            //           );
-            //         },
-            //         // child: buildCircleAvatar(),
-            //         child: _profileImage(profileImage),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            Positioned(
-              bottom: 0,
-              left: 20,
-              right: 20,
-              child: Container(
-                alignment: Alignment.center,
-                height: 100,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: List.generate(
-                    headerItem.length,
-                    (index) => _headerItem(
-                      headerItem[index]['image'],
-                      headerItem[index]['title'],
-                      headerItem[index]['on_tap'],
-                    ),
-                  ),
-                ),
-              ),
-            )
+            const SizedBox(height: 12),
+            _buildUserHeader(context),
+            const SizedBox(height: 16),
+            _buildQuickActions(headerItem),
+            const SizedBox(height: 10),
           ],
         ),
       ),
     );
   }
 
-  Widget buildCircleAvatar() {
-    return CircleAvatar(
-      radius: 20,
-      backgroundColor: grayColor,
-      backgroundImage: NetworkImage(
-          RemoteUrls.imageUrl(userUpdateInfo.updateUserInfo!.image ?? '')),
-    );
-  }
-
-  Widget _profileImage(String image) {
-    return Container(
-      height: 45.0,
-      width: 45.0,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-      ),
-      child: ClipRRect(
-          borderRadius: BorderRadius.circular(30.0),
-          child: CustomImage(path: image, fit: BoxFit.cover)),
-    );
-  }
-
-  Widget _headerItem(String icon, String text, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildUserHeader(BuildContext context) {
+    final userImage = userUpdateInfo.updateUserInfo!.image ?? '';
+    final imagePath = userImage.isNotEmpty
+        ? userImage
+        : (userUpdateInfo.defaultImage?.image ?? '');
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Row(
         children: [
           Container(
-            height: 54,
-            width: 54,
-            decoration: const BoxDecoration(
-              color: Color(0xffE8EEF2),
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white24, width: 1),
               shape: BoxShape.circle,
             ),
-            child: Center(child: CustomImage(path: icon)),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            text,
-            style: GoogleFonts.inter(
-              fontSize: 13.0,
-              fontWeight: FontWeight.w400,
-              color: white,
+            child: CircleAvatar(
+              radius: 32,
+              backgroundColor: Colors.grey.shade900,
+              backgroundImage: imagePath.isNotEmpty
+                  ? NetworkImage(RemoteUrls.imageUrl(imagePath))
+                  : null,
+              onBackgroundImageError: imagePath.isNotEmpty
+                  ? (_, __) {}
+                  : null,
+              child: imagePath.isEmpty
+                  ? const Icon(Icons.person, color: Colors.white54, size: 32)
+                  : null,
             ),
-          )
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userUpdateInfo.updateUserInfo!.name,
+                  style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, RouteNames.profileEditScreen),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white24),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      "EDIT PROFILE",
+                      style: GoogleFonts.inter(color: Colors.white70, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  // Widget _buildUserInfo(BuildContext context) {
-  //   return const CustomImage(
-  //     path: KImages.settingAppBarImage,
-  //     fit: BoxFit.cover,
-  //   );
-  // }
-  Widget _buildUserInfo(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      height: height - 60,
-      decoration: BoxDecoration(
-        color: Utils.dynamicPrimaryColor(context),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(30.0),
-          bottomRight: Radius.circular(30.0),
-        ),
-      ),
+  Widget _buildQuickActions(List<Map<String, dynamic>> items) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: items.map((item) => _actionItem(item)).toList(),
+      ),
+    );
+  }
+
+  Widget _actionItem(Map<String, dynamic> item) {
+    return InkWell(
+      onTap: item['on_tap'],
+      child: Column(
         children: [
-          CustomImage(
-              path: RemoteUrls.imageUrl(
-                  context.read<AppSettingCubit>().settingModel!.setting!.logo),
-              height: 30.0,
-              width: 100.0,
-              color: white),
-          Row(
-            children: [
-              Text(
-                userUpdateInfo.updateUserInfo!.name,
-                style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white),
-              ),
-              const SizedBox(width: 8),
-              InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, RouteNames.profileEditScreen);
-                },
-                child: CircleAvatar(
-                  radius: 25,
-                  backgroundColor: grayColor,
-                  backgroundImage: NetworkImage(RemoteUrls.imageUrl(
-                      userUpdateInfo.updateUserInfo!.image ?? '')),
-                ),
-              ),
-            ],
+          Icon(item['icon'], color: Colors.white70, size: 24),
+          const SizedBox(height: 6),
+          Text(
+            item['title'],
+            style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white54),
           ),
         ],
       ),

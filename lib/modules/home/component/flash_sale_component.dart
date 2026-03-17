@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '/core/router_name.dart';
 import '/widgets/capitalized_word.dart';
 import '../../../core/remote_urls.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/language_string.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
@@ -69,7 +68,7 @@ class FlashSaleComponent extends StatelessWidget {
                 children: [
                   Text(
                     Language.saleOver.capitalizeByWord(),
-                    style: headlineTextStyle(16.0),
+                    style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
                   ),
                   CountdownTimer(
                     endTime: endTime,
@@ -77,7 +76,7 @@ class FlashSaleComponent extends StatelessWidget {
                       if (time == null) {
                         return Text(
                           Language.saleOver.capitalizeByWord(),
-                          style: headlineTextStyle(16.0),
+                          style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
                         );
                       }
                       return Row(
@@ -172,7 +171,7 @@ class FlashSaleComponent extends StatelessWidget {
           },
           child: Text(
             Language.seeAll.capitalizeByWord(),
-            style: headlineTextStyle(16.0),
+            style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
           ),
         ),
       ],
@@ -187,7 +186,7 @@ class FlashSaleComponent extends StatelessWidget {
         width: 80.0,
         padding: const EdgeInsets.only(bottom: 4.0),
         decoration: BoxDecoration(
-          color: Utils.dynamicPrimaryColor(context),
+          color: Colors.black,
           borderRadius: BorderRadius.circular(25.0),
         ),
         child: Row(
@@ -195,13 +194,13 @@ class FlashSaleComponent extends StatelessWidget {
           children: [
             Text(
               'Shop Now',
-              style: simpleTextStyle(white).copyWith(fontSize: 11.0),
+              style: GoogleFonts.inter(fontSize: 11, color: Colors.white),
             ),
             const Padding(
               padding: EdgeInsets.only(top: 4),
               child: Icon(
                 Icons.arrow_forward_ios,
-                color: white,
+                color: Colors.white,
                 size: 14.0,
               ),
             )
@@ -279,7 +278,7 @@ class FlashLoadedProduct extends StatelessWidget {
                   width: 115.0,
                   margin: const EdgeInsets.symmetric(horizontal: 5.0),
                   decoration: BoxDecoration(
-                    color: white,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(5.0),
                     border: Border.all(
                       color: const Color.fromRGBO(174, 28, 154, 0.14),
@@ -389,7 +388,7 @@ class FlashLoadedProduct extends StatelessWidget {
           productModel.name,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.jost(
-              fontWeight: FontWeight.w700, fontSize: 10.0, color: blackColor),
+              fontWeight: FontWeight.w700, fontSize: 10.0, color: Colors.black),
         ),
         Row(
           children: [

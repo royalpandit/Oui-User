@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '/widgets/shimmer_loader.dart';
 import '/widgets/capitalized_word.dart';
 import '../../core/router_name.dart';
-import '../../utils/constants.dart';
 import '../../utils/language_string.dart';
 import '../../widgets/please_sign_in_widget.dart';
 import '../../widgets/toggle_button_scroll_component.dart';
@@ -31,11 +34,15 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: scaffoldBGColor,
+      backgroundColor: Colors.white,
       body: BlocBuilder<OrderCubit, OrderState>(
         builder: (context, state) {
           if (state is OrderStateLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: SizedBox(
+                    height: 28,
+                    width: 120,
+                    child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is OrderStateError) {
             if (state.statusCode == 401) {
               return const PleaseSignInWidget();
@@ -43,7 +50,7 @@ class _OrderScreenState extends State<OrderScreen> {
             return Center(
               child: Text(
                 state.message,
-                style: const TextStyle(color: redColor),
+                style: GoogleFonts.inter(fontSize: 14, color: Colors.red),
               ),
             );
           } else if (state is OrderStateLoaded ||
@@ -110,10 +117,13 @@ class _OrderLoadedWidgetState extends State<OrderLoadedWidget> {
         SliverAppBar(
           titleSpacing: routeName != RouteNames.mainPage ? 0 : null,
           automaticallyImplyLeading: routeName != RouteNames.mainPage,
-          titleTextStyle: const TextStyle(
-              color: blackColor, fontSize: 18, fontWeight: FontWeight.w600),
+          titleTextStyle: GoogleFonts.inter(
+              color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600),
           title: Text(Language.order.capitalizeByWord()),
-          backgroundColor: scaffoldBGColor,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
         ),
         SliverToBoxAdapter(
           child: ToggleButtonScrollComponent(

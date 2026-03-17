@@ -1,13 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import '/utils/constants.dart';
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 import '/widgets/custom_image.dart';
 import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
-import '../../../utils/utils.dart';
 import '../model/banner_model.dart';
 
 class HotDealBanner extends StatelessWidget {
@@ -39,7 +38,7 @@ class HotDealBanner extends StatelessWidget {
               maxFontSize: 15.0,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: paragraphTextStyle(15.0),
+              style: GoogleFonts.inter(fontSize: 15.0, color: Colors.grey.shade600),
             ),
           ),
           Positioned(
@@ -56,7 +55,7 @@ class HotDealBanner extends StatelessWidget {
                 maxFontSize: 15.0,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: headlineTextStyle(15.0),
+                style: GoogleFonts.inter(fontSize: 15.0, fontWeight: FontWeight.w700, color: Colors.black),
               ),
             ),
           ),
@@ -85,8 +84,8 @@ class HotDealBanner extends StatelessWidget {
         width: 96.0,
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0)
             .copyWith(bottom: 10.0),
-        decoration: BoxDecoration(
-          color: Utils.dynamicPrimaryColor(context),
+        decoration: const BoxDecoration(
+          color: Colors.black,
           //borderRadius: BorderRadius.circular(20.0),
         ),
         child: Row(
@@ -96,14 +95,14 @@ class HotDealBanner extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: white,
+                color: Colors.white,
               ),
             ),
             const Padding(
               padding: EdgeInsets.only(top: 4),
               child: Icon(
                 Icons.arrow_forward_ios_outlined,
-                color: white,
+                color: Colors.white,
                 size: 14.0,
               ),
             )

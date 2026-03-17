@@ -1,16 +1,17 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '/modules/product_details/component/loader_screen.dart';
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 import '../../core/remote_urls.dart';
 import '../../core/router_name.dart';
-import '../../utils/constants.dart';
-import '../try_on/try_on_constants.dart';
 import '../../utils/utils.dart';
+import '../try_on/try_on_constants.dart';
 import '../../widgets/toggle_button_component.dart';
 import '../cart/controllers/cart/cart_cubit.dart';
 import '../home/component/home_app_bar.dart';
@@ -59,7 +60,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               return Center(
                 child: Text(
                   state.errorMessage,
-                  style: const TextStyle(color: redColor),
+                  style: GoogleFonts.inter(fontSize: 14, color: Colors.red),
                 ),
               );
             }
@@ -82,10 +83,18 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           slivers: [
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
             SliverAppBar(
-              backgroundColor: cardBgColor,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              systemOverlayStyle: SystemUiOverlayStyle.dark,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
+              ),
+              centerTitle: true,
               title: Text(
                 Language.productDetails.capitalizeByWord(),
-                style: headlineTextStyle(18.0),
+                style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
               ),
             ),
             SliverToBoxAdapter(
@@ -154,12 +163,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     final clothType = clothTypeFromCategorySlug(product.category?.slug);
 
     return Container(
-      padding: Utils.all(value: 20.0),
-      decoration: const BoxDecoration(
-        color: bottomPanelColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade200)),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20.0),
+          topRight: Radius.circular(20.0),
         ),
       ),
       child: Row(
@@ -168,26 +178,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             onTap: () {
               Navigator.pushNamed(context, RouteNames.cartScreen);
             },
-            child: Container(
+            child: SizedBox(
               height: 50,
               width: 50,
-              padding: Utils.all(value: 12.0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, RouteNames.cartScreen);
+              child: BlocBuilder<CartCubit, CartState>(
+                builder: (context, state) {
+                  return CartBadge(
+                    count: cartProducts.cartCount.toString(),
+                    badgeColor: Colors.black,
+                    iconColor: Colors.black,
+                  );
                 },
-                child: BlocBuilder<CartCubit, CartState>(
-                  builder: (context, state) {
-                    return CartBadge(
-                      count: cartProducts.cartCount.toString(),
-                      badgeColor: Utils.dynamicPrimaryColor(context),
-                    );
-                  },
-                ),
               ),
             ),
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 16),
           if (showTryOn) ...[
             Expanded(
               child: GestureDetector(
@@ -204,23 +209,18 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 },
                 child: Container(
                   height: 50.0,
-                  padding: const EdgeInsets.only(bottom: 6.0),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Utils.dynamicPrimaryColor(context), width: 2),
-                    borderRadius: BorderRadius.circular(30.0),
+                    border: Border.all(color: Colors.black, width: 1.5),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.checkroom,
-                          color: Utils.dynamicPrimaryColor(context), size: 22),
+                      const Icon(Icons.checkroom, color: Colors.black, size: 22),
                       const SizedBox(width: 6),
                       Text(
                         'Try on',
-                        style: simpleTextStyle(Utils.dynamicPrimaryColor(context))
-                            .copyWith(
-                                fontSize: 16.0, fontWeight: FontWeight.w600),
+                        style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black),
                       ),
                     ],
                   ),
@@ -234,7 +234,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               onTap: () {
                 showModalBottomSheet(
                     context: context,
-                    backgroundColor: bottomPanelColor,
+                    backgroundColor: Colors.white,
                     isScrollControlled: true,
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
@@ -247,21 +247,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               child: Container(
                 width: double.infinity,
                 height: 50.0,
-                padding: const EdgeInsets.only(bottom: 6.0),
                 decoration: BoxDecoration(
-                    color: Utils.dynamicPrimaryColor(context),
-                    borderRadius: BorderRadius.circular(30.0)),
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(12)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 4.0, right: 6.0),
-                      child: Icon(Icons.add, color: white, size: 30.0),
-                    ),
+                    const Icon(Icons.add, color: Colors.white, size: 24.0),
+                    const SizedBox(width: 6),
                     Text(
                       Language.addToCart.capitalizeByWord(),
-                      style: simpleTextStyle(white).copyWith(
-                          fontSize: 18.0, fontWeight: FontWeight.w700),
+                      style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
                     )
                   ],
                 ),

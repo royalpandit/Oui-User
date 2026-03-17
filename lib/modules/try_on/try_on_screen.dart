@@ -2,15 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/remote_urls.dart';
-import '../../utils/constants.dart';
-import '../../utils/utils.dart';
 import '../../widgets/custom_image.dart';
 import '../../widgets/rounded_app_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TryOnScreen extends StatefulWidget {
   const TryOnScreen({
@@ -179,7 +179,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
             children: [
               Text(
                 'Try on: ${widget.productName}',
-                style: headlineTextStyle(18),
+                style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black),
               ),
               const SizedBox(height: 16),
               Row(
@@ -198,12 +198,12 @@ class _TryOnScreenState extends State<TryOnScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: redColor.withOpacity(0.1),
+                    color: Colors.red.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     _error!,
-                    style: paragraphTextStyle(14).copyWith(color: redColor),
+                    style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600).copyWith(color: Colors.red),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -233,8 +233,8 @@ class _TryOnScreenState extends State<TryOnScreen> {
                 child: ElevatedButton(
                   onPressed: _loading ? null : _runTryOn,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Utils.dynamicPrimaryColor(context),
-                    foregroundColor: white,
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -243,14 +243,18 @@ class _TryOnScreenState extends State<TryOnScreen> {
                       ? const SizedBox(
                           height: 24,
                           width: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: white),
+                          child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: ShimmerLoader.rect(height: 20, width: 20),
+                          ),
                         )
                       : const Text('Try On'),
                 ),
               ),
               if (_resultImageBase64 != null) ...[
                 const SizedBox(height: 24),
-                Text('Result', style: headlineTextStyle(16)),
+                Text('Result', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black)),
                 const SizedBox(height: 8),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
@@ -282,7 +286,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
     return Container(
       height: 160,
       decoration: BoxDecoration(
-        color: cardBgColor,
+        color: const Color(0xFFF6F6F6),
         borderRadius: BorderRadius.circular(12),
       ),
       clipBehavior: Clip.antiAlias,
@@ -299,7 +303,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
     return Container(
       height: 160,
       decoration: BoxDecoration(
-        color: cardBgColor,
+        color: const Color(0xFFF6F6F6),
         borderRadius: BorderRadius.circular(12),
       ),
       clipBehavior: Clip.antiAlias,
@@ -312,11 +316,11 @@ class _TryOnScreenState extends State<TryOnScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.person, size: 48, color: grayColor),
+                  Icon(Icons.person, size: 48, color: Colors.grey),
                   const SizedBox(height: 8),
                   Text(
                     'Your photo',
-                    style: paragraphTextStyle(12),
+                    style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade600),
                   ),
                 ],
               ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/widgets/capitalized_word.dart';
 
 import '/modules/cart/model/shipping_response_model.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/language_string.dart';
 import '../../../utils/utils.dart';
 
@@ -43,7 +43,7 @@ class _ShippingMethodListState extends State<ShippingMethodList> {
           const SizedBox(height: 20),
           Text(
             Language.shippingCost.capitalizeByWord(),
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
           ),
           const SizedBox(height: 10),
           ...widget.shippingMethods.map(
@@ -52,11 +52,11 @@ class _ShippingMethodListState extends State<ShippingMethodList> {
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6.0),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                         color: isSelected
-                            ? Utils.dynamicPrimaryColor(context)
-                            : borderColor)),
+                            ? Colors.black
+                            : Colors.grey.shade200)),
                 child: ListTile(
                   onTap: () {
                     shippingMethodModel = e;
@@ -65,8 +65,10 @@ class _ShippingMethodListState extends State<ShippingMethodList> {
                   },
                   horizontalTitleGap: 0,
                   title: Text(
-                      "${Language.fees.capitalizeByWord()}: ${e.shippingFee}"),
-                  subtitle: Text(e.shippingRule),
+                      "${Language.fees.capitalizeByWord()}: ${e.shippingFee}",
+                      style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black)),
+                  subtitle: Text(e.shippingRule,
+                      style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade600)),
                 ),
               );
             },

@@ -2,12 +2,12 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/widgets/capitalized_word.dart';
 import 'package:shop_us/widgets/favorite_button.dart';
 
 import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
@@ -82,7 +82,7 @@ class HomeHorizontalListProductCard extends StatelessWidget {
       width: width,
       margin: const EdgeInsets.only(right: 8),
       decoration: const BoxDecoration(
-        color: white,
+        color: Colors.white,
         //border: borderSide,
         //borderRadius: BorderRadius.circular(4),
       ),
@@ -133,7 +133,7 @@ class HomeHorizontalListProductCard extends StatelessWidget {
                           maxFontSize: 16,
                           minFontSize: 12,
                           overflow: TextOverflow.ellipsis,
-                          style: headlineTextStyle(16.0),
+                          style: GoogleFonts.inter(fontSize: 16.0, fontWeight: FontWeight.w700, color: Colors.black),
                         ),
                         const SizedBox(height: 6.0),
                         if (isFlashSale) ...[
@@ -165,7 +165,7 @@ class HomeHorizontalListProductCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(12.0).copyWith(right: 4.0),
       decoration: BoxDecoration(
-          color: cardBgColor, borderRadius: Utils.borderRadius(r: 6.0)),
+          color: const Color(0xFFF6F6F6), borderRadius: Utils.borderRadius(r: 6.0)),
       height: height - 2,
       width: width / 2.5,
       child: Padding(
@@ -218,7 +218,7 @@ class HomeHorizontalListProductCard extends StatelessWidget {
             )),
             child: Icon(
               Icons.add,
-              color: Utils.dynamicPrimaryColor(context),
+              color: Colors.black,
               size: 30.0,
             ),
           ),

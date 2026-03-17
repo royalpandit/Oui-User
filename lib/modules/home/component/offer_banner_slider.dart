@@ -1,9 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
-import '/utils/constants.dart';
 import '../../../core/router_name.dart';
-import '../../../utils/utils.dart';
 import '../model/slider_model.dart';
 import 'single_offer_banner.dart';
 
@@ -80,28 +78,28 @@ class _OfferBannerSliderState extends State<OfferBannerSlider> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.0),
           border:
-              Border.all(color: Utils.dynamicPrimaryColor(context), width: 1.0),
+              Border.all(color: Colors.black, width: 1.0),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
             widget.sliders.length,
             (index) => AnimatedContainer(
-              duration: kDuration,
+              duration: const Duration(milliseconds: 300),
               height: 6.0,
               width: 6.0,
               padding: EdgeInsets.all(_currentIndex == index ? 2.0 : 0.0),
               margin: const EdgeInsets.symmetric(horizontal: 2.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Utils.dynamicPrimaryColor(context),
+                color: Colors.black,
               ),
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: _currentIndex == index
-                      ? white
-                      : Utils.dynamicPrimaryColor(context),
+                      ? Colors.white
+                      : Colors.black,
                 ),
               ),
             ),

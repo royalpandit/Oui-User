@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '/modules/profile/model/user_info/user_updated_info.dart';
 import '/utils/language_string.dart';
@@ -11,7 +12,6 @@ import '../../../core/remote_urls.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../../../widgets/field_error_text.dart';
-import '../../../widgets/primary_button.dart';
 import '../controllers/country_state_by_id/country_state_by_id_cubit.dart';
 import '../controllers/profile_edit/profile_edit_cubit.dart';
 import '../controllers/updated_info/updated_info_cubit.dart';
@@ -139,6 +139,50 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
   final zipCodeController = TextEditingController();
   final addressController = TextEditingController();
 
+  String _stripPhonePrefix(String phone) {
+    String p = phone.trim();
+    if (p.startsWith('+91')) p = p.substring(3);
+    if (p.startsWith('91') && p.length > 10) p = p.substring(2);
+    if (p.startsWith('0')) p = p.substring(1);
+    return p;
+  }
+
+  InputDecoration _inputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400),
+      filled: true,
+      fillColor: Colors.grey.shade50,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.shade200, width: 1.5),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      ),
+    );
+  }
+
+  Widget _fieldLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black87),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileEdBlc = context.read<ProfileEditCubit>();
@@ -177,18 +221,15 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
         //     }
 
         return Form(
-          // key: context.read<ProfileEditCubit>().formKey,
-          //key: context.read<ProfileEditCubit>().profileFormKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _buildImage(),
               Text(
                 widget.userData.updateUserInfo!.name,
-                style:
-                    const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               BlocBuilder<ProfileEditCubit, ProfileEditStateModel>(
                 buildWhen: (p, c) => true,
                 builder: (context, state) {
@@ -196,16 +237,13 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      _fieldLabel(Language.name.capitalizeByWord()),
                       TextFormField(
                         keyboardType: TextInputType.name,
                         initialValue: widget.userData.updateUserInfo!.name,
                         onChanged: profileEdBlc.changeName,
-                        // validator: (String? v) {
-                        //   if (v == null || v.isEmpty) return Language.name;
-                        //   return null;
-                        // },
-                        decoration: InputDecoration(
-                            hintText: Language.name.capitalizeByWord()),
+                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        decoration: _inputDecoration(Language.name.capitalizeByWord()),
                       ),
                       if (edit is ProfileEditFormValidState) ...[
                         if (edit.errors.name.isNotEmpty)
@@ -222,31 +260,27 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      _fieldLabel(Language.phoneNumber.capitalizeByWord()),
                       TextFormField(
                         keyboardType: TextInputType.phone,
-                        onChanged: profileEdBlc.changePhone,
-                        initialValue: widget.userData.updateUserInfo!.phone,
-                        // initialValue: '1234567890',
-                        // validator: (String? v) {
-                        //   if (v == null || v.isEmpty || v.length < 8) {
-                        //     return "*Phone Number is Required";
-                        //   }
-                        //   return null;
-                        // },
-                        decoration: InputDecoration(
-                          hintText: Language.phoneNumber.capitalizeByWord(),
+                        onChanged: (value) {
+                          profileEdBlc.changePhone(_stripPhonePrefix(value));
+                        },
+                        initialValue: _stripPhonePrefix(widget.userData.updateUserInfo!.phone ?? ''),
+                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        decoration: _inputDecoration(Language.phoneNumber.capitalizeByWord()).copyWith(
                           prefixIcon: CountryCodePicker(
-                            padding: const EdgeInsets.only(bottom: 8),
+                            padding: EdgeInsets.zero,
                             onChanged: (country) {
-                              profileEdBlc
-                                  .changePhoneCode(country.dialCode ?? '');
+                              profileEdBlc.changePhoneCode(country.dialCode ?? '');
                             },
-                            flagWidth: 35,
-                            initialSelection: 'BD',
-                            favorite: const ['+88', 'BD'],
+                            flagWidth: 28,
+                            initialSelection: 'IN',
+                            favorite: const ['+91', 'IN'],
                             showCountryOnly: false,
                             showOnlyCountryWhenClosed: false,
                             alignLeft: false,
+                            textStyle: GoogleFonts.inter(fontSize: 14, color: Colors.black),
                           ),
                         ),
                       ),
@@ -265,6 +299,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      _fieldLabel(Language.country.capitalizeByWord()),
                       _countryField(),
                       if (edit is ProfileEditFormValidState) ...[
                         if (edit.errors.country.isNotEmpty)
@@ -281,6 +316,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      _fieldLabel(Language.state.capitalizeByWord()),
                       stateField(),
                       if (edit is ProfileEditFormValidState) ...[
                         if (edit.errors.state.isNotEmpty)
@@ -291,37 +327,27 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                 },
               ),
               const SizedBox(height: 16),
-              cityField(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _fieldLabel(Language.city.capitalizeByWord()),
+                  cityField(),
+                ],
+              ),
               const SizedBox(height: 16),
-              // TextFormField(
-              //   keyboardType: TextInputType.number,
-              //   initialValue: widget.userData.updateUserInfo.zipCode,
-              //   onChanged: profileEdBlc.changeZipCode,
-              //   validator: (String? v) {
-              //     if (v == null || v.isEmpty) return "*Zip Code is Required";
-              //     return null;
-              //   },
-              //   decoration: const InputDecoration(hintText: 'Your zip-code'),
-              // ),
-              // const SizedBox(height: 16),
-
               BlocBuilder<ProfileEditCubit, ProfileEditStateModel>(
                 builder: (context, state) {
                   final edit = state.stateStatus;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      _fieldLabel(Language.yourAddress.capitalizeByWord()),
                       TextFormField(
                         keyboardType: TextInputType.streetAddress,
                         initialValue: widget.userData.updateUserInfo!.address,
                         onChanged: profileEdBlc.changeAddress,
-                        // validator: (String? v) {
-                        //   if (v == null || v.isEmpty)
-                        //     return '*Address is Required';
-                        //   return null;
-                        // },
-                        decoration: InputDecoration(
-                            hintText: Language.yourAddress.capitalizeByWord()),
+                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        decoration: _inputDecoration(Language.yourAddress.capitalizeByWord()),
                       ),
                       if (edit is ProfileEditFormValidState) ...[
                         if (edit.errors.address.isNotEmpty)
@@ -331,8 +357,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                   );
                 },
               ),
-              const SizedBox(height: 20),
-
+              const SizedBox(height: 30),
               BlocListener<ProfileEditCubit, ProfileEditStateModel>(
                 listener: (context, state) {
                   if (state.stateStatus is ProfileEditStateLoading) {
@@ -350,19 +375,25 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                     }
                   }
                 },
-                child: PrimaryButton(
-                  text: Language.updateProfile.capitalizeByWord(),
-                  onPressed: () {
-                    // if (!context
-                    //     .read<ProfileEditCubit>()
-                    //     .profileFormKey
-                    //     .currentState!
-                    //     .validate()) return;
-                    Utils.closeKeyBoard(context);
-                    context.read<ProfileEditCubit>().submitForm();
-
-                    // print('UPDATED... ${context.read<ProfileEditCubit>().submitForm()}');
-                  },
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Utils.closeKeyBoard(context);
+                      context.read<ProfileEditCubit>().submitForm();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text(
+                      Language.updateProfile.capitalizeByWord(),
+                      style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -424,7 +455,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                       profileEditCubit.changeImage(imageSourcePath);
                     },
                     child: const CircleAvatar(
-                      backgroundColor: Color(0xff18587A),
+                      backgroundColor: Colors.black,
                       child: Icon(Icons.edit, color: Colors.white),
                     ),
                   ),
@@ -441,25 +472,18 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CountryModel>(
       value: _currentCountry,
-      // hint:  Text(addressBl.countryList[0].name),
-      hint: Text(Language.country.capitalizeByWord()),
-      decoration: const InputDecoration(
-        isDense: true,
-        border: OutlineInputBorder(
-          // borderSide: BorderSide(width: 1, color: CustomColors.lineColor),
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
-      ),
+      hint: Text(Language.country.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey)),
+      decoration: _inputDecoration(''),
+      dropdownColor: Colors.white,
+      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
       onTap: () async {
         Utils.closeKeyBoard(context);
       },
       onChanged: (value) {
         if (value == null) return;
         _loadState(value);
-
         context.read<ProfileEditCubit>().changeCountry('${value.id}');
       },
-      // validator: (value) => value == null ? '*City is Required' : null,
       isDense: true,
       isExpanded: true,
       items: addressBl.countryList.isEmpty
@@ -477,27 +501,19 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CountryStateModel>(
       value: _countryState,
-      hint: Text(Language.state.capitalizeByWord()),
-      // hint:  Text(profileBl.state.state),
-      decoration: const InputDecoration(
-        isDense: true,
-        border: OutlineInputBorder(
-          // borderSide: BorderSide(width: 1, color: CustomColors.lineColor),
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
-      ),
+      hint: Text(Language.state.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey)),
+      decoration: _inputDecoration(''),
+      dropdownColor: Colors.white,
+      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
       onTap: () async {
         Utils.closeKeyBoard(context);
       },
       onChanged: (value) {
         if (value == null) return;
-        // _cityModel = null;
         _countryState = value;
         _loadCity(value);
-        // addressBl.cityStateChangeCityFilter(value);
         profileBl.changeState('${value.id}');
       },
-      // validator: (value) => value == null ? '*State is Required' : null,
       isDense: true,
       isExpanded: true,
       items: addressBl.stateList.isEmpty
@@ -515,14 +531,10 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CityModel>(
       value: _cityModel,
-      // hint:  Text(profileBl.state.city),
-      hint: Text(Language.city.capitalizeByWord()),
-      decoration: const InputDecoration(
-        isDense: true,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
-      ),
+      hint: Text(Language.city.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey)),
+      decoration: _inputDecoration(''),
+      dropdownColor: Colors.white,
+      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
       onTap: () {
         Utils.closeKeyBoard(context);
       },
@@ -531,7 +543,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
         if (value == null) return;
         profileBl.changeCity('${value.id}');
       },
-      // validator: (value) => value == null ? 'field required' : null,
       isDense: true,
       isExpanded: true,
       items: addressBl.cities.isEmpty

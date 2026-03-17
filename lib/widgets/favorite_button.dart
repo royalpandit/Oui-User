@@ -104,7 +104,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
               padding: const EdgeInsets.all(4.0),
               child: Icon(
                 isFav ? Icons.favorite : Icons.favorite_border,
-                color: Utils.dynamicPrimaryColor(context),
+                color: Colors.black,
               ),
             ),
           ),
@@ -171,7 +171,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
                 padding: const EdgeInsets.all(4.0),
                 child: Icon(
                   isFav ? Icons.favorite : Icons.favorite_border,
-                  color: Utils.dynamicPrimaryColor(context),
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -192,6 +192,6 @@ Widget favorite(BuildContext context) {
       borderRadius: BorderRadius.circular(4.0),
     ),
     child: Icon(Icons.favorite_outline_sharp,
-        color: Utils.dynamicPrimaryColor(context), size: 28.0),
+        color: Colors.black, size: 28.0),
   );
 }

@@ -54,7 +54,6 @@ class UserProfileInfo extends Equatable {
   }
 
   factory UserProfileInfo.fromMap(Map<String, dynamic> map) {
-    print('DI: ${map['defaultProfile']}');
     return UserProfileInfo(
       updateUserInfo: map['personInfo'] != null?
           UpdateUserInfo.fromMap(map['personInfo'] as Map<String, dynamic>):null,

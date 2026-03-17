@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shop_us/utils/utils.dart';
-
-import '../modules/animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
-import '../utils/constants.dart';
 
 // ignore: must_be_immutable
 class PrimaryButton extends StatelessWidget {
@@ -12,17 +7,15 @@ class PrimaryButton extends StatelessWidget {
     super.key,
     this.maximumSize = const Size(double.infinity, 52),
     required this.text,
-    this.gradientColor = greenGradient,
     this.fontSize = 18.0,
     required this.onPressed,
     this.minimumSize = const Size(double.infinity, 52),
-    this.borderRadiusSize = 0.0,
+    this.borderRadiusSize = 12.0,
     this.bgColor,
-    this.textColor = white,
+    this.textColor = Colors.white,
   });
 
   final VoidCallback? onPressed;
-  final List<Color> gradientColor;
   final String text;
   final Size maximumSize;
   final Size minimumSize;
@@ -33,28 +26,26 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = context.read<AppSettingCubit>().settingModel!.setting;
-    if (color != null && color.themeOne.isNotEmpty) {
-      bgColor = Utils.dynamicPrimaryColor(context);
-    } else {
-      bgColor = primaryColor;
-    }
+    bgColor ??= Colors.black;
 
     final borderRadius = BorderRadius.circular(borderRadiusSize);
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
-        shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(borderRadius: borderRadius)),
+        shape: WidgetStateProperty.all(RoundedRectangleBorder(
+          borderRadius: borderRadius,
+          side: BorderSide(color: Colors.black.withOpacity(0.08)),
+        )),
         minimumSize: WidgetStateProperty.all(minimumSize),
         maximumSize: WidgetStateProperty.all(maximumSize),
         backgroundColor: WidgetStateProperty.all(bgColor),
-        overlayColor: WidgetStateProperty.all(transparent),
-        elevation: WidgetStateProperty.all(0.0),
+        overlayColor: WidgetStateProperty.all(bgColor?.withOpacity(0.85) ?? Colors.black.withOpacity(0.85)),
+        elevation: WidgetStateProperty.all(6.0),
+        shadowColor: WidgetStateProperty.all(Colors.black26),
       ),
       child: Text(
         text,
-        style: GoogleFonts.roboto(
+        style: GoogleFonts.inter(
             color: textColor,
             fontSize: fontSize,
             height: 1.5,

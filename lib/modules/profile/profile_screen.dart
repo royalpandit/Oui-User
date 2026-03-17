@@ -10,8 +10,6 @@ import '/widgets/capitalized_word.dart';
 import '../../core/remote_urls.dart';
 import '../../core/router_name.dart';
 import '../../utils/constants.dart';
-import '../../utils/k_images.dart';
-import '../../widgets/custom_image.dart';
 import '../../widgets/please_sign_in_widget.dart';
 import '../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../authentication/controller/login/login_bloc.dart';
@@ -26,281 +24,298 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // final _className = 'ProfileScreen';
-
   @override
   Widget build(BuildContext context) {
     final userData = context.read<LoginBloc>().userInfo;
     final settingModel = context.read<AppSettingCubit>().settingModel;
-    const double appBarHeight = 180;
+    const double appBarHeight = 185; 
     final routeName = ModalRoute.of(context)?.settings.name ?? '';
-    // context.read<UserProfileInfoCubit>().getUserProfileInfo();
 
     if (userData == null) {
       return const PleaseSignInWidget();
     }
 
     return Scaffold(
+      backgroundColor: Colors.white, // Clean white background
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            collapsedHeight: appBarHeight,
-            iconTheme: IconThemeData(color: Utils.dynamicPrimaryColor(context)),
-            automaticallyImplyLeading: routeName != RouteNames.mainPage,
             expandedHeight: appBarHeight,
-            systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: Utils.dynamicPrimaryColor(context),
-            ),
-            flexibleSpace:
-                BlocBuilder<UserProfileInfoCubit, UserProfilenfoState>(
-              builder: (context, state) {
-                if (state is UpdatedLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state is UpdatedLoaded) {
-                  return ProfileAppBar(
-                    height: appBarHeight,
-                    logo:
-                        RemoteUrls.imageUrl(settingModel?.setting!.logo ?? ''),
-                    userUpdateInfo: state.updatedInfo,
-                  );
-                }
-                return const SizedBox();
-              },
+            pinned: true,
+            elevation: 0,
+            backgroundColor: Colors.black, // Sleek black header
+            automaticallyImplyLeading: routeName != RouteNames.mainPage,
+            systemOverlayStyle: SystemUiOverlayStyle.light,
+            flexibleSpace: FlexibleSpaceBar(
+              background: BlocBuilder<UserProfileInfoCubit, UserProfilenfoState>(
+                builder: (context, state) {
+                  if (state is UpdatedLoading) {
+                    return const Center(child: CircularProgressIndicator(color: Colors.white));
+                  }
+                  if (state is UpdatedLoaded) {
+                    return ProfileAppBar(
+                      height: appBarHeight,
+                      logo: RemoteUrls.imageUrl(settingModel?.setting!.logo ?? ''),
+                      userUpdateInfo: state.updatedInfo,
+                    );
+                  }
+                  return const SizedBox();
+                },
+              ),
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+          
+          _buildSectionHeader("Account Management"),
           _buildProfileOptions(context),
-          const SliverToBoxAdapter(child: SizedBox(height: 65)),
+          
+          _buildSectionHeader("Support & Privacy"),
+          _buildSupportOptions(context),
+          
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+          _buildLogoutButton(context),
+          const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
       ),
     );
   }
 
-  SliverPadding _buildProfileOptions(BuildContext context) {
-    final loginBloc = context.read<LoginBloc>();
-    final homeModel = context.read<HomeControllerCubit>().homeModel;
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-      sliver: SliverList(
-        delegate: SliverChildListDelegate(
-          [
-            ElementTile(
-              title: Language.yourAddress.capitalizeByWord(),
-              press: () {
-                Navigator.pushNamed(context, RouteNames.addressScreen);
-              },
-              iconPath: KImages.profileLocationIcon,
-            ),
-            ElementTile(
-              title: Language.allCategories.capitalizeByWord(),
-              press: () {
-                Navigator.pushNamed(context, RouteNames.allCategoryListScreen,
-                    arguments: {
-                      "app_bar": homeModel.sectionTitle[0].custom ??
-                          homeModel.sectionTitle[0].defaultTitle
-                    });
-              },
-              iconPath: KImages.profileCategoryIcon,
-            ),
-            ElementTile(
-              title: Language.termsCon.capitalizeByWord(),
-              press: () {
-                Navigator.pushNamed(context, RouteNames.termsConditionScreen);
-              },
-              iconPath: KImages.profileTermsConditionIcon,
-            ),
-            ElementTile(
-              title: Language.privacyPolicy.capitalizeByWord(),
-              press: () {
-                Navigator.pushNamed(context, RouteNames.privacyPolicyScreen);
-              },
-              iconPath: KImages.profilePrivacyIcon,
-            ),
-            ElementTile(
-              title: Language.faq,
-              press: () {
-                Navigator.pushNamed(context, RouteNames.faqScreen);
-              },
-              iconPath: KImages.profileFaqIcon,
-            ),
-            ElementTile(
-              title: Language.aboutUs.capitalizeByWord(),
-              press: () {
-                Navigator.pushNamed(context, RouteNames.aboutUsScreen);
-              },
-              iconPath: KImages.profileAboutUsIcon,
-            ),
-            ElementTile(
-              title: Language.contactUs.capitalizeByWord(),
-              press: () {
-                Navigator.pushNamed(context, RouteNames.contactUsScreen);
-              },
-              iconPath: KImages.profileContactIcon,
-            ),
-            ElementTile(
-              title: Language.appInfo.capitalizeByWord(),
-              press: () {
-                Utils.appInfoDialog(context);
-              },
-              iconPath: KImages.profileAppInfoIcon,
-            ),
-            BlocConsumer<LoginBloc, LoginModelState>(builder: (context, state) {
-              return ElementTile(
-                title: Language.logout.capitalizeByWord(),
-                press: () {
-                  // Navigator.pushReplacementNamed(
-                  //     context, RouteNames.authenticationScreen);
-                  Utils.showCustomDialog(
-                    context,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 20.0, horizontal: 12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // const SizedBox(height: 40.0),
-                          const SizedBox(
-                            height: 120.0,
-                            width: 120.0,
-                            child: CustomImage(
-                                path: KImages.exitImage, color: primaryColor),
-                          ),
-                          const SizedBox(height: 10.0),
-                          Text(
-                            Language.areYouSure.capitalizeByWord(),
-                            style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 18.0,
-                              color: blackColor,
-                            ),
-                          ),
-                          const SizedBox(height: 6.0),
-                          Text(
-                            'You want to Signout?',
-                            style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 20.0,
-                              color: blackColor,
-                            ),
-                          ),
-                          const SizedBox(height: 20.0),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              exitButton(() => Navigator.pop(context),
-                                  Language.cancel, blackColor),
-                              const SizedBox(width: 20.0),
-                              exitButton(
-                                () {
-                                  //Navigator.pop(context);
-                                  loginBloc.add(const LoginEventLogout());
-                                },
-                                Language.logout.capitalizeByWord(),
-                                Utils.dynamicPrimaryColor(context),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-                iconPath: KImages.profileLogOutIcon,
-              );
-            }, listener: (context, state) {
-              final logout = state.state;
-              if (logout is LoginStateLogOutLoading) {
-                Utils.loadingDialog(context);
-                // Navigator.pushNamedAndRemoveUntil(
-                //     context, RouteNames.authenticationScreen, (route) => false);
-              } else {
-                Utils.closeDialog(context);
-                if (logout is LoginStateSignOutError) {
-                  Utils.errorSnackBar(context, logout.errorMsg);
-                } else if (logout is LoginStateLogOut) {
-                  Navigator.of(context).pop();
-                  Navigator.pushNamedAndRemoveUntil(context,
-                      RouteNames.authenticationScreen, (route) => false);
-                  Utils.showSnackBar(context, logout.msg);
-                }
-              }
-            }),
-            // ElementTile(
-            //   title: "Sign Out",
-            //   press: () {
-            //     Navigator.pushReplacementNamed(
-            //         context, RouteNames.authenticationScreen);
-            //   },
-            //   iconPath: Kimages.profileLogOutIcon,
-            // ),
-          ],
+  Widget _buildSectionHeader(String title) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 10),
+        child: Text(
+          title.toUpperCase(),
+          style: GoogleFonts.inter(
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
+            color: Colors.grey.shade400,
+          ),
         ),
       ),
     );
   }
 
-  Widget exitButton(VoidCallback onTap, String text, Color bgColor) {
-    return ElevatedButton(
-      onPressed: onTap,
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(bgColor),
-        minimumSize: MaterialStateProperty.all(const Size(104, 40)),
-        padding: MaterialStateProperty.all(
-            const EdgeInsets.symmetric(horizontal: 24.0, vertical: 6.0)
-                .copyWith(bottom: 6.0)),
-        shape: MaterialStateProperty.all(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
+  SliverPadding _buildProfileOptions(BuildContext context) {
+    final homeModel = context.read<HomeControllerCubit>().homeModel;
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          _MenuRow(
+            icon: Icons.location_on_outlined,
+            title: Language.yourAddress.capitalizeByWord(),
+            onTap: () => Navigator.pushNamed(context, RouteNames.addressScreen),
           ),
+          _MenuRow(
+            icon: Icons.grid_view_rounded,
+            title: Language.allCategories.capitalizeByWord(),
+            onTap: () => Navigator.pushNamed(context, RouteNames.allCategoryListScreen, arguments: {
+              "app_bar": homeModel.sectionTitle[0].custom ?? homeModel.sectionTitle[0].defaultTitle
+            }),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  SliverPadding _buildSupportOptions(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          _MenuRow(icon: Icons.description_outlined, title: Language.termsCon.capitalizeByWord(), onTap: () => Navigator.pushNamed(context, RouteNames.termsConditionScreen)),
+          _MenuRow(icon: Icons.shield_outlined, title: Language.privacyPolicy.capitalizeByWord(), onTap: () => Navigator.pushNamed(context, RouteNames.privacyPolicyScreen)),
+          _MenuRow(icon: Icons.help_outline_rounded, title: Language.faq, onTap: () => Navigator.pushNamed(context, RouteNames.faqScreen)),
+          _MenuRow(icon: Icons.info_outline_rounded, title: Language.aboutUs.capitalizeByWord(), onTap: () => Navigator.pushNamed(context, RouteNames.aboutUsScreen)),
+          _MenuRow(icon: Icons.mail_outline_rounded, title: Language.contactUs.capitalizeByWord(), onTap: () => Navigator.pushNamed(context, RouteNames.contactUsScreen)),
+          _MenuRow(icon: Icons.smartphone_outlined, title: Language.appInfo.capitalizeByWord(), onTap: () => _showAppInfoSheet(context)),
+        ]),
+      ),
+    );
+  }
+
+
+
+  void _showAppInfoSheet(BuildContext context) {
+    final settingModel = context.read<AppSettingCubit>().settingModel;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 10),
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  Language.appInfo.capitalizeByWord(),
+                  style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black),
+                ),
+                const SizedBox(height: 20),
+                _infoRow(Language.name.capitalizeByWord(), "OUI"),
+                _infoRow(Language.version.capitalizeByWord(), "1.3.0"),
+                _infoRow("Build", "1"),
+                _infoRow("Platform", "Android / iOS"),
+                _infoRow(Language.developedBy.capitalizeByWord(), "Corescent"),
+                const SizedBox(height: 20),
+                Text(
+                  "OUI is a premium grocery shopping experience designed to bring the finest selection of products right to your doorstep.",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade500, height: 1.5),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _infoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade500)),
+          Text(value, style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: BlocConsumer<LoginBloc, LoginModelState>(
+          listener: (context, state) {
+            final logout = state.state;
+            if (logout is LoginStateLogOutLoading) {
+              Utils.loadingDialog(context);
+            } else {
+              Utils.closeDialog(context);
+              if (logout is LoginStateSignOutError) {
+                Utils.errorSnackBar(context, logout.errorMsg);
+              } else if (logout is LoginStateLogOut) {
+                Navigator.pushNamedAndRemoveUntil(context, RouteNames.authenticationScreen, (route) => false);
+              }
+            }
+          },
+          builder: (context, state) {
+            return OutlinedButton(
+              onPressed: () => _showLogoutDialog(context),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.black12, width: 1.5),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.power_settings_new_rounded, color: Colors.black, size: 20),
+                  const SizedBox(width: 12),
+                  Text(
+                    Language.logout.capitalizeByWord(),
+                    style: GoogleFonts.inter(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 10.0),
-        child: Text(
-          text,
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.w700,
-            fontSize: 16.0,
-            color: white,
-          ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.black12)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.logout_rounded, size: 48, color: Colors.black),
+            const SizedBox(height: 20),
+            Text("Sign Out", style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            const Text("Are you sure you want to end your session?", textAlign: TextAlign.center),
+          ],
         ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel", style: TextStyle(color: Colors.grey))),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<LoginBloc>().add(const LoginEventLogout());
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+            child: const Text("Logout", style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }
 }
 
-class ElementTile extends StatelessWidget {
-  const ElementTile({
-    super.key,
-    this.title,
-    this.press,
-    this.iconPath,
-  });
+class _MenuRow extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
 
-  final String? title;
-  final VoidCallback? press;
-  final String? iconPath;
+  const _MenuRow({required this.icon, required this.title, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      minLeadingWidth: 0,
-      onTap: press,
-      contentPadding: EdgeInsets.zero,
-      leading: CustomImage(
-        path: iconPath!,
-        height: 20.0,
-        color: Utils.dynamicPrimaryColor(context),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.black12, width: 1.5),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, size: 22, color: Colors.black54),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black87),
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, size: 20, color: Colors.grey.shade400),
+              ],
+            ),
+          ),
+        ),
       ),
-      title: Text(title!,
-          style: GoogleFonts.inter(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: buttonTextColor,
-          )),
     );
   }
 }

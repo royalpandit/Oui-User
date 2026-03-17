@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 
 class PriceCardWidget extends StatelessWidget {
@@ -11,7 +10,7 @@ class PriceCardWidget extends StatelessWidget {
     required this.price,
     required this.offerPrice,
     this.textSize = 16,
-    this.priceColor = primaryColor,
+    this.priceColor = Colors.black,
   });
   final String price;
   final double textSize;

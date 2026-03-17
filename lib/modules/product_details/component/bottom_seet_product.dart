@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '/widgets/capitalized_word.dart';
 import '../../../core/remote_urls.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
@@ -94,7 +93,7 @@ class BottomSheetProduct extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: cardBgColor,
+              color: const Color(0xFFF6F6F6),
               borderRadius: Utils.borderRadius(r: 4.0),
             ),
             child: ClipRRect(
@@ -116,24 +115,22 @@ class BottomSheetProduct extends StatelessWidget {
                   product.name.capitalizeByWord(),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.roboto(
+                  style: GoogleFonts.inter(
                       height: 1.6,
                       fontSize: 18.0,
                       fontWeight: FontWeight.w600,
-                      color: white),
+                      color: Colors.black),
                 ),
                 const SizedBox(height: 5),
                 if (isFlashSale) ...[
                   PriceCardWidget(
                     price: mainPrice.toString(),
                     offerPrice: flashPrice.toString(),
-                    priceColor: white,
                   ),
                 ] else ...[
                   PriceCardWidget(
                     price: mainPrice.toString(),
                     offerPrice: offerPrice.toString(),
-                    priceColor: white,
                   ),
                 ],
               ],

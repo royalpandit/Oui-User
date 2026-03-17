@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'primary_button.dart';
-import '../utils/constants.dart';
 
 class FeedbackSuccess extends StatelessWidget {
   const FeedbackSuccess({
@@ -31,7 +30,7 @@ class FeedbackSuccess extends StatelessWidget {
             style: TextStyle(
                 height: 1.3,
                 fontSize: 16,
-                color: iconGreyColor,
+                color: Colors.grey,
                 fontWeight: FontWeight.w400),
           ),
           const SizedBox(height: 24),

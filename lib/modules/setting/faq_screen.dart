@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import '../../utils/constants.dart';
 import '../../utils/language_string.dart';
-import '../../widgets/app_bar_leading.dart';
 import 'component/faq_list_widget.dart';
 import 'controllers/faq_cubit/faq_cubit.dart';
 
@@ -17,69 +16,50 @@ class FaqScreen extends StatefulWidget {
 
 class _FaqScreenState extends State<FaqScreen> {
   @override
-  Widget build(BuildContext context) {
-    context.read<FaqCubit>().getFaqList();
-    const double appBarHeight = 120;
-    return Scaffold(
-      backgroundColor: scaffoldBGColor,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            // expandedHeight: appBarHeight,
-
-            systemOverlayStyle:
-                const SystemUiOverlayStyle(statusBarColor: scaffoldBGColor),
-            title: Text(
-              Language.faq,
-              style: const TextStyle(color: blackColor),
-            ),
-            titleSpacing: 0,
-            leading: const AppbarLeading(),
-            // flexibleSpace: const FaqAppBar(height: appBarHeight),
-          ),
-          //const SliverToBoxAdapter(child: SizedBox(height: 30)),
-          BlocBuilder<FaqCubit, FaqCubitState>(
-            builder: (context, state) {
-              if (state is FaqCubitStateLoaded) {
-                return FaqListWidget(faqList: state.faqList);
-              } else if (state is FaqCubitStateLoading) {
-                return const SliverToBoxAdapter(
-                    child: Center(child: CircularProgressIndicator()));
-              } else if (state is FaqCubitStateError) {
-                return SliverToBoxAdapter(
-                  child: Center(
-                    child: Text(
-                      state.errorMessage,
-                      style: const TextStyle(color: redColor),
-                    ),
-                  ),
-                );
-              }
-              return const SliverToBoxAdapter(child: SizedBox());
-            },
-          ),
-        ],
-      ),
-    );
+  void initState() {
+    super.initState();
+    Future.microtask(() => context.read<FaqCubit>().getFaqList());
   }
 
-  Widget buildBody(double appBarHeight) {
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          expandedHeight: appBarHeight,
-          systemOverlayStyle:
-              const SystemUiOverlayStyle(statusBarColor: scaffoldBGColor),
-          title: Text(
-            Language.faq,
-            style: const TextStyle(color: blackColor),
-          ),
-          titleSpacing: 0,
-          leading: const AppbarLeading(),
-          // flexibleSpace: const FaqAppBar(height: appBarHeight),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
         ),
-        const SliverToBoxAdapter(child: SizedBox(height: 30)),
-      ],
+        centerTitle: true,
+        title: Text(
+          Language.faq,
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+        ),
+      ),
+      body: BlocBuilder<FaqCubit, FaqCubitState>(
+        builder: (context, state) {
+          if (state is FaqCubitStateLoaded) {
+            return ListView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              children: [
+                FaqListWidget(faqList: state.faqList),
+              ],
+            );
+          } else if (state is FaqCubitStateLoading) {
+            return const Center(child: CircularProgressIndicator(color: Colors.black));
+          } else if (state is FaqCubitStateError) {
+            return Center(
+              child: Text(state.errorMessage, style: GoogleFonts.inter(color: Colors.red.shade400)),
+            );
+          }
+          return const SizedBox();
+        },
+      ),
     );
   }
 }

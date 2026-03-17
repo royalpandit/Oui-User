@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '/utils/constants.dart';
 import '../../../utils/k_images.dart';
 import '../../../widgets/custom_image.dart';
 import '../../category/component/product_card.dart';
@@ -25,10 +24,10 @@ class NewArrivalComponent extends StatelessWidget {
         children: [
           SliverToBoxAdapter(
               child: Text(sectionTitle,
-                  style: GoogleFonts.jost(
-                    fontWeight: FontWeight.w600,
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w700,
                     fontSize: 16.0,
-                    color: blackColor,
+                    color: Colors.black,
                   ))),
           const SliverPadding(padding: EdgeInsets.symmetric(vertical: 10.0)),
           SliverGrid(
@@ -36,7 +35,7 @@ class NewArrivalComponent extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              mainAxisExtent: singleProductHeight + 60.0,
+              mainAxisExtent: 304.0,
             ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) =>
@@ -68,10 +67,10 @@ class NewArrivalRow extends StatelessWidget {
       children: [
         Text(
           'New Arrival',
-          style: GoogleFonts.jost(
-            fontWeight: FontWeight.w600,
+          style: GoogleFonts.inter(
+            fontWeight: FontWeight.w700,
             fontSize: 16.0,
-            color: blackColor,
+            color: Colors.black,
           ),
         ),
         PopupMenuButton<String>(
@@ -91,7 +90,7 @@ class NewArrivalRow extends StatelessWidget {
                         fontSize: 16.0,
                         fontWeight: FontWeight.w400,
                         height: 0.6,
-                        color: textGreyColor,
+                        color: Colors.grey,
                       ),
                     ),
                   ),

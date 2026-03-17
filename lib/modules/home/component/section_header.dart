@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '/utils/constants.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 
 class SectionHeader extends StatelessWidget {
   const SectionHeader({
     super.key,
-    this.color = buttonTextColor,
+    this.color = Colors.black,
     this.onTap,
     required this.headerText,
     this.isSeeAll = true,
@@ -25,7 +25,11 @@ class SectionHeader extends StatelessWidget {
         children: [
           Text(
             headerText,
-            style: headlineTextStyle(16.0),
+            style: GoogleFonts.inter(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: Colors.black,
+            ),
           ),
           isSeeAll? InkWell(
             onTap: onTap,
@@ -33,7 +37,11 @@ class SectionHeader extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 Language.seeAll.capitalizeByWord(),
-                style: paragraphTextStyle(16.0),
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey.shade600,
+                ),
               ),
             ),
           ):const SizedBox(),

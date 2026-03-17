@@ -53,7 +53,7 @@ dependencies:
   toggle_switch: ^2.1.0
   webview_flutter: ^4.2.2
     # payment
-  flutter_stripe: ^10.1.1
+  flutter_stripe: ^12.4.0
   flutter_font_awesome_web_names:
     git:
       url: https://github.com/Mythar/flutter_font_awesome_web_names

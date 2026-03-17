@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shop_us/utils/constants.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../../core/router_name.dart';
@@ -27,7 +26,7 @@ class CategoryGridView extends StatelessWidget {
             child: SectionHeader(
               // headerText: 'Market Categories',
               headerText: sectionTitle,
-              color: buttonTextColor,
+              color: Colors.black,
               onTap: () {
                 Navigator.pushNamed(context, RouteNames.allCategoryListScreen,
                     arguments: {
