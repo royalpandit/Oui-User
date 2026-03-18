@@ -47,15 +47,22 @@ class FlashSaleComponent extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 20.0),
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6.0),
+          borderRadius: BorderRadius.circular(16.0),
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFFFBD7E9),
-              Color(0xFFFFD7AB),
+              Color(0xFFF0F0F0),
+              Color(0xFFE0E0E0),
             ],
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +93,7 @@ class FlashSaleComponent extends StatelessWidget {
                             title: Language.days.capitalizeByWord(),
                             value: time.days!,
                             key: UniqueKey(),
-                            color: const Color(0xffEB5757),
+                            color: const Color(0xFF333333),
                           ),
                           const SizedBox(width: 14.0),
                           _MyCircularProgressCustomValue(
@@ -94,7 +101,7 @@ class FlashSaleComponent extends StatelessWidget {
                             title: 'Hrs',
                             value: time.hours!,
                             key: UniqueKey(),
-                            color: const Color(0xff2F80ED),
+                            color: const Color(0xFF666666),
                           ),
                           const SizedBox(width: 14.0),
                           _MyCircularProgressCustomValue(
@@ -102,7 +109,7 @@ class FlashSaleComponent extends StatelessWidget {
                             title: 'Min',
                             value: time.min!,
                             key: UniqueKey(),
-                            color: const Color(0xff219653),
+                            color: const Color(0xFF999999),
                           ),
                           const SizedBox(width: 14.0),
                           _MyCircularProgressCustomValue(
@@ -110,7 +117,7 @@ class FlashSaleComponent extends StatelessWidget {
                             title: 'Sec',
                             value: time.sec!,
                             key: UniqueKey(),
-                            color: const Color(0xffEB5757),
+                            color: const Color(0xFF444444),
                           ),
                         ],
                       );

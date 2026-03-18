@@ -67,7 +67,7 @@ class _StripeScreenState extends State<StripeScreen> {
                 obscureCardNumber: true,
                 obscureCardCvv: true,
                 isHolderNameVisible: true,
-                cardBgColor: Colors.red,
+                cardBgColor: Colors.black,
                 backgroundImage:
                     useBackgroundImage ? KImages.paymentCardIcon : null,
                 isSwipeGestureEnabled: true,

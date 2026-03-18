@@ -330,7 +330,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
                       decoration: BoxDecoration(
                           color: colors[index],
                           borderRadius: BorderRadius.circular(4.0),
-                          border: Border.all(color: const Color(0xFFFAE8F7))),
+                          border: Border.all(color: const Color(0xFFE0E0E0))),
                     )),
           ),
         ),
@@ -340,8 +340,8 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
 }
 
 final List<Color> colors = [
-  const Color(0xFF5D5FEF),
-  const Color(0xFFEF5DA8),
-  const Color(0xFF56CCF2),
-  const Color(0xFFF2C94C),
+  const Color(0xFF333333),
+  const Color(0xFF666666),
+  const Color(0xFF999999),
+  const Color(0xFFCCCCCC),
 ];

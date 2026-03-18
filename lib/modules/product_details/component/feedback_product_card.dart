@@ -17,8 +17,8 @@ class FeedbackProductCard extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: const Color(0xffE8EEF2)),
-        color: const Color(0xffE8EEF2),
+        border: Border.all(color: const Color(0xFFE8E8E8)),
+        color: const Color(0xFFF5F5F5),
       ),
       child: Row(
         children: [

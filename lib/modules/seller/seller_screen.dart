@@ -109,18 +109,8 @@ class SingleSellerInfo extends StatelessWidget {
             padding:
                 const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    buildSellerInfo(Icons.email, singleSellerModel.email),
-                    buildSellerInfo(Icons.phone, singleSellerModel.phone),
-                    buildSellerInfo(
-                        Icons.location_on, singleSellerModel.address),
-                  ],
-                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,

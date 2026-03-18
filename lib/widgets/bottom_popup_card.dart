@@ -8,7 +8,7 @@ class BottomPopupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = success ? AppStyle.accentColor : Colors.red;
+    final borderColor = success ? AppStyle.accentColor : Colors.grey.shade700;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Material(
@@ -37,7 +37,7 @@ class BottomPopupCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   message,
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF0B2C3D)),
+                  style: const TextStyle(fontSize: 14, color: Color(0xFF1A1A1A)),
                 ),
               ),
               const SizedBox(width: 8),

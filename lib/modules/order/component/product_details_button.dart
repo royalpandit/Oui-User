@@ -13,12 +13,12 @@ class ProductDetailsButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: redColor),
+          border: Border.all(color: blackColor),
           borderRadius: BorderRadius.circular(40),
         ),
         child: const Text(
           'Details',
-          style: TextStyle(fontSize: 12, color: redColor),
+          style: TextStyle(fontSize: 12, color: blackColor),
         ),
       ),
     );

@@ -30,7 +30,7 @@ class PanelCollaspComponent extends StatelessWidget {
           color: Colors.white,
           border: Border(top: BorderSide(color: Colors.grey.shade200)),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -42,7 +42,7 @@ class PanelCollaspComponent extends StatelessWidget {
             height: 4,
             width: 60,
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -56,7 +56,7 @@ class PanelCollaspComponent extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -67,7 +67,7 @@ class PanelCollaspComponent extends StatelessWidget {
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(

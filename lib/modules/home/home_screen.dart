@@ -155,7 +155,6 @@ class _LoadedHomePage extends StatelessWidget {
         ],
 
         ///Banner slider end
-        const SliverToBoxAdapter(child: SizedBox(height: 10)),
 
         ///popular product slider start
         if (homeModel.popularCategoryVisibilty is bool ||
@@ -239,7 +238,6 @@ class _LoadedHomePage extends StatelessWidget {
 
         ///top rated product slider end
         // WidthBannerComponent(banner: homeModel.popularCategorySidebarBanner),
-        const SliverToBoxAdapter(child: SizedBox(height: 5)),
 
         if (homeModel.topRatedVisibility is bool ||
             homeModel.topRatedVisibility is int ||

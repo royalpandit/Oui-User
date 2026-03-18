@@ -19,7 +19,7 @@ class CategoryGridView extends StatelessWidget {
   Widget build(BuildContext context) {
     if (homeCategories.isEmpty) return const SliverToBoxAdapter();
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+      padding: const EdgeInsets.only(left: 0, right: 0, top: 16, bottom: 8),
       sliver: MultiSliver(
         children: [
           SliverToBoxAdapter(
@@ -35,7 +35,7 @@ class CategoryGridView extends StatelessWidget {
               },
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 20)),
+          const SliverToBoxAdapter(child: SizedBox(height: 14)),
           SliverToBoxAdapter(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),

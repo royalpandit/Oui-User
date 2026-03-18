@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '/modules/cart/model/checkout_response_model.dart';
+import '/modules/cart/controllers/checkout/checkout_cubit.dart';
 import '/modules/place_order/controllers/bank/bank_cubit.dart';
 import '/modules/place_order/controllers/stripe/stripe_cubit.dart';
 import '/utils/k_images.dart';
@@ -35,11 +36,10 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final receivedValue =
+    final body =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final body = receivedValue['body'] as Map<String, dynamic>;
     final checkoutResponseModel =
-        receivedValue['payment_status'] as CheckoutResponseModel;
+        context.read<CheckoutCubit>().checkoutResponseModel!;
     return MultiBlocListener(
       listeners: [
         BlocListener<CashOnPaymentCubit, CashPaymentState>(
@@ -189,6 +189,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               title: "Cash On Delivery",
               icon: KImages.codIcon,
               press: () {
+                body['agree_terms_condition'] = '1';
                 context.read<CashOnPaymentCubit>().cashOnDelivery(body);
               },
             ),

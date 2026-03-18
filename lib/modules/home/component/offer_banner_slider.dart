@@ -24,10 +24,15 @@ class _OfferBannerSliderState extends State<OfferBannerSlider> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.sliders.isEmpty) return const SizedBox.shrink();
     return Container(
       height: height,
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+      ),
+      clipBehavior: Clip.antiAlias,
       child: Stack(
         fit: StackFit.expand,
         children: [

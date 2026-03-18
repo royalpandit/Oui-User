@@ -29,7 +29,7 @@ class _MessageInputFieldState extends State<MessageInputField> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 8.0),
       decoration: BoxDecoration(
-        color: const Color(0xff3b5998).withOpacity(0.06),
+        color: const Color(0xFF000000).withOpacity(0.06),
         borderRadius: BorderRadius.circular(32.0),
       ),
       child: Row(

@@ -19,7 +19,7 @@ class NotificationList extends StatelessWidget {
 
         return SingleNofitication(
           notification: item,
-          color: index == 3 ? const Color(0xffE8F3FF) : null,
+          color: index == 3 ? const Color(0xFFF5F5F5) : null,
         );
       },
     );

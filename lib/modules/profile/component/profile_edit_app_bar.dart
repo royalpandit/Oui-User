@@ -58,7 +58,7 @@ class ProfileEditAppBar extends StatelessWidget implements PreferredSizeWidget {
                           right: 10,
                           bottom: 10,
                           child: CircleAvatar(
-                            backgroundColor: Color(0xff18587A),
+                            backgroundColor: Color(0xFF333333),
                             child: Icon(Icons.edit, color: Colors.white),
                           ),
                         )

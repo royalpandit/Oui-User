@@ -28,8 +28,20 @@ class _ShippingMethodListState extends State<ShippingMethodList> {
     super.initState();
     if (widget.shippingMethods.isNotEmpty) {
       shippingMethodModel = widget.shippingMethods.first;
-
       widget.onChange(shippingMethodModel!.id);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant ShippingMethodList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.shippingMethods != widget.shippingMethods) {
+      if (widget.shippingMethods.isNotEmpty) {
+        shippingMethodModel = widget.shippingMethods.first;
+        widget.onChange(shippingMethodModel!.id);
+      } else {
+        shippingMethodModel = null;
+      }
     }
   }
 

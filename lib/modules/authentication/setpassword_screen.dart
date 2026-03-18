@@ -50,7 +50,7 @@ class _SetpasswordScreenState extends State<SetpasswordScreen> {
               gradient: LinearGradient(
                 begin: Alignment.center,
                 end: Alignment.bottomRight,
-                colors: [Colors.white, Color(0xffFFEFE7)],
+                colors: [Colors.white, Color(0xFFF0F0F0)],
               ),
             ),
             child: Center(
@@ -70,7 +70,7 @@ class _SetpasswordScreenState extends State<SetpasswordScreen> {
       children: [
         CircleAvatar(
           radius: 96,
-          backgroundColor: redColor.withOpacity(0.1),
+          backgroundColor: Colors.grey.withOpacity(0.1),
           child: const CustomImage(path: KImages.forgotIcon),
         ),
         const SizedBox(height: 55),

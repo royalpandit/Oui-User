@@ -28,78 +28,77 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   }
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
+      value: SystemUiOverlayStyle.dark, // Dark icons for white background
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
-          top: false,
           child: Column(
             children: [
-              // Top Image Section - Minimalist & Large
-              Expanded(
-                flex: 5,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    PageView.builder(
-                      controller: _pageController,
-                      onPageChanged: (int page) {
-                        setState(() {
-                          _currentPage = page;
-                        });
-                      },
-                      itemCount: _numPages,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 40),
-                          child: Center(
-                            child: CustomImage(
-                              path: 'assets/icon/${index + 1}.png',
-                              fit: BoxFit.contain,
-                              width: size.width * 0.7,
-                            ),
-                          ),
-                        );
-                      },
+              // --- TOP SECTION: Skip Button ---
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8, top: 8),
+                  child: TextButton(
+                    onPressed: _navigateToLogin,
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey.shade600,
                     ),
-                    // Skip Button - Professional Grey
-                    Positioned(
-                      top: 60,
-                      right: 20,
-                      child: TextButton(
-                        onPressed: _navigateToLogin,
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.white.withOpacity(0.5),
-                        ),
-                        child: Text(
-                          Language.skipForNow.capitalizeByWord(),
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
+                    child: Text(
+                      Language.skipForNow.capitalizeByWord(),
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
 
-              // Bottom Content Section - Integrated Look
+              // --- MIDDLE SECTION: Large Image ---
+              Expanded(
+                flex: 5,
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (int page) {
+                    setState(() {
+                      _currentPage = page;
+                    });
+                  },
+                  itemCount: _numPages,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Center(
+                        child: CustomImage(
+                          path: 'assets/icon/${index + 1}.png',
+                          fit: BoxFit.contain,
+                          width: size.width * 0.75,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // --- BOTTOM SECTION: Content & Actions ---
               Expanded(
                 flex: 4,
-                child: Container(
+                child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
-                  decoration: const BoxDecoration(
-                    color: Colors.black, // Kept black for a seamless OLED look
-                  ),
                   child: Column(
                     children: [
-                      // Step Indicator - iOS Style Pill
+                      // Step Indicator Pill
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
@@ -107,41 +106,37 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           (index) => _buildDot(index),
                         ),
                       ),
-                      const SizedBox(height: 40),
-                      
+                      const SizedBox(height: 48),
+
                       // Animated Text Content
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text(
-                              _getTitle(_currentPage),
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.inter(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w700,
-                              color: Colors.black,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              _getSubtitle(_currentPage),
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.inter(
-                                fontSize: 16,
-                                color: Colors.black.withOpacity(0.7),
-                                height: 1.6,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
+                      Text(
+                        _getTitle(_currentPage),
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFF1A1A1A), // Near black
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        _getSubtitle(_currentPage),
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          color: Colors.grey.shade600,
+                          height: 1.6,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
 
-                      // Action Button - Updated to Premium White-on-Black style
+                      const Spacer(),
+
+                      // Action Button - High Contrast Professional Style
                       SizedBox(
                         width: double.infinity,
-                        height: 56,
+                        height: 58,
                         child: ElevatedButton(
                           onPressed: () {
                             if (_currentPage == _numPages - 1) {
@@ -154,8 +149,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
+                            backgroundColor: const Color(0xFF1A1A1A), // Solid Black
+                            foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -167,12 +162,13 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                 : Language.next.capitalizeByWord(),
                             style: GoogleFonts.inter(
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ),
@@ -195,11 +191,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      height: 4,
-      width: isSelected ? 24 : 8,
+      height: 6,
+      width: isSelected ? 28 : 8,
       decoration: BoxDecoration(
-        color: isSelected ? Colors.black : Colors.grey.shade300,
-        borderRadius: BorderRadius.circular(2),
+        color: isSelected ? const Color(0xFF1A1A1A) : Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(3),
       ),
     );
   }

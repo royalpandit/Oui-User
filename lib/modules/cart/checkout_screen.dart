@@ -260,23 +260,26 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
           Flexible(
             child: ElevatedButton(
             onPressed: () {
+              log('Place Order: billingId=$billingAddressId, shippingId=$shippingAddressId, shippingMethod=$shippingMethod, methodListLen=${shippingMethodList.length}');
               if (agreeTermsCondition != 1) {
                 Utils.errorSnackBar(context,
                     Language.agreeTermAndCondition.capitalizeByWord());
                 return;
-              } else if (shippingAddressId < 1 ||
-                  billingAddressId < 1 ||
+              } else if (billingAddressId < 1 && shippingAddressId < 1) {
+                Utils.errorSnackBar(context, 'Please select both billing and shipping address');
+              } else if (billingAddressId < 1) {
+                Utils.errorSnackBar(context, 'Please select a billing address');
+              } else if (shippingAddressId < 1) {
+                Utils.errorSnackBar(context, 'Please select a shipping address');
+              } else if (shippingMethodList.isNotEmpty &&
                   shippingMethod < 1) {
-                Utils.errorSnackBar(context, Language.selectLocation);
+                Utils.errorSnackBar(context, 'Please select a shipping method');
               } else {
                 body['shipping_address_id'] = shippingAddressId.toString();
                 body['billing_address_id'] = billingAddressId.toString();
                 body['shipping_method_id'] = shippingMethod.toString();
                 Navigator.pushNamed(context, RouteNames.placeOrderScreen,
-                    arguments: {
-                      'body': body,
-                      'payment_status': checkoutResponseModel,
-                    });
+                    arguments: body);
               }
             },
             style: ElevatedButton.styleFrom(
@@ -327,7 +330,20 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
           ),
         ),
         const SizedBox(height: 12),
-        BlocBuilder<AddressCubit, AddressState>(
+        BlocConsumer<AddressCubit, AddressState>(
+          listener: (context, state) {
+            if (state is AddressStateLoaded && state.address.addresses.isNotEmpty) {
+              final addresses = state.address.addresses;
+              if (billingAddressId == 0) {
+                billingAddressId = addresses.first.id;
+              }
+              if (shippingAddressId == 0) {
+                shippingAddressId = addresses.first.id;
+                _populateShippingMethods(addresses.first);
+              }
+              setState(() {});
+            }
+          },
           builder: (context, state) {
             if (state is AddressStateLoading) {
               return Text(Language.loading.capitalizeByWord(),
@@ -343,8 +359,10 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
                 return singleAddressCard(context, state.address.addresses);
               }
             }
-            return singleAddressCard(context, addressCubit.address!.addresses);
-            // return Text('${Language.somethingWentWrong.capitalizeByWord()}!');
+            if (addressCubit.address != null && addressCubit.address!.addresses.isNotEmpty) {
+              return singleAddressCard(context, addressCubit.address!.addresses);
+            }
+            return const SizedBox();
           },
         )
       ],
@@ -352,11 +370,6 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
   }
 
   Widget singleAddressCard(BuildContext context, List<AddressModel> address) {
-    // Auto-select first address if not yet selected
-    if (address.isNotEmpty) {
-      if (billingAddressId == 0) billingAddressId = address.first.id;
-      if (shippingAddressId == 0) shippingAddressId = address.first.id;
-    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -430,6 +443,22 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
     );
   }
 
+  void _populateShippingMethods(AddressModel selectedAddress) {
+    if (checkoutResponseModel == null) return;
+    shippingMethodList.clear();
+    shippingMethodList.addAll(checkoutResponseModel!.shippings
+        .where((element) => element.cityId == 0)
+        .toList());
+    shippingMethodList.addAll(checkoutResponseModel!.shippings
+        .where((element) => element.cityId == selectedAddress.cityId)
+        .toList());
+    // Auto-select first shipping method
+    if (shippingMethodList.isNotEmpty) {
+      shippingMethod = shippingMethodList.first.id;
+      totalPrice = previousPrice + shippingMethodList.first.shippingFee;
+    }
+  }
+
   Widget shippingCharges(List<AddressModel> address, int index) {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
@@ -438,14 +467,7 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
           if (addressTypeSelect == Language.billingAddress.capitalizeByWord()) {
             billingAddressId = address[index].id;
           } else {
-            shippingMethodList.clear();
-            shippingMethodList.addAll(checkoutResponseModel!.shippings
-                .where((element) => element.cityId == "0")
-                .toList());
-
-            shippingMethodList.addAll(checkoutResponseModel!.shippings
-                .where((element) => element.cityId == address[index].cityId)
-                .toList());
+            _populateShippingMethods(address[index]);
 
             // for (var shipping in checkoutResponseModel!.shippings) {
             //   if (shipping.type == basedOnPrice) {

@@ -214,14 +214,14 @@ class FlashScreen extends StatelessWidget {
                 title: 'Hrs',
                 value: time.hours!,
                 key: UniqueKey(),
-                color: const Color(0xff2F80ED),
+                color: const Color(0xFF999999),
               ),
               _MyCircularProgressCustomValue(
                 maxValue: 60,
                 title: 'Min',
                 value: time.min!,
                 key: UniqueKey(),
-                color: const Color(0xff219653),
+                color: const Color(0xFF666666),
               ),
               _MyCircularProgressCustomValue(
                 maxValue: 60,

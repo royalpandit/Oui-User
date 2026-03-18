@@ -34,7 +34,7 @@ class MyTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(double.infinity, 64),
-          backgroundColor: lightningYellowColor,
+          backgroundColor: blackColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
         ),
@@ -49,7 +49,7 @@ class MyTheme {
         // selectedLabelStyle: TextStyle(color: primaryColor),
         elevation: 3,
         backgroundColor: Color(0x00ffffff),
-        selectedLabelStyle: TextStyle(color: redColor, fontSize: 14.0),
+        selectedLabelStyle: TextStyle(color: blackColor, fontSize: 14.0),
         unselectedLabelStyle: TextStyle(color: iconGreyColor, fontSize: 12.0),
         selectedItemColor: blackColor,
         unselectedItemColor: iconGreyColor,

@@ -24,6 +24,18 @@ class HotDealBanner extends StatelessWidget {
       height: height,
       margin: const EdgeInsets.symmetric(horizontal: 8),
       width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -65,6 +77,7 @@ class HotDealBanner extends StatelessWidget {
               child: shopNowButton(context)),
         ],
       ),
+      ),
     );
   }
 
@@ -84,9 +97,9 @@ class HotDealBanner extends StatelessWidget {
         width: 96.0,
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0)
             .copyWith(bottom: 10.0),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: Colors.black,
-          //borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(8.0),
         ),
         child: Row(
           children: [

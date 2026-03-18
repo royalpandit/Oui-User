@@ -50,7 +50,7 @@ class _SettingScreenState extends State<SettingScreen> {
             trailing: Switch.adaptive(
                 activeTrackColor: Colors.black,
                 value: true,
-                inactiveTrackColor: const Color(0xff374557).withOpacity(.6),
+                inactiveTrackColor: Colors.grey.withOpacity(.4),
                 activeColor: Colors.white,
                 onChanged: (v) {}),
           ),
@@ -61,7 +61,7 @@ class _SettingScreenState extends State<SettingScreen> {
             trailing: Switch.adaptive(
                 activeTrackColor: Colors.black,
                 value: false,
-                inactiveTrackColor: const Color(0xff374557).withOpacity(.6),
+                inactiveTrackColor: Colors.grey.withOpacity(.4),
                 activeColor: Colors.white,
                 onChanged: (v) {}),
           ),
@@ -72,7 +72,7 @@ class _SettingScreenState extends State<SettingScreen> {
             trailing: Switch.adaptive(
                 activeTrackColor: Colors.black,
                 value: false,
-                inactiveTrackColor: const Color(0xff374557).withOpacity(.6),
+                inactiveTrackColor: Colors.grey.withOpacity(.4),
                 activeColor: Colors.white,
                 onChanged: (v) {}),
           ),
@@ -83,7 +83,7 @@ class _SettingScreenState extends State<SettingScreen> {
             trailing: Switch.adaptive(
                 activeTrackColor: Colors.black,
                 value: true,
-                inactiveTrackColor: const Color(0xff374557).withOpacity(.6),
+                inactiveTrackColor: Colors.grey.withOpacity(.4),
                 activeColor: Colors.white,
                 onChanged: (v) {}),
           ),
@@ -94,7 +94,7 @@ class _SettingScreenState extends State<SettingScreen> {
             trailing: Switch.adaptive(
                 activeTrackColor: Colors.black,
                 value: false,
-                inactiveTrackColor: const Color(0xff374557).withOpacity(.6),
+                inactiveTrackColor: Colors.grey.withOpacity(.4),
                 activeColor: Colors.white,
                 onChanged: (v) {}),
           ),

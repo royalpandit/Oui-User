@@ -30,7 +30,14 @@ class CategoryCircleCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         decoration: BoxDecoration(
             color: Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(4.0)),
+            borderRadius: BorderRadius.circular(12.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ]),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

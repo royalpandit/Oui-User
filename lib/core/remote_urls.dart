@@ -177,11 +177,11 @@ class RemoteUrls {
 
   static String brandProducts(String slug) => '${baseUrl}product?brand=$slug';
 
-  static String sellerDetailsUrl(String slug) => '${baseUrl}user/$slug';
+  static String sellerDetailsUrl(String slug) => '${baseUrl}sellers/$slug';
 
   // CatVTON virtual try-on API (change this URL to point to your CatVTON backend, same as VirtualTryOn app.json extra.API_URL)
   static const String tryOnBaseUrl =
-      'https://6cc3-2405-201-3016-9117-cdb3-fe46-6dc-bc6c.ngrok-free.app';
+      'https://e547-2405-201-3016-9117-7c34-66a3-25bf-cdf6.ngrok-free.app';
   static String get tryOnApiUrl => '$tryOnBaseUrl/api/try-on';
   static String get tryOnHealthUrl => '$tryOnBaseUrl/health';
   static String get tryOnPreprocessUrl => '$tryOnBaseUrl/api/preprocess-person';

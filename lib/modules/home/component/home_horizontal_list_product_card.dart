@@ -81,10 +81,16 @@ class HomeHorizontalListProductCard extends StatelessWidget {
       height: height,
       width: width,
       margin: const EdgeInsets.only(right: 8),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
-        //border: borderSide,
-        //borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: InkWell(
         onTap: () {
@@ -165,7 +171,7 @@ class HomeHorizontalListProductCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(12.0).copyWith(right: 4.0),
       decoration: BoxDecoration(
-          color: const Color(0xFFF6F6F6), borderRadius: Utils.borderRadius(r: 6.0)),
+          color: const Color(0xFFF6F6F6), borderRadius: Utils.borderRadius(r: 10.0)),
       height: height - 2,
       width: width / 2.5,
       child: Padding(

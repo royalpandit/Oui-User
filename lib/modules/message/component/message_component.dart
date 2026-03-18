@@ -20,7 +20,7 @@ class MessageComponent extends StatelessWidget {
         sent: true,
         delivered: true,
         seen: true,
-        color: element.isMe ? const Color(0xff18587A) : const Color(0xffE8EEF2),
+        color: element.isMe ? const Color(0xFF333333) : const Color(0xFFEEEEEE),
         tail: true,
         textStyle: TextStyle(
           fontSize: 18,

@@ -19,7 +19,7 @@ class SingleChatListItem extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 16, top: 16),
         decoration: const BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: Color(0xffE8F4FF), width: 1),
+            bottom: BorderSide(color: Color(0xFFE8E8E8), width: 1),
           ),
         ),
         child: Row(
@@ -82,7 +82,7 @@ class SingleChatListItem extends StatelessWidget {
       margin: const EdgeInsets.only(left: 16),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: const Color(0xff18587A)),
+          color: const Color(0xFF333333)),
       child: Center(
         child: Text(
           item.numberOfMsg,

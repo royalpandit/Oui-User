@@ -21,7 +21,7 @@ class BestSellerGridView extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10, left: 0, right: 0),
       sliver: MultiSliver(
         children: [
-          const SliverToBoxAdapter(child: SizedBox(height: 20.0)),
+          const SliverToBoxAdapter(child: SizedBox(height: 10.0)),
           SliverToBoxAdapter(
             child: SectionHeader(
               headerText: sectionTitle,

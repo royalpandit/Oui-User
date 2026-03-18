@@ -35,7 +35,15 @@ class SingleCircularSeller extends StatelessWidget {
         margin: const EdgeInsets.only(right: 12.0),
         padding: const EdgeInsets.all(5.0),
         decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6), borderRadius: BorderRadius.circular(4.0)),
+            color: const Color(0xFFF6F6F6),
+            borderRadius: BorderRadius.circular(12.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ]),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

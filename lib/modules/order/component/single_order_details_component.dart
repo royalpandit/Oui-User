@@ -59,7 +59,7 @@ class SingleOrderDetailsComponent extends StatelessWidget {
                         style: GoogleFonts.roboto(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w700,
-                            color: Utils.dynamicPrimaryColor(context))),
+                            color: Colors.black)),
                   ])),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,7 +68,7 @@ class SingleOrderDetailsComponent extends StatelessWidget {
                           style: GoogleFonts.roboto(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w700,
-                              color: Utils.dynamicPrimaryColor(context))),
+                              color: Colors.black)),
                       if (isOrdered)
                         InkWell(
                           onTap: () {

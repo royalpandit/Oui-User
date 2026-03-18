@@ -89,14 +89,7 @@ class Utils {
   }
 
   static Color dynamicPrimaryColor(BuildContext context) {
-    final color = context
-        .read<AppSettingCubit>()
-        .settingModel!
-        .setting!
-        .themeOne
-        .replaceAll('#', '0xFF');
-    return Color(int.parse(color));
-    //return const Color(0xFF000000);
+    return const Color(0xFF000000);
   }
 
   static String formatPriceIcon(var price, BuildContext context) {

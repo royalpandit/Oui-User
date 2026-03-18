@@ -48,16 +48,16 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(
-                                color: Utils.dynamicPrimaryColor(context))),
+                            borderSide: const BorderSide(
+                                color: Colors.grey)),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(
-                                color: Utils.dynamicPrimaryColor(context))),
+                            borderSide: const BorderSide(
+                                color: Colors.black)),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(
-                                color: Utils.dynamicPrimaryColor(context))),
+                            borderSide: const BorderSide(
+                                color: Colors.grey)),
                         hintText: bankInfo.bankStatus!.accountInfo,
                       ),
                     ),

@@ -25,7 +25,7 @@ class SinglePaymentCardComponent extends StatelessWidget {
         ),
         subtitle: Text('874 ****** 8372'),
         trailing: CircleAvatar(
-          backgroundColor: const Color(0xFFC1D4DF),
+          backgroundColor: const Color(0xFFE0E0E0),
           radius: 13,
           child: const Icon(Icons.arrow_forward_ios_rounded,
               size: 16, color: Colors.black),

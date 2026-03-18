@@ -55,8 +55,8 @@ class OrderedListComponent extends StatelessWidget {
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: orderedItem.orderStatus.toString() == '4'
-                          ? Colors.red
-                          : const Color(0xFF2E7D32)),
+                          ? Colors.grey.shade700
+                          : Colors.black),
                 )
               ],
             ),

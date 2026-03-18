@@ -28,7 +28,7 @@ class _CombineBannerSliderState extends State<CombineBannerSlider> {
 
     return Column(
       children: [
-        const SizedBox(height: 14),
+        const SizedBox(height: 10),
         CarouselSlider(
           options: CarouselOptions(
             height: height,
