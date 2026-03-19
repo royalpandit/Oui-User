@@ -4,7 +4,6 @@ import 'package:shop_us/widgets/capitalized_word.dart';
 
 import '/modules/cart/model/shipping_response_model.dart';
 import '../../../utils/language_string.dart';
-import '../../../utils/utils.dart';
 
 class ShippingMethodList extends StatefulWidget {
   const ShippingMethodList({

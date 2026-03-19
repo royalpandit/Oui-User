@@ -32,46 +32,42 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final appSetting = context.read<AppSettingCubit>();
     return Column(
-      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: width,
-          height: 244.0,
-          margin: Utils.only(bottom: 10.0),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Stack(
-            //mainAxisSize: MainAxisSize.min,
-            fit: StackFit.expand,
-            children: [
-              GestureDetector(
-                onTap: () => Navigator.pushNamed(
-                    context, RouteNames.productDetailsScreen,
-                    arguments: productModel.slug),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  //mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildImage(),
-                    //const SizedBox(height: 8),
-                    // _buildContent(appSetting),
-                  ],
+        Expanded(
+          child: Container(
+            width: width,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF6F6F6),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(
+                      context, RouteNames.productDetailsScreen,
+                      arguments: productModel.slug),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: CustomImage(
+                      path: RemoteUrls.imageUrl(productModel.thumbImage),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
-              Positioned(
-                  bottom: 0.0, right: 0.0, child: addToCartButton(context)),
-              Positioned(
-                  left: 10.0,
-                  top: 10.0,
-                  child: FavoriteButton(productId: productModel.id))
-            ],
+                Positioned(
+                    bottom: 0.0, right: 0.0, child: addToCartButton(context)),
+                Positioned(
+                    left: 10.0,
+                    top: 10.0,
+                    child: FavoriteButton(productId: productModel.id))
+              ],
+            ),
           ),
         ),
-        Flexible(fit: FlexFit.loose, child: _buildContent(appSetting)),
+        _buildContent(appSetting),
       ],
     );
     // return Column(
@@ -120,39 +116,31 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget addToCartButton(BuildContext context) {
-    return SizedBox(
-      height: 38.0,
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: GestureDetector(
-          onTap: () {
-            final AddToCartModel addToCart = AddToCartModel(
-              quantity: 1,
-              productId: productModel.id,
-              image: productModel.thumbImage,
-              slug: productModel.slug,
-              token: "",
-              variantItems: variantItems,
-            );
-            context.read<AddToCartCubit>().addToCart(addToCart);
-          },
-          child: Container(
-            width: 45.0,
-            height: 45.0,
-            alignment: Alignment.center,
-            margin: const EdgeInsets.only(top: 3.0),
-            decoration: const BoxDecoration(
-                //color: Utils.dynamicPrimaryColor(context).withOpacity(0.3),
-                borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(24.0),
-              bottomRight: Radius.circular(4.0),
-            )),
-            child: Icon(
-              Icons.add,
-              color: Colors.black,
-              size: 30.0,
-            ),
-          ),
+    return GestureDetector(
+      onTap: () {
+        final AddToCartModel addToCart = AddToCartModel(
+          quantity: 1,
+          productId: productModel.id,
+          image: productModel.thumbImage,
+          slug: productModel.slug,
+          token: "",
+          variantItems: variantItems,
+        );
+        context.read<AddToCartCubit>().addToCart(addToCart);
+      },
+      child: Container(
+        height: 36,
+        width: 36,
+        alignment: Alignment.center,
+        margin: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.85),
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(
+          Icons.add_rounded,
+          color: Colors.black,
+          size: 22,
         ),
       ),
     );
@@ -204,10 +192,10 @@ class ProductCard extends StatelessWidget {
       }
     }
 
-    return Container(
-      padding: const EdgeInsets.only(left: 10, right: 0),
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 0, top: 6),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Row(

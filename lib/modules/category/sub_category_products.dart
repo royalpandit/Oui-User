@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../widgets/shimmer_loader.dart';
@@ -43,7 +42,7 @@ class SubCategoryProductScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                mainAxisExtent: 230,
+                mainAxisExtent: 290,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 25),
               itemCount: products.length,

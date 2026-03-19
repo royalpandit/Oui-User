@@ -110,7 +110,7 @@ class _PanelComponentState extends State<PanelComponent> {
 
   @override
   Widget build(BuildContext context) {
-    final couponCubit = context.read<CartCubit>().couponResponseModel;
+    final _ = context.read<CartCubit>().couponResponseModel;
     return Container(
       decoration: BoxDecoration(
           color: Colors.white,

@@ -77,21 +77,21 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     // _countryState = null;
     _countryState = context
         .read<UserProfileInfoCubit>()
-        .defaultState(widget.userData.updateUserInfo!.stateId.toString() ?? '');
+        .defaultState(widget.userData.updateUserInfo!.stateId.toString());
 
     if (_countryState != null) {
       log(_countryState.toString(), name: "_stateModel");
 
       _cityModel = context
           .read<UserProfileInfoCubit>()
-          .defaultCity(widget.userData.updateUserInfo!.cityId.toString() ?? '');
+          .defaultCity(widget.userData.updateUserInfo!.cityId.toString());
       log(_cityModel.toString(), name: "_cityModel");
     }
 
     for (var element in widget.userData.countryModel) {
       if (element.id == widget.userData.updateUserInfo!.countryId) {
         _currentCountry = element;
-        print("_country $_currentCountry");
+        debugPrint("_country $_currentCountry");
 
         break;
       }
@@ -266,7 +266,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                         onChanged: (value) {
                           profileEdBlc.changePhone(_stripPhonePrefix(value));
                         },
-                        initialValue: _stripPhonePrefix(widget.userData.updateUserInfo!.phone ?? ''),
+                        initialValue: _stripPhonePrefix(widget.userData.updateUserInfo!.phone),
                         style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
                         decoration: _inputDecoration(Language.phoneNumber.capitalizeByWord()).copyWith(
                           prefixIcon: CountryCodePicker(
@@ -418,10 +418,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
         profileImage = state.image.isNotEmpty ? state.image : profileImage;
 
         final image = context.read<UserProfileInfoCubit>().updatedInfo;
-
-        String pic = image.updateUserInfo!.image.isNotEmpty
-            ? RemoteUrls.imageUrl(image.updateUserInfo!.image)
-            : RemoteUrls.imageUrl(image.defaultImage!.image);
 
         return Container(
           decoration: BoxDecoration(

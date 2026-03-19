@@ -139,7 +139,7 @@ class _FlutterWaveState extends State<FlutterWaveScreen> {
   // }
 
   void _redirect(String url) {
-    print("Url: $url");
+    debugPrint("Url: $url");
     if (_canRedirect) {
       bool isSuccess = url.contains('/order-success-url-for-mobile-app') &&
           url.contains(RemoteUrls.rootUrl);
@@ -171,15 +171,15 @@ class _FlutterWaveState extends State<FlutterWaveScreen> {
         log(decodedJSON, name: 'FlutterWaveScreen');
         if (responseJSON["result"] == false) {
           Utils.errorSnackBar(context, responseJSON["message"]);
-          print('message3');
+          debugPrint('message3');
         } else if (responseJSON["result"] == true) {
           Utils.showSnackBar(context, responseJSON["message"]);
-          print('message1');
+          debugPrint('message1');
         }
         Navigator.pushNamedAndRemoveUntil(context, RouteNames.orderScreen,
             (route) {
           if (route.settings.name == RouteNames.mainPage) {
-            print('message2');
+            debugPrint('message2');
             return true;
           }
           return false;

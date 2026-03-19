@@ -26,9 +26,6 @@ class _WishListCardState extends State<WishListCard> {
   Widget build(BuildContext context) {
     final wishListCubit = context.read<WishListCubit>();
 
-    bool isSelected = wishListCubit.selectedId.contains(widget.product.id);
-
-    final width = MediaQuery.of(context).size.width - 40;
     const double height = 120;
     return InkWell(
       onTap: () {

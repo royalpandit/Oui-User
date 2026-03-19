@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 import '../../../core/remote_urls.dart';
-import '../../../utils/utils.dart';
 import '../model/product_details_model.dart';
 import 'related_single_product_card.dart';
 
@@ -38,28 +37,35 @@ class SellerInfo extends StatelessWidget {
           ),
 
           productDetailsModel!.thisSellerProducts.isNotEmpty
-              ? SizedBox(
-                  height: 250 +
-                      (10.0 * productDetailsModel!.thisSellerProducts.length),
-                  child: GridView.builder(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        mainAxisExtent: 304.0,
+              ? LayoutBuilder(
+                  builder: (context, constraints) {
+                    final itemCount = productDetailsModel!.thisSellerProducts.length < 4
+                        ? productDetailsModel!.thisSellerProducts.length
+                        : 4;
+                    final rows = (itemCount / 2).ceil();
+                    final gridHeight = rows * 290.0 + (rows - 1) * 10.0;
+                    return SizedBox(
+                      height: gridHeight,
+                      child: GridView.builder(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          mainAxisExtent: 290.0,
+                        ),
+                        itemCount: itemCount,
+                        itemBuilder: (context, index) {
+                          return RelatedSingleProductCard(
+                              productModel:
+                                  productDetailsModel!.thisSellerProducts[index]);
+                        },
                       ),
-                      itemCount:
-                          productDetailsModel!.thisSellerProducts.length < 4
-                              ? productDetailsModel!.thisSellerProducts.length
-                              : 4,
-                      itemBuilder: (context, index) {
-                        return RelatedSingleProductCard(
-                            productModel:
-                                productDetailsModel!.thisSellerProducts[index]);
-                      }))
+                    );
+                  },
+                )
               : const SizedBox(),
           // SliverGrid(
           //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -91,88 +97,80 @@ class SellerProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
+      padding: const EdgeInsets.all(14.0),
       margin: const EdgeInsets.only(bottom: 16.0),
       decoration: BoxDecoration(
-          color: Colors.grey.shade100, borderRadius: BorderRadius.circular(22.0)),
-      child: Column(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(16.0),
+          border: Border.all(color: Colors.grey.shade200, width: 0.5),
+      ),
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                height: 74.0,
-                width: 74.0,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: Colors.black, width: 1.2),
-                  shape: BoxShape.circle,
+          Container(
+            height: 60.0,
+            width: 60.0,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300, width: 1.5),
+              shape: BoxShape.circle,
+            ),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(RemoteUrls.imageUrl(
+                  productDetailsModel!.sellerProfile!.image)),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  productDetailsModel!.sellerProfile!.name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
                 ),
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(RemoteUrls.imageUrl(
-                      productDetailsModel!.sellerProfile!.image)),
+                const SizedBox(height: 2),
+                Text(
+                  productDetailsModel!.sellerProfile!.address,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 6),
+                Row(
                   children: [
-                    Text(
-                      productDetailsModel!.sellerProfile!.name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        height: 1.5,
-                        color: Colors.black,
+                    RatingBar.builder(
+                      initialRating:
+                          productDetailsModel!.sellerReviewQty!.toDouble(),
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      ignoreGestures: true,
+                      itemCount: 5,
+                      itemSize: 14,
+                      itemPadding:
+                          const EdgeInsets.symmetric(horizontal: 1.0),
+                      itemBuilder: (context, _) => const Icon(
+                        Icons.star_rounded,
+                        color: Colors.amber,
                       ),
+                      onRatingUpdate: (rating) {},
                     ),
+                    const SizedBox(width: 6),
                     Text(
-                      productDetailsModel!.sellerProfile!.address,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                        height: 1.5,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        RatingBar.builder(
-                          initialRating:
-                              productDetailsModel!.sellerReviewQty!.toDouble(),
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          ignoreGestures: true,
-                          itemCount: 5,
-                          itemSize: 15,
-                          itemPadding:
-                              const EdgeInsets.symmetric(horizontal: 2.0),
-                          itemBuilder: (context, _) => const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          onRatingUpdate: (rating) {},
-                        ),
-                        Container(
-                            width: 1,
-                            margin: const EdgeInsets.symmetric(horizontal: 6),
-                            height: 24,
-                            color: Colors.grey.shade300),
-                        Text(
-                          productDetailsModel!.sellerTotalReview.toString(),
-                          style: const TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w300),
-                        )
-                      ],
+                      '(${productDetailsModel!.sellerTotalReview})',
+                      style: TextStyle(
+                          fontSize: 12, color: Colors.grey.shade500),
                     )
                   ],
-                ),
-              )
-            ],
-          ),
+                )
+              ],
+            ),
+          )
         ],
       ),
     );

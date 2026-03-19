@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_us/widgets/shimmer_loader.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -46,12 +46,10 @@ class HomeScreen extends StatelessWidget {
           }
         }
       },
-      child: SafeArea(
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
         child: Scaffold(
           backgroundColor: Colors.white,
-          // appBar: HomeAppBar(
-          //   logo: context.read<AppSettingCubit>().settingModel!.setting!.logo,
-          // ),
           body: BlocBuilder<HomeControllerCubit, HomeControllerState>(
             builder: (context, state) {
               log(state.toString(), name: _className);
@@ -104,28 +102,28 @@ class _LoadedHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final routeName = ModalRoute.of(context)?.settings.name ?? '';
     final appSetting = context.read<AppSettingCubit>().settingModel!.setting;
-    const double appBarHeight = 160;
+    final rawBannerList = <BannerModel>[
+      if (homeModel.sliderBannerOne != null) homeModel.sliderBannerOne!,
+      if (homeModel.sliderBannerTwo != null) homeModel.sliderBannerTwo!,
+      if (homeModel.twoColumnBannerOne != null) homeModel.twoColumnBannerOne!,
+      if (homeModel.twoColumnBannerTwo != null) homeModel.twoColumnBannerTwo!,
+    ];
+
+    // Assign each banner to the corresponding category by index
+    final categorySlugs =
+        homeModel.homeCategories.map((c) => c.slug).toList();
     final combineBannerList = <BannerModel>[];
-    if (homeModel.sliderBannerOne != null) {
-      combineBannerList.add(homeModel.sliderBannerOne!);
+    for (int i = 0; i < rawBannerList.length; i++) {
+      if (i < categorySlugs.length) {
+        combineBannerList.add(rawBannerList[i].copyWith(
+          slug: categorySlugs[i],
+          titleOne: homeModel.homeCategories[i].name,
+        ));
+      } else {
+        combineBannerList.add(rawBannerList[i]);
+      }
     }
-    if (homeModel.sliderBannerTwo != null) {
-      combineBannerList.add(homeModel.sliderBannerTwo!);
-    }
-    if (homeModel.twoColumnBannerOne != null) {
-      combineBannerList.add(homeModel.twoColumnBannerOne!);
-    }
-    if (homeModel.twoColumnBannerTwo != null) {
-      combineBannerList.add(homeModel.twoColumnBannerTwo!);
-    }
-    // if (homeModel.singleBannerOne != null) {
-    //   combineBannerList.add(homeModel.singleBannerOne!);
-    // }
-    // if (homeModel.singleBannerTwo != null) {
-    //   combineBannerList.add(homeModel.singleBannerTwo!);
-    // }
 
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
@@ -207,37 +205,7 @@ class _LoadedHomePage extends StatelessWidget {
           const SliverToBoxAdapter(child: SizedBox.shrink())
         ],
 
-        // ///top rated product slider start
-        // if (homeModel.topRatedVisibility is bool ||
-        //     homeModel.topRatedVisibility is int ||
-        //     homeModel.topRatedVisibility is String) ...[
-        //   if (homeModel.topRatedVisibility == true ||
-        //       homeModel.topRatedVisibility == 1 ||
-        //       homeModel.topRatedVisibility == '1') ...[
-        //     CategoryAndListComponent(
-        //       productList: homeModel.topRatedProducts,
-        //       bgColor: const Color(0xffF6F6F6),
-        //       category:
-        //           '${homeModel.sectionTitle[3].custom ?? homeModel.sectionTitle[3].defaultTitle}',
-        //       onTap: () {
-        //         Navigator.pushNamed(
-        //           context,
-        //           RouteNames.allPopulerProductScreen,
-        //           arguments: {
-        //             'keyword': "popular_category",
-        //             'app_bar':
-        //                 '${homeModel.sectionTitle[3].custom ?? homeModel.sectionTitle[3].defaultTitle}'
-        //           },
-        //         );
-        //       },
-        //     ),
-        //   ]
-        // ] else ...[
-        //   const SliverToBoxAdapter(child: SizedBox.shrink())
-        // ],
-
         ///top rated product slider end
-        // WidthBannerComponent(banner: homeModel.popularCategorySidebarBanner),
 
         if (homeModel.topRatedVisibility is bool ||
             homeModel.topRatedVisibility is int ||

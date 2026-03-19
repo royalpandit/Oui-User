@@ -99,7 +99,7 @@ class _RazorpayScreenState extends State<RazorpayScreen> {
   }
 
   void _redirect(String url) {
-    print("Url: $url");
+    debugPrint("Url: $url");
     if (_canRedirect) {
       bool isSuccess = url.contains('/order-success-url-for-mobile-app') &&
           url.contains(RemoteUrls.rootUrl);

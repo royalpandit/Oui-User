@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '/widgets/field_error_text.dart';
-import '../../../utils/utils.dart';
 import '../controller/login/login_bloc.dart';
 import 'guest_button.dart';
 

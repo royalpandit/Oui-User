@@ -22,7 +22,7 @@ class CustomRatingBar extends StatelessWidget {
         size: 18.0,
       ),
       onRatingUpdate: (rating) {
-        print(rating);
+        debugPrint('$rating');
       },
     );
   }

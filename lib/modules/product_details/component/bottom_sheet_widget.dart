@@ -45,28 +45,31 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.fromLTRB(20, 16, 20, MediaQuery.of(context).padding.bottom + 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
           BottomSheetProduct(
             product: ProductModel.fromMap(
               widget.product.toMap(),
             ),
             variantItem: variantItems,
           ),
-          Container(
-            color: Colors.grey.shade200,
-            height: 1,
-            width: double.infinity,
-            margin: const EdgeInsets.only(bottom: 15),
-          ),
+          Divider(color: Colors.grey.shade200, height: 24),
           _VarientItemsWidget(
             productVariants: widget.product.activeVariantModel,
             variantItems: variantItems,
             onChange: (item) {
               setState(() {
-                // Update your logic here
                 for (var element in variantItems.toList()) {
                   if (element.id == item.id) {
                     variantItems.remove(element);
@@ -76,84 +79,79 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
               });
             },
           ),
-
-          // _VarientItemsWidget(
-          //   productVariants: widget.product.activeVariantModel,
-          //   variantItems: variantItems,
-          //   onChange: (item) {
-          //     setState(() {
-          //       for (var element in variantItems.toList()) {
-          //         if (element.id == item.id) {
-          //           variantItems.remove(element);
-          //           print('Element Id: ${element.name}');
-          //           print('Item Id: ${item.name}');
-          //         }
-          //       }
-          //       variantItems.add(item);
-          //     });
-          //   },
-          // ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Text(
-                  Language.quantity.capitalizeByWord(),
-                  style: GoogleFonts.inter(
-                      fontSize: 18, color: Colors.black, fontWeight: FontWeight.w600),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  if (quantity > 1) {
-                    quantity--;
-                    setState(() {});
-                  }
-                },
-                child: CircleAvatar(
-                  radius: 12,
-                  foregroundColor: Colors.transparent,
-                  backgroundColor: Colors.grey.shade200,
-                  child: const Icon(
-                    Icons.remove,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 9),
-                child: Text(
-                  quantity.toString(),
-                  style: GoogleFonts.inter(
-                      fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  quantity++;
-                  setState(() {});
-                },
-                child: CircleAvatar(
-                  radius: 12,
-                  foregroundColor: Colors.transparent,
-                  backgroundColor: Colors.grey.shade200,
-                  child: const Icon(Icons.add,
-                      color: Colors.black),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Row(
             children: [
               Text(
-                "${Language.totalPrice.capitalizeByWord()} : ${totalPrice()}",
-                style: GoogleFonts.inter(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w600),
+                Language.quantity.capitalizeByWord(),
+                style: GoogleFonts.inter(
+                    fontSize: 15, color: Colors.black, fontWeight: FontWeight.w600),
+              ),
+              const Spacer(),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        if (quantity > 1) {
+                          quantity--;
+                          setState(() {});
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        alignment: Alignment.center,
+                        child: Icon(Icons.remove, color: Colors.black, size: 18),
+                      ),
+                    ),
+                    Container(
+                      width: 40,
+                      alignment: Alignment.center,
+                      child: Text(
+                        quantity.toString(),
+                        style: GoogleFonts.inter(
+                            fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        quantity++;
+                        setState(() {});
+                      },
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        alignment: Alignment.center,
+                        child: Icon(Icons.add, color: Colors.black, size: 18),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 14),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                Language.totalPrice.capitalizeByWord(),
+                style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
+              ),
+              Text(
+                totalPrice(),
+                style: GoogleFonts.inter(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
@@ -169,15 +167,15 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             },
             child: Container(
               width: double.infinity,
-              height: 50.0,
+              height: 52.0,
               decoration: BoxDecoration(
                   color: Colors.black,
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(14)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.add, color: Colors.white, size: 24.0),
-                  const SizedBox(width: 6),
+                  const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 22.0),
+                  const SizedBox(width: 8),
                   Text(
                     Language.addToCart.capitalizeByWord(),
                     style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
@@ -367,12 +365,12 @@ class _VarientItemsWidget extends StatelessWidget {
     return InkWell(
       onTap: () => onChange(varient),
       child: Container(
-        margin: Utils.symmetric(h: 4.0),
-        padding: Utils.symmetric(h: 4.0, v: 4.0),
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: variantItems.contains(varient) ? Colors.black : null,
-          borderRadius: BorderRadius.circular(3),
-          border: Border.all(color: Colors.grey.shade200),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: variantItems.contains(varient) ? Colors.black : Colors.grey.shade300),
         ),
         child: Text(
           itemModel.name.capitalizeByWord(),

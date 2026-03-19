@@ -9,7 +9,6 @@ import '/core/remote_urls.dart';
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 import '/widgets/custom_image.dart';
-import '/widgets/shimmer_loader.dart';
 import 'controllers/about_us_cubit/about_us_cubit.dart';
 
 class AboutUsScreen extends StatefulWidget {

@@ -99,82 +99,86 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.product.category!.name.toUpperCase(),
-                      style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade500),
-                    ),
-                    const SizedBox(height: 10.0),
-                    Text(
-                      widget.product.name.capitalizeByWord(),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black),
-                    ),
-                  ],
+          if (widget.product.category != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                widget.product.category!.name.toUpperCase(),
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey.shade500,
+                  letterSpacing: 0.8,
                 ),
               ),
-              /*  Container(
-                height: 40.0,
-                width: 40.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4.0),
-                  color: borderColor,
-                ),
-                child: const Icon(Icons.share, color: Utils.dynamicPrimaryColor(context), size: 26.0),
-              ),*/
-            ],
-          ),
+            ),
           const SizedBox(height: 10.0),
+          Text(
+            widget.product.name.capitalizeByWord(),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.black, height: 1.3),
+          ),
+          const SizedBox(height: 12.0),
           if (isFlashSale) ...[
             PriceCardWidget(
               price: mainPrice.toString(),
               offerPrice: flashPrice.toString(),
-              textSize: 22,
+              textSize: 24,
             ),
           ] else ...[
             PriceCardWidget(
               price: mainPrice.toString(),
               offerPrice: offerPrice.toString(),
-              textSize: 22,
+              textSize: 24,
             ),
           ],
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 12.0),
           _builtRating(),
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 12.0),
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 10.0),
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0)
-                .copyWith(bottom: 6.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(4.0),
+              color: availability
+                  ? Colors.red.withOpacity(0.08)
+                  : Colors.green.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            child: Text.rich(TextSpan(children: [
-              TextSpan(
-                  text: '${Language.availability.capitalizeByWord()}: ',
-                  style: GoogleFonts.inter(fontSize: 14, color: Colors.grey)),
-              TextSpan(
-                  text: availability
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  availability ? Icons.remove_shopping_cart_outlined : Icons.check_circle_outline,
+                  size: 16,
+                  color: availability ? Colors.red.shade600 : Colors.green.shade700,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  availability
                       ? Language.stockOut
                       : '${widget.product.qty} ${Language.productsAvailable}',
-                  style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black))
-            ])),
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: availability ? Colors.red.shade600 : Colors.green.shade700,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 10.0),
-          Text(
-            widget.product.shortDescription,
-            textAlign: TextAlign.justify,
-            style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
-          ),
-          const SizedBox(height: 26),
+          if (widget.product.shortDescription.isNotEmpty) ...[
+            const SizedBox(height: 14.0),
+            Text(
+              widget.product.shortDescription,
+              textAlign: TextAlign.start,
+              style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600, height: 1.5),
+            ),
+          ],
+          const SizedBox(height: 16),
         ],
       ),
     );
@@ -190,24 +194,30 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
           allowHalfRating: true,
           ignoreGestures: true,
           itemCount: 5,
-          itemSize: 15,
-          itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+          itemSize: 16,
+          itemPadding: const EdgeInsets.symmetric(horizontal: 1.5),
           itemBuilder: (context, _) => const Icon(
-            Icons.star,
+            Icons.star_rounded,
             color: Colors.amber,
           ),
           onRatingUpdate: (rating) {},
         ),
+        const SizedBox(width: 8),
         Container(
             width: 1,
-            margin: const EdgeInsets.symmetric(horizontal: 6),
-            height: 24,
+            height: 16,
             color: Colors.grey.shade300),
+        const SizedBox(width: 8),
         Text(
           Utils.getRating(widget.detailsModel.productReviews)
               .toStringAsFixed(1),
-          style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black),
-        )
+          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          '(${widget.detailsModel.productReviews.length})',
+          style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade500),
+        ),
       ],
     );
   }

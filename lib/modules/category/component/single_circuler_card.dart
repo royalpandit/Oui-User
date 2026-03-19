@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/core/remote_urls.dart';
 import 'package:shop_us/modules/home/model/home_categories_model.dart';
+import 'package:shop_us/widgets/capitalized_word.dart';
 import 'package:shop_us/widgets/custom_image.dart';
 
 import '../../../core/router_name.dart';
@@ -31,6 +32,7 @@ class CategoryCircleCard extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.grey.shade100,
             borderRadius: BorderRadius.circular(12.0),
+            border: Border.all(color: Colors.grey.shade400, width: 1.0),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.04),
@@ -52,7 +54,7 @@ class CategoryCircleCard extends StatelessWidget {
             ),
             const SizedBox(width: 10.0),
             Text(
-              homeCategories.name,
+              homeCategories.name.capitalizeByWord(),
               maxLines: 1,
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,

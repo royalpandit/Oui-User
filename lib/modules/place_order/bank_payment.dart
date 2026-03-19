@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '/widgets/capitalized_word.dart';
 import '../../utils/language_string.dart';
-import '../../utils/utils.dart';
 import '../../widgets/field_error_text.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/rounded_app_bar.dart';
@@ -30,7 +29,7 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
   @override
   Widget build(BuildContext context) {
     final bankInfo = context.read<CheckoutCubit>().checkoutResponseModel;
-    print(bankInfo!.bankStatus!.accountInfo);
+    debugPrint(bankInfo!.bankStatus!.accountInfo);
     return Scaffold(
       appBar: RoundedAppBar(titleText: Language.bankPayment.capitalizeByWord()),
       body: SingleChildScrollView(

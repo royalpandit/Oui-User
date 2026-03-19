@@ -11,7 +11,6 @@ import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 import '../../core/router_name.dart';
 import '../../dummy_data/all_dummy_data.dart';
-import '../../utils/constants.dart';
 import '../../utils/utils.dart';
 import '../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../profile/controllers/address/address_cubit.dart';

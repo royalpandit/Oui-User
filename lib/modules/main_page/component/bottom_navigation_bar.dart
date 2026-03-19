@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '/widgets/capitalized_word.dart';
-import '../../../utils/k_images.dart';
 import '../../../utils/language_string.dart';
 import '../main_controller.dart';
 
@@ -13,47 +10,105 @@ class MyBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = MainController();
-    return SizedBox(
-      child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        child: StreamBuilder(
-          initialData: 0,
-          stream: controller.naveListener.stream,
-          builder: (_, AsyncSnapshot<int> index) {
-            int selectedIndex = index.data ?? 0;
-            return BottomNavigationBar(
-              showUnselectedLabels: true,
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: Colors.white,
-              selectedLabelStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),
-              unselectedLabelStyle: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade500),
-              selectedItemColor: Colors.black,
-              unselectedItemColor: Colors.grey.shade500,
-              elevation: 8,
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: SvgPicture.asset(KImages.homeIcon, colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn)),
-                  activeIcon: SvgPicture.asset(KImages.homeActive, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
+
+    return Container(
+      height: 70, // Standard professional height
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          top: BorderSide(color: Colors.grey.shade200, width: 1),
+        ),
+      ),
+      child: StreamBuilder<int>(
+        initialData: 0,
+        stream: controller.naveListener.stream,
+        builder: (context, snapshot) {
+          int selectedIndex = snapshot.data ?? 0;
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(
+                  context,
+                  index: 0,
+                  selectedIndex: selectedIndex,
+                  icon: Icons.home_outlined,
+                  activeIcon: Icons.home_rounded,
                   label: Language.home.capitalizeByWord(),
+                  onTap: () => controller.naveListener.sink.add(0),
                 ),
-                BottomNavigationBarItem(
-                  icon: SvgPicture.asset(KImages.orderIcon, colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn)),
-                  activeIcon: SvgPicture.asset(KImages.orderActive, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
+                _buildNavItem(
+                  context,
+                  index: 1,
+                  selectedIndex: selectedIndex,
+                  icon: Icons.shopping_bag_outlined,
+                  activeIcon: Icons.shopping_bag_rounded,
                   label: Language.order.capitalizeByWord(),
+                  onTap: () => controller.naveListener.sink.add(1),
                 ),
-                BottomNavigationBarItem(
-                  tooltip: Language.profile.capitalizeByWord(),
-                  activeIcon: SvgPicture.asset(KImages.profileActive, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
-                  icon: SvgPicture.asset(KImages.profileIcon, colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn)),
+                _buildNavItem(
+                  context,
+                  index: 2,
+                  selectedIndex: selectedIndex,
+                  icon: Icons.person_outline_rounded,
+                  activeIcon: Icons.person_rounded,
                   label: Language.profile.capitalizeByWord(),
+                  onTap: () => controller.naveListener.sink.add(2),
                 ),
               ],
-              currentIndex: selectedIndex,
-              onTap: (int index) {
-                controller.naveListener.sink.add(index);
-              },
-            );
-          },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+    BuildContext context, {
+    required int index,
+    required int selectedIndex,
+    required IconData icon,
+    required IconData activeIcon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    bool isSelected = index == selectedIndex;
+
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          // 1. Box behind icon and name when selected
+          color: isSelected ? Colors.black : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isSelected ? activeIcon : icon,
+              color: isSelected ? Colors.white : Colors.grey.shade500,
+              size: 22,
+            ),
+            // 2. Animate text showing/hiding for a premium feel
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

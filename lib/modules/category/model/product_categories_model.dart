@@ -40,21 +40,28 @@ class ProductCategoriesModel extends Equatable {
 
   factory ProductCategoriesModel.fromMap(Map<String, dynamic> map) {
     return ProductCategoriesModel(
-      activeVariants: List<ActiveVariantModel>.from(
-        (map['activeVariants'] as List<dynamic>).map<ActiveVariantModel>(
-          (x) => ActiveVariantModel.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      brands: List<BrandModel>.from(
-        (map['brands'] as List<dynamic>).map<BrandModel>(
-          (x) => BrandModel.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      products: List<ProductModel>.from(
-        (map['products']['data'] as List<dynamic>).map<ProductModel>(
-          (x) => ProductModel.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      activeVariants: map['active_variants'] != null
+          ? List<ActiveVariantModel>.from(
+              (map['active_variants'] as List<dynamic>)
+                  .map<ActiveVariantModel>(
+                (x) => ActiveVariantModel.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : [],
+      brands: map['brands'] != null
+          ? List<BrandModel>.from(
+              (map['brands'] as List<dynamic>).map<BrandModel>(
+                (x) => BrandModel.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : [],
+      products: map['products'] != null && map['products']['data'] != null
+          ? List<ProductModel>.from(
+              (map['products']['data'] as List<dynamic>).map<ProductModel>(
+                (x) => ProductModel.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : [],
     );
   }
 

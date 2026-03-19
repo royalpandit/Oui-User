@@ -13,92 +13,60 @@ class NewArrivalComponent extends StatelessWidget {
     required this.productList,
     required this.sectionTitle,
   });
+
   final List<ProductModel> productList;
   final String sectionTitle;
 
   @override
   Widget build(BuildContext context) {
+    String formattedTitle = sectionTitle.trim().split(RegExp(r'\s+')).map((word) {
+      if (word.isEmpty) return "";
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(' ');
+
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       sliver: MultiSliver(
         children: [
           SliverToBoxAdapter(
-              child: Text(sectionTitle,
-                  style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16.0,
-                    color: Colors.black,
-                  ))),
-          const SliverPadding(padding: EdgeInsets.symmetric(vertical: 10.0)),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    formattedTitle,
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18.0,
+                      color: Colors.black,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              mainAxisExtent: 304.0,
+              crossAxisSpacing: 14,
+              mainAxisSpacing: 20,
+              // mainAxisExtent increased to 320 to allow for the contained 
+              // image and the text description below.
+              mainAxisExtent: 320.0, 
             ),
             delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) =>
-                  ProductCard(productModel: productList[index]),
+              (BuildContext context, int index) {
+                // Return your main ProductCard here
+                return ProductCard(productModel: productList[index]);
+              },
               childCount: productList.length > 8 ? 8 : productList.length,
             ),
           ),
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
         ],
       ),
-    );
-  }
-}
-
-class NewArrivalRow extends StatelessWidget {
-  NewArrivalRow({super.key});
-  final List<String> list = <String>[
-    'New Arrival',
-    'Best Selling',
-    'Discount Products',
-    'Height Price',
-    'Low Price',
-    'Free Delivery'
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'New Arrival',
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.w700,
-            fontSize: 16.0,
-            color: Colors.black,
-          ),
-        ),
-        PopupMenuButton<String>(
-          position: PopupMenuPosition.under,
-          constraints: const BoxConstraints(maxWidth: 180.0),
-          icon: const CustomImage(path: KImages.newArrivalFilter),
-          padding: EdgeInsets.zero,
-          itemBuilder: (context) {
-            return list
-                .map<PopupMenuItem<String>>(
-                  (item) => PopupMenuItem(
-                    value: item,
-                    height: 36.0,
-                    child: Text(
-                      item,
-                      style: GoogleFonts.inter(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w400,
-                        height: 0.6,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                )
-                .toList();
-          },
-        ),
-      ],
     );
   }
 }

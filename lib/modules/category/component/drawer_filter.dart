@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
-import '../../../utils/utils.dart';
 import '../../../widgets/primary_button.dart';
 import '../controller/cubit/category_cubit.dart';
 import '../model/filter_model.dart';
@@ -34,11 +33,11 @@ class _DrawerFilterState extends State<DrawerFilter> {
           for (var i in state.categoryProducts) {
             if (i.price < minValue) {
               minValue = i.price;
-              print('minValue : $minValue');
+              debugPrint('minValue : $minValue');
             }
             if (i.price > maxValue) {
               maxValue = i.price;
-              print('maxValue : $maxValue');
+              debugPrint('maxValue : $maxValue');
             }
           }
           //_currentRangeValues = RangeValues(minValue, maxValue);
@@ -92,8 +91,8 @@ class _DrawerFilterState extends State<DrawerFilter> {
                         minValue =
                             double.parse(values.start.round().toString());
                         maxValue = double.parse(values.end.round().toString());
-                        print(_currentRangeValues);
-                        print("min: $minValue - max: $maxValue");
+                        debugPrint('$_currentRangeValues');
+                        debugPrint("min: $minValue - max: $maxValue");
                       });
                     },
                   ),

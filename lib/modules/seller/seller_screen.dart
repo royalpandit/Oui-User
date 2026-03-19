@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import '../../core/remote_urls.dart';
-import '../../utils/utils.dart';
 import '../../widgets/custom_image.dart';
 import '../category/component/product_card.dart';
 

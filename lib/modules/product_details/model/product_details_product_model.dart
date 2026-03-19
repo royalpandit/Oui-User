@@ -196,10 +196,10 @@ class ProductDetailsProductModel extends Equatable {
           (x) => ActiveVariantModel.fromMap(x as Map<String, dynamic>),
         ),
       ),
-      category: map['category'] != null
+      category: map['category'] != null && map['category'] is Map
           ? CategoriesModel.fromMap(map['category'] as Map<String, dynamic>)
           : null,
-      brand: map['brand'] != null
+      brand: map['brand'] != null && map['brand'] is Map
           ? BrandModel.fromMap(map['brand'] as Map<String, dynamic>)
           : null,
       avgReview: map['avg_review'] != null

@@ -100,7 +100,7 @@ class _SslCommerceState extends State<SslCommerceScreen> {
   }
 
   void _redirect(String url) {
-    print("Url: $url");
+    debugPrint("Url: $url");
     if (_canRedirect) {
       bool isSuccess = url.contains('/sslcommerz-success') &&
           url.contains(RemoteUrls.rootUrl);
@@ -117,7 +117,7 @@ class _SslCommerceState extends State<SslCommerceScreen> {
         Navigator.pop(context);
         return;
       } else {
-        print('sslzzzzzzzzz');
+        debugPrint('sslzzzzzzzzz');
         log("Encountered problem");
       }
     }

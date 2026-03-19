@@ -10,7 +10,6 @@ import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 import '../../core/remote_urls.dart';
 import '../../core/router_name.dart';
-import '../../utils/utils.dart';
 import '../try_on/try_on_constants.dart';
 import '../../widgets/toggle_button_component.dart';
 import '../cart/controllers/cart/cart_cubit.dart';
@@ -81,15 +80,25 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       children: [
         CustomScrollView(
           slivers: [
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
             SliverAppBar(
               backgroundColor: Colors.white,
               elevation: 0,
               scrolledUnderElevation: 0,
+              floating: true,
+              pinned: false,
               systemOverlayStyle: SystemUiOverlayStyle.dark,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
-                onPressed: () => Navigator.pop(context),
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: IconButton(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.grey.shade100,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.black),
+                  onPressed: () => Navigator.pop(context),
+                ),
               ),
               centerTitle: true,
               title: Text(
@@ -102,17 +111,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   product: productDetailsModel.product,
                   gallery: productDetailsModel.gallery),
             ),
-            // SliverToBoxAdapter(
-            //     child: ProductHeaderComponent(
-            //         productDetailsModel.product, productDetailsModel.gallery)),
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
             SliverToBoxAdapter(
               child: ProductDetailsComponent(
                 detailsModel: productDetailsModel,
                 product: productDetailsModel.product,
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 25)),
+            const SliverToBoxAdapter(child: SizedBox(height: 8)),
             SliverToBoxAdapter(
               child: ToggleButtonComponent(
                 textList: [
@@ -130,12 +136,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 },
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
             SliverToBoxAdapter(child: getChild(productDetailsModel)),
             SliverToBoxAdapter(
               child: RelatedProductsList(productDetailsModel.relatedProducts),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 95)),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
         _buildBottomButtons(productDetailsModel.product),
@@ -162,14 +168,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     final clothImageUrl = RemoteUrls.imageUrl(product.thumbImage);
     final clothType = clothTypeFromCategorySlug(product.category?.slug);
 
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomPadding > 0 ? bottomPadding : 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade200)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, -4),
+          ),
+        ],
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
+          topLeft: Radius.circular(24.0),
+          topRight: Radius.circular(24.0),
         ),
       ),
       child: Row(

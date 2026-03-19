@@ -189,8 +189,13 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               title: "Cash On Delivery",
               icon: KImages.codIcon,
               press: () {
-                body['agree_terms_condition'] = '1';
-                context.read<CashOnPaymentCubit>().cashOnDelivery(body);
+                final jsonBody = <String, dynamic>{
+                  'shipping_address_id': int.tryParse(body['shipping_address_id'].toString()) ?? 0,
+                  'billing_address_id': int.tryParse(body['billing_address_id'].toString()) ?? 0,
+                  'shipping_method_id': int.tryParse(body['shipping_method_id'].toString()) ?? 0,
+                  'coupon': body['coupon']?.toString() ?? '',
+                };
+                context.read<CashOnPaymentCubit>().cashOnDelivery(jsonBody);
               },
             ),
             PaymentCard(
@@ -255,7 +260,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 Navigator.pushNamed(context, RouteNames.molliePaymentScreen,
                         arguments: RemoteUrls.payWithMollieWeb(token, params))
                     .then((value) {
-                  print("V: $value");
+                  debugPrint("V: $value");
                   if (value == true) {
                     Navigator.pushNamedAndRemoveUntil(
                         context, RouteNames.orderScreen, (route) {

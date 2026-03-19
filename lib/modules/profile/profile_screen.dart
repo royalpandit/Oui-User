@@ -9,7 +9,6 @@ import '/utils/utils.dart';
 import '/widgets/capitalized_word.dart';
 import '../../core/remote_urls.dart';
 import '../../core/router_name.dart';
-import '../../utils/constants.dart';
 import '../../widgets/please_sign_in_widget.dart';
 import '../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../authentication/controller/login/login_bloc.dart';
@@ -138,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
   void _showAppInfoSheet(BuildContext context) {
-    final settingModel = context.read<AppSettingCubit>().settingModel;
+    context.read<AppSettingCubit>().settingModel;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,

@@ -63,7 +63,7 @@ class FlashScreen extends StatelessWidget {
                       crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      mainAxisExtent: 230,
+                      mainAxisExtent: 290,
                     ),
                     itemCount: state.flashModel.products.length,
                     itemBuilder: (context,index){

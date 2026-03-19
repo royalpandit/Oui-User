@@ -200,7 +200,7 @@ class RouteNames {
         return MaterialPageRoute(
             settings: settings, builder: (_) => const AddressScreen());
       case RouteNames.addAddressScreen:
-        final map = settings.arguments as Map<String, dynamic>;
+        settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             settings: settings, builder: (_) => const AddAddressScreen());
       case RouteNames.addNewPaymentCardScreen:

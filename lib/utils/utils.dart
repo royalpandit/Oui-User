@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -118,7 +117,7 @@ class Utils {
         double p = 0.0;
 
         for (var i in cartProductModel.variants) {
-          print("vItem1: $i");
+          debugPrint("vItem1: $i");
           if (i.varientItem != null) {
             p += i.varientItem!.price;
           }
@@ -132,7 +131,7 @@ class Utils {
       if (cartProductModel.variants.isNotEmpty) {
         double p = 0.0;
         for (var i in cartProductModel.variants) {
-          print("vItem2: $i");
+          debugPrint("vItem2: $i");
           if (i.varientItem != null) {
             p += i.varientItem!.price;
           }

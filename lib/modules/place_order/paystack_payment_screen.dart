@@ -100,7 +100,7 @@ class _PaystackPaymenttState extends State<PaystackPaymentScreen> {
   }
 
   void _redirect(String url) {
-    print("Url: $url");
+    debugPrint("Url: $url");
     if (_canRedirect) {
       bool isSuccess = url.contains('/order-success-url-for-mobile-app') &&
           url.contains(RemoteUrls.rootUrl);
@@ -134,7 +134,7 @@ class _PaystackPaymenttState extends State<PaystackPaymentScreen> {
           Utils.errorSnackBar(context, responseJSON["message"]);
         } else if (responseJSON["result"] == true) {
           Utils.showSnackBar(context, responseJSON["message"]);
-          print('paystackkkkkkk');
+          debugPrint('paystackkkkkkk');
         }
         Navigator.pushNamedAndRemoveUntil(context, RouteNames.orderScreen,
             (route) {

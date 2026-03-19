@@ -127,9 +127,9 @@ class ProductDetailsModel extends Equatable {
       sellerTotalProducts: map['sellerTotalProducts'] ?? 0,
       sellerReviewQty: map['sellerReviewQty'] ?? 0,
       sellerTotalReview: map['sellerTotalReview'] !=null ?  int.parse("${map['sellerTotalReview']}") : 0,
-      sellerProfile: map['seller'] != null
+      sellerProfile: map['seller'] != null && map['seller'] is Map
           ? SellerInfoProfile.fromMap(
-          map['seller']['user'] as Map<String, dynamic>)
+          (map['seller']['user'] is Map ? map['seller']['user'] : {}) as Map<String, dynamic>)
           : null,
     );
   }

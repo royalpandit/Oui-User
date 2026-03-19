@@ -15,30 +15,29 @@ class RelatedProductsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (relatedProducts.isEmpty) return const SizedBox.shrink();
     return Column(
       children: [
         Container(
-          margin: const EdgeInsets.only(bottom: 10.0),
+          margin: const EdgeInsets.only(bottom: 12.0),
           child: SectionHeader(
             headerText: Language.relatedProduct.capitalizeByWord(),
             isSeeAll: false,
-            // onTap: () =>Navigator.pushNamed(context, RouteNames.allCategoryListScreen),
           ),
         ),
         SizedBox(
-          height: 304.0,
+          height: 290.0,
           child: ListView.separated(
-            separatorBuilder: (context, index) => const SizedBox(width: 16),
+            separatorBuilder: (context, index) => const SizedBox(width: 12),
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             itemCount: relatedProducts.length,
             itemBuilder: (context, index) => RelatedSingleProductCard(
-                productModel: relatedProducts[index], width: 180),
+                productModel: relatedProducts[index], width: 165),
           ),
         ),
-        const SizedBox(
-          height: 30.0,
-        )
+        const SizedBox(height: 16.0),
       ],
     );
   }

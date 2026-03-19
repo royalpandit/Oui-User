@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '/utils/language_string.dart';
-import '/widgets/capitalized_word.dart';
-import '../../core/router_name.dart';
-import '../../utils/utils.dart';
 import 'controller/forgot_password/forgot_password_cubit.dart';
 
 class ForgotScreen extends StatelessWidget {

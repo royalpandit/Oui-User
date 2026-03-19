@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
@@ -19,9 +18,7 @@ class CheckoutSingleItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width - 40;
 
-    double flashPrice = 0.0;
     double offerPrice = 0.0;
     double mainPrice = 0.0;
     final isFlashSale = appSetting.settingModel!.flashSaleProducts
@@ -52,6 +49,7 @@ class CheckoutSingleItem extends StatelessWidget {
       mainPrice = product.product.offerPrice;
     }
 
+    double flashPrice = 0.0;
     if (isFlashSale) {
       if (product.product.offerPrice.toString().isNotEmpty) {
         final discount =

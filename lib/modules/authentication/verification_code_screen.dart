@@ -5,16 +5,38 @@ import 'package:pinput/pinput.dart';
 
 import '/widgets/capitalized_word.dart';
 import '/utils/language_string.dart';
+import '../../core/router_name.dart';
 import 'controller/login/login_bloc.dart'; // Verified path
 
-class VerificationCodeScreen extends StatelessWidget {
+class VerificationCodeScreen extends StatefulWidget {
   const VerificationCodeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final pinController = TextEditingController();
-    final size = MediaQuery.of(context).size;
+  State<VerificationCodeScreen> createState() => _VerificationCodeScreenState();
+}
 
+class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
+  final pinController = TextEditingController();
+  bool _isSubmitting = false;
+  bool _isVerified = false;
+
+  @override
+  void dispose() {
+    pinController.dispose();
+    super.dispose();
+  }
+
+  void _submitCode(BuildContext context) {
+    if (_isSubmitting || _isVerified) return;
+    if (pinController.text.length == 6) {
+      context.read<LoginBloc>().add(
+            AccountActivateCodeSubmit(pinController.text),
+          );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -26,7 +48,48 @@ class VerificationCodeScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SafeArea(
+      body: BlocListener<LoginBloc, LoginModelState>(
+        listenWhen: (prev, curr) => prev.state != curr.state,
+        listener: (context, modelState) {
+          final loginState = modelState.state;
+          if (loginState is LoginStateLoading) {
+            setState(() => _isSubmitting = true);
+          } else if (loginState is AccountActivateSuccess) {
+            setState(() {
+              _isSubmitting = false;
+              _isVerified = true;
+            });
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              RouteNames.authenticationScreen,
+              (route) => false,
+            );
+          } else if (loginState is LoginStateError) {
+            setState(() => _isSubmitting = false);
+            final msg = loginState.errorMsg.toLowerCase();
+            if (msg.contains('invalid token') || msg.contains('already')) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Already verified. Please sign in.'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                RouteNames.authenticationScreen,
+                (route) => false,
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(loginState.errorMsg),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          }
+        },
+        child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
@@ -86,9 +149,7 @@ class VerificationCodeScreen extends StatelessWidget {
                     ),
                   ),
                   onCompleted: (String code) {
-                    context
-                        .read<LoginBloc>()
-                        .add(AccountActivateCodeSubmit(code));
+                    _submitCode(context);
                   },
                 ),
               ),
@@ -134,26 +195,32 @@ class VerificationCodeScreen extends StatelessWidget {
                     ),
                     elevation: 0,
                   ),
-                  onPressed: () {
-                    if (pinController.text.length == 6) {
-                      context.read<LoginBloc>().add(
-                            AccountActivateCodeSubmit(pinController.text),
-                          );
-                    }
-                  },
-                  child: Text(
-                    "Verify Now",
-                    style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    ),
-                  ),
+                  onPressed: _isSubmitting || _isVerified
+                      ? null
+                      : () => _submitCode(context),
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.black,
+                          ),
+                        )
+                      : Text(
+                          _isVerified ? "Verified" : "Verify Now",
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 20),
             ],
           ),
         ),
+      ),
       ),
     );
   }

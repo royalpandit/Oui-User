@@ -17,14 +17,19 @@ class SingleReviewCardComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(14),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
             backgroundImage:
                 NetworkImage(RemoteUrls.imageUrl(reviewModel.user.image ?? '')),
-            radius: 22,
+            radius: 20,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -36,15 +41,17 @@ class SingleReviewCardComponent extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Text(reviewModel.user.name,
-                          maxLines: 2, style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black)),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black)),
                     ),
                     Text(
                       Utils.timeAgo(reviewModel.createdAt),
-                      style: GoogleFonts.inter(fontSize: 12, color: Colors.grey),
+                      style: GoogleFonts.inter(fontSize: 11, color: Colors.grey),
                     )
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 RatingBar.builder(
                   initialRating: Utils.toDouble(reviewModel.rating.toString()),
                   minRating: 1,
@@ -53,17 +60,20 @@ class SingleReviewCardComponent extends StatelessWidget {
                   ignoreGestures: true,
                   itemCount: 5,
                   itemSize: 14,
-                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  itemPadding: const EdgeInsets.symmetric(horizontal: 1.0),
                   itemBuilder: (context, _) => const Icon(
-                    Icons.star,
+                    Icons.star_rounded,
                     color: Colors.amber,
                   ),
                   onRatingUpdate: (rating) {},
                 ),
-                Text(
-                  reviewModel.review,
-                  style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
-                )
+                if (reviewModel.review.isNotEmpty) ...[                
+                  const SizedBox(height: 6),
+                  Text(
+                    reviewModel.review,
+                    style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade600, height: 1.4),
+                  ),
+                ],
               ],
             ),
           ),

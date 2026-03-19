@@ -139,7 +139,7 @@ class _InstamojoPaymentState extends State<InstamojoPaymentScreen> {
   // }
 
   void _redirect(String url) {
-    print("Url: $url");
+    debugPrint("Url: $url");
     if (_canRedirect) {
       bool isSuccess = url.contains('/order-success-url-for-mobile-app') &&
           url.contains(RemoteUrls.rootUrl);
@@ -170,16 +170,16 @@ class _InstamojoPaymentState extends State<InstamojoPaymentScreen> {
         var responseJSON = jsonDecode(decodedJSON);
         log(decodedJSON, name: 'InstamojoPaymentScreen');
         if (responseJSON["result"] == false) {
-          print('message1');
+          debugPrint('message1');
           Utils.errorSnackBar(context, responseJSON["message"]);
         } else if (responseJSON["result"] == true) {
-          print('message2');
+          debugPrint('message2');
           Utils.showSnackBar(context, responseJSON["message"]);
         }
         Navigator.pushNamedAndRemoveUntil(context, RouteNames.orderScreen,
             (route) {
           if (route.settings.name == RouteNames.mainPage) {
-            print('message3');
+            debugPrint('message3');
             return true;
           }
           return false;

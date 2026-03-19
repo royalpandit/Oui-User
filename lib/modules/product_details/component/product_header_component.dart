@@ -50,11 +50,14 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
     return Column(
       children: [
         Container(
-          height: Utils.vSize(300.0),
+          height: Utils.vSize(320.0),
           width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Color(0xFFF6F6F6),
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF6F6F6),
+            borderRadius: BorderRadius.circular(20),
           ),
+          clipBehavior: Clip.antiAlias,
           child: PageView.builder(
               itemCount: allImages.length,
               onPageChanged: (int index) =>
@@ -62,28 +65,25 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
               itemBuilder: (context, index) {
                 return CustomImage(
                   path: RemoteUrls.imageUrl(allImages[index]),
-                  // path: KImages.detailImage,
-                  fit: BoxFit.fitHeight,
+                  fit: BoxFit.cover,
                 );
               }),
         ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          child: Row(
-            children: List.generate(
-              allImages.length,
-              (index) => AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: Utils.only(
-                    top: 10.0,
-                    right: index == allImages.length - 1 ? 16.0 : 8.0,
-                    left: index == 0 ? 16.0 : 0.0),
-                height: Utils.vSize(3.0),
-                width: Utils.hSize(60.0),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            allImages.length,
+            (index) => AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              height: 6,
+              width: _currentIndex == index ? 24 : 6,
+              decoration: BoxDecoration(
                 color: _currentIndex == index
                     ? Colors.black
                     : Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(3),
               ),
             ),
           ),

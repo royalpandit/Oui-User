@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -15,7 +14,7 @@ class ErrorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final appSetting = context.read<AppSettingCubit>();
     final id = appSetting.settingModel!.maintainTextModel!.id;
-    print('ID : $id');
+    debugPrint('ID : $id');
     return Scaffold(
       body: BlocBuilder<AppSettingCubit, AppSettingState>(
         builder: (context, state) {

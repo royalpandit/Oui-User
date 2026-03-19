@@ -24,49 +24,59 @@ class SingleCategoryProductScreen extends StatefulWidget {
 
 class _SingleCategoryProductScreenState
     extends State<SingleCategoryProductScreen> {
+  bool _isInitialized = false;
+  late String _appBarName;
+  late String _keyword;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      _isInitialized = true;
+      final receivedValue =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      _appBarName = receivedValue['app_bar'] as String;
+      _keyword = receivedValue['keyword'] as String;
+      context.read<CategoryCubit>().getCategoryProduct(_keyword);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final receivedValue =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final appBarName = receivedValue['app_bar'] as String;
-    final keyword = receivedValue['keyword'] as String;
-    context.read<CategoryCubit>().getCategoryProduct(keyword);
-
     return Scaffold(
         endDrawer: const DrawerFilter(),
         appBar: RoundedAppBar(
           actions: const [SizedBox()],
-          titleText: appBarName.capitalizeByWord(),
+          titleText: _isInitialized ? _appBarName.capitalizeByWord() : '',
           onTap: () {
             Navigator.popAndPushNamed(
                 context, RouteNames.allCategoryListScreen);
           },
         ),
         body: BlocBuilder<CategoryCubit, CategoryState>(
+          buildWhen: (previous, current) {
+            return current is CategoryLoadingState ||
+                current is CategoryLoadedState ||
+                current is CategoryErrorState;
+          },
           builder: (context, state) {
-            if (state is CategoryLoadingState) {
-                return const Center(
-                  child: SizedBox(
-                    height: 28,
-                    width: 120,
-                    child: ShimmerLoader.rect(height: 12, width: 120)));
-            } else if (state is CategoryLoadedState) {
+            if (state is CategoryLoadedState) {
               if (state.categoryProducts.isEmpty) {
                 return Center(
                     child: Text(Language.noItemsFound.capitalizeByWord()));
               }
-              // _buildProductGrid(state.productCategoriesModel.products);
               return const CategoryLoad();
             } else if (state is CategoryErrorState) {
               return Center(
                 child: Text(state.errorMessage),
               );
             }
-            return Center(
+            // Loading state or any other state — show loading indicator
+            return const Center(
               child: SizedBox(
-                child: Text(Language.somethingWentWrong.capitalizeByWord()),
-              ),
-            );
+                height: 28,
+                width: 120,
+                child: ShimmerLoader.rect(height: 12, width: 120)));
           },
         ));
   }

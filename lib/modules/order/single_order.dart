@@ -71,7 +71,6 @@ class LoadedList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final routeName = ModalRoute.of(context)?.settings.name ?? '';
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(

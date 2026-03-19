@@ -44,6 +44,8 @@ class CategoryRepositoryImp extends CategoryRepository {
       return right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, e.statusCode));
+    } catch (e) {
+      return Left(ServerFailure(e.toString(), 600));
     }
   }
 

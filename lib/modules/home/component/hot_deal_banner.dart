@@ -1,10 +1,7 @@
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '/utils/language_string.dart';
-import '/widgets/capitalized_word.dart';
-import '/widgets/custom_image.dart';
 import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
 import '../model/banner_model.dart';
@@ -13,114 +10,111 @@ class HotDealBanner extends StatelessWidget {
   const HotDealBanner({
     super.key,
     required this.banner,
-    this.height,
+    this.alignRight = false,
   });
+
   final BannerModel banner;
-  final double? height;
+  final bool alignRight;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: () {
+        if (banner.slug.isNotEmpty) {
+          Navigator.pushNamed(
+            context,
+            RouteNames.singleCategoryProductScreen,
+            arguments: {
+              'keyword': banner.slug,
+              'app_bar': banner.titleOne.isNotEmpty ? banner.titleOne : banner.slug,
+            },
+          );
+        }
+      },
       child: Stack(
         fit: StackFit.expand,
         children: [
-          CustomImage(
-              path: RemoteUrls.imageUrl(banner.image), fit: BoxFit.fill),
-          Positioned(
-            top: 10.0,
-            left: banner.slug == 'sweatshirt' ? 140.0 : 20.0,
-            child: AutoSizeText(
-              banner.titleOne.capitalizeByWord(),
-              minFontSize: 12.0,
-              maxFontSize: 15.0,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(fontSize: 15.0, color: Colors.grey.shade600),
+          CachedNetworkImage(
+            imageUrl: RemoteUrls.rootUrl + banner.image,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(
+              color: const Color(0xFFF5F5F5),
+            ),
+            errorWidget: (context, url, error) => Container(
+              color: const Color(0xFFF5F5F5),
+              child: const Icon(Icons.image_not_supported, color: Colors.grey),
             ),
           ),
-          Positioned(
-            top: 30.0,
-            left: banner.slug == 'sweatshirt' ? 140.0 : 20.0,
-            // left: banner.slug == 'fruits' ? 140.0 : 20.0,
-            child: Container(
-              width: 140.0,
-              height: 50.0,
-              margin: const EdgeInsets.symmetric(vertical: 10.0),
-              child: AutoSizeText(
-                banner.titleTwo.capitalizeByWord(),
-                minFontSize: 12.0,
-                maxFontSize: 15.0,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(fontSize: 15.0, fontWeight: FontWeight.w700, color: Colors.black),
+          // Gradient overlay for text readability
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: alignRight ? Alignment.centerRight : Alignment.centerLeft,
+                  end: alignRight ? Alignment.centerLeft : Alignment.centerRight,
+                  colors: [
+                    Colors.black.withOpacity(0.5),
+                    Colors.transparent,
+                  ],
+                ),
               ),
             ),
           ),
+          // Text content
           Positioned(
-              bottom: 20.0,
-              left: banner.slug == 'sweatshirt' ? 150.0 : 20.0,
-              child: shopNowButton(context)),
+            left: alignRight ? null : 20.0,
+            right: alignRight ? 20.0 : null,
+            top: 0,
+            bottom: 0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment:
+                  alignRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                if (banner.badge.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    margin: const EdgeInsets.only(bottom: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      banner.badge.toUpperCase(),
+                      style: GoogleFonts.inter(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                if (banner.titleOne.isNotEmpty)
+                  Text(
+                    banner.titleOne,
+                    textAlign: alignRight ? TextAlign.right : TextAlign.left,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      height: 1.2,
+                    ),
+                  ),
+                if (banner.titleTwo.isNotEmpty)
+                  Text(
+                    banner.titleTwo,
+                    textAlign: alignRight ? TextAlign.right : TextAlign.left,
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white.withOpacity(0.9),
+                      height: 1.4,
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ],
-      ),
-      ),
-    );
-  }
-
-  Widget shopNowButton(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.pushNamed(
-          context,
-          RouteNames.singleCategoryProductScreen,
-          arguments: {
-            'keyword': banner.slug,
-            'app_bar': banner.slug,
-          },
-        );
-      },
-      child: Container(
-        width: 96.0,
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0)
-            .copyWith(bottom: 10.0),
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Row(
-          children: [
-            Text(
-              Language.shopNow.capitalizeByWord(),
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 4),
-              child: Icon(
-                Icons.arrow_forward_ios_outlined,
-                color: Colors.white,
-                size: 14.0,
-              ),
-            )
-          ],
-        ),
       ),
     );
   }

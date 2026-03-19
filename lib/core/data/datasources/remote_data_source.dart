@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'remote_data_source_package_names.dart';
@@ -257,10 +260,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<String> cashOnDeliveryPayment(
       Map<String, dynamic> body, String token) async {
     final uri = Uri.parse(RemoteUrls.cashOnDelivery(token));
+    final headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+    };
     final clientMethod = client.post(
       uri,
-      headers: demoModeHeader,
-      body: body,
+      headers: headers,
+      body: json.encode(body),
     );
     final responseJsonBody =
         await NetworkParser.callClientWithCatchException(() => clientMethod);
@@ -584,7 +592,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
           .replaceAll(' ', '_');
       myMap[newKey] = value;
     });
-    print('NEW MAP $myMap');
+    debugPrint('NEW MAP $myMap');
     return WebsiteSetupModel.fromMap(responseJsonBody);
   }
 
@@ -856,7 +864,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final responseJsonBody =
         await NetworkParser.callClientWithCatchException(() => clientMethod);
 
-    print('responseJsonBody $responseJsonBody');
+    debugPrint('responseJsonBody $responseJsonBody');
     if (responseJsonBody['terms_conditions'] != null) {
       return PrivacyPolicyAndTermConditionModel.fromMap(
           responseJsonBody['terms_conditions']);

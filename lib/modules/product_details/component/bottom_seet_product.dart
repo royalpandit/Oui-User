@@ -81,28 +81,22 @@ class BottomSheetProduct extends StatelessWidget {
         flashPrice = mainPrice - discount;
       }
     }
-    return Container(
-      height: height,
-      padding: const EdgeInsets.all(15),
-      // decoration: BoxDecoration(
-      //   borderRadius: BorderRadius.circular(4),
-      //   border: Border.all(color: const Color(0xffE8EEF2)),
-      //   color: const Color(0xffE8EEF2),
-      // ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFF6F6F6),
-              borderRadius: Utils.borderRadius(r: 4.0),
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(12),
               child: CustomImage(
                 path: RemoteUrls.imageUrl(product.thumbImage),
                 fit: BoxFit.cover,
-                height: 85.0,
-                width: 85.0,
+                height: 80.0,
+                width: 80.0,
               ),
             ),
           ),
@@ -110,18 +104,19 @@ class BottomSheetProduct extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   product.name.capitalizeByWord(),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.inter(
-                      height: 1.6,
-                      fontSize: 18.0,
+                      height: 1.3,
+                      fontSize: 16.0,
                       fontWeight: FontWeight.w600,
                       color: Colors.black),
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 6),
                 if (isFlashSale) ...[
                   PriceCardWidget(
                     price: mainPrice.toString(),

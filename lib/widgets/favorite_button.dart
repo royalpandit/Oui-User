@@ -43,7 +43,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
       setState(() {
         isFav = true;
         wishItem = i;
-        print('Ittttt $i');
+        debugPrint('Ittttt $i');
       });
     }
   }
@@ -69,7 +69,8 @@ class _FavoriteButtonState extends State<FavoriteButton> {
       }
     }, child: StatefulBuilder(
       builder: (context, StateSetter setState) {
-        return InkWell(
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () async {
             if (isFav) {
               if (wishItem.isNotEmpty) {
@@ -93,19 +94,17 @@ class _FavoriteButtonState extends State<FavoriteButton> {
             setState(() => isFav = !isFav);
           },
           child: Container(
-            height: height,
-            width: height,
+            height: 36,
+            width: 36,
             alignment: Alignment.center,
-            // margin: const EdgeInsets.only(top: 10.0, left: 10.0),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.0),
+              color: Colors.white.withValues(alpha: 0.85),
+              shape: BoxShape.circle,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Icon(
-                isFav ? Icons.favorite : Icons.favorite_border,
-                color: Colors.black,
-              ),
+            child: Icon(
+              isFav ? Icons.favorite : Icons.favorite_border,
+              color: isFav ? Colors.red : Colors.black,
+              size: 20,
             ),
           ),
         );
@@ -142,7 +141,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
                       .read<WishListCubit>()
                       .removeWishList(wishItem.first);
                   // setState(() {});
-                  // print("r: $r");
+                  // debugPrint("r: $r");
                   r.fold(
                     (failure) {
                       Utils.showSnackBar(context, failure.message);

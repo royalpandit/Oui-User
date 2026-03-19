@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/widgets/shimmer_loader.dart';
 import '/widgets/capitalized_word.dart';

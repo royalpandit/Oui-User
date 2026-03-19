@@ -24,7 +24,7 @@ class SectionHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            headerText,
+            headerText.capitalizeByWord(),
             style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w700,

@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '/modules/profile/controllers/updated_info/updated_info_cubit.dart';
 import '/modules/profile/model/user_info/user_updated_info.dart';
-import '/utils/language_string.dart';
-import '/widgets/capitalized_word.dart';
 import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
-import '../../../utils/constants.dart';
-import '../../../utils/k_images.dart';
-import '../../../utils/utils.dart';
-import '../../../widgets/custom_image.dart';
-import '../../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../../main_page/main_controller.dart';
 
 class ProfileAppBar extends StatelessWidget {
@@ -53,7 +44,7 @@ class ProfileAppBar extends StatelessWidget {
   }
 
   Widget _buildUserHeader(BuildContext context) {
-    final userImage = userUpdateInfo.updateUserInfo!.image ?? '';
+    final userImage = userUpdateInfo.updateUserInfo!.image;
     final imagePath = userImage.isNotEmpty
         ? userImage
         : (userUpdateInfo.defaultImage?.image ?? '');

@@ -46,17 +46,17 @@ class ReviewListComponent extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
-        //borderRadius: BorderRadius.circular(50.0)
+        borderRadius: BorderRadius.circular(16.0),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25.0),
+      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
             Utils.getRating(productReviews).toStringAsFixed(1),
-            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 14),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -67,18 +67,18 @@ class ReviewListComponent extends StatelessWidget {
                 allowHalfRating: true,
                 ignoreGestures: true,
                 itemCount: 5,
-                itemSize: 20,
-                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                itemSize: 18,
+                itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
                 itemBuilder: (context, _) => const Icon(
-                  Icons.star,
+                  Icons.star_rounded,
                   color: Colors.amber,
                 ),
                 onRatingUpdate: (rating) {},
               ),
-              // const SizedBox(height: 12),
+              const SizedBox(height: 4),
               Text(
-                '${productReviews.length} Review',
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
+                '${productReviews.length} Review${productReviews.length != 1 ? 's' : ''}',
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
               )
             ],
           ),

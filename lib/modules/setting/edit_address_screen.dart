@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -136,10 +135,10 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
   }
 
   void _setValueIntoController(EditAddressModel editAddressModel) {
-    nameCtr.text = editAddressModel.address.name ?? '';
-    emailCtr.text = editAddressModel.address.email ?? '';
-    phoneCtr.text = editAddressModel.address.phone ?? '';
-    addressCtr.text = editAddressModel.address.address ?? '';
+    nameCtr.text = editAddressModel.address.name;
+    emailCtr.text = editAddressModel.address.email;
+    phoneCtr.text = editAddressModel.address.phone;
+    addressCtr.text = editAddressModel.address.address;
   }
 
   InputDecoration _inputDecoration(String hint) {

@@ -42,32 +42,35 @@ class _ToggleButtonComponentState extends State<ToggleButtonComponent> {
   }
 
   Widget _buildSingleBtn(int key, String value) {
+    if (value.isEmpty) return const SizedBox.shrink();
+    final isSelected = initialLabelIndex == key;
     return Flexible(
       flex: 2,
-      child: InkWell(
+      child: GestureDetector(
         onTap: () => setState(() {
           initialLabelIndex = key;
           widget.onChange(initialLabelIndex);
         }),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 250),
           margin: const EdgeInsets.symmetric(horizontal: 4),
-          // padding: const EdgeInsets.symmetric(vertical: 8).copyWith(bottom: 10.0),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: initialLabelIndex == key
-                ? Colors.black
-                : Colors.transparent,
-            //borderRadius: BorderRadius.circular(20.0),
+            color: isSelected ? Colors.black : Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Padding(
-            padding: Utils.only(bottom: 6.0),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Text(
               value,
-              style: GoogleFonts.inter(fontSize: 14.0, color: Colors.grey.shade600).copyWith(
-                  color: initialLabelIndex != key
-                      ? const Color(0xFF6E6D79)
-                      : Colors.white),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.inter(
+                fontSize: 13.0,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? Colors.white : const Color(0xFF6E6D79),
+              ),
             ),
           ),
         ),
@@ -78,13 +81,16 @@ class _ToggleButtonComponentState extends State<ToggleButtonComponent> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 40,
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: getBtns(),
-        ),
+      height: 44,
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(3),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: getBtns(),
       ),
     );
   }

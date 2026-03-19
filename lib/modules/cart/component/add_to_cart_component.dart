@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/widgets/custom_text.dart';
 
 import '/modules/animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';

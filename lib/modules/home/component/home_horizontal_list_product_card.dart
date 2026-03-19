@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/widgets/capitalized_word.dart';
 import 'package:shop_us/widgets/favorite_button.dart';
@@ -11,25 +10,20 @@ import '../../../core/router_name.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
-import '../../cart/controllers/cart/add_to_cart/add_to_cart_cubit.dart';
-import '../../cart/model/add_to_cart_model.dart';
 import '../../category/component/price_card_widget.dart';
-import '../../product_details/model/product_variant_model.dart';
 import '../../setting/model/website_setup_model.dart';
 import '../model/product_model.dart';
 
 class HomeHorizontalListProductCard extends StatelessWidget {
   final ProductModel productModel;
-
-  HomeHorizontalListProductCard({
-    super.key,
-    this.height = 100,
-    this.width = 215,
-    required this.productModel,
-  });
   final double height, width;
 
-  final Set<ActiveVariantModel> variantItems = {};
+  const HomeHorizontalListProductCard({
+    super.key,
+    this.height = 140, // Reduced slightly for a tighter professional look
+    this.width = 280,
+    required this.productModel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +31,11 @@ class HomeHorizontalListProductCard extends StatelessWidget {
     double flashPrice = 0.0;
     double offerPrice = 0.0;
     double mainPrice = 0.0;
+
     final isFlashSale = appSetting.settingModel!.flashSaleProducts
         .contains(FlashSaleProductsModel(productId: productModel.id));
 
+    // Price Calculation Logic
     if (productModel.offerPrice.toString().isNotEmpty) {
       double p = 0.0;
       if (productModel.productVariants.isNotEmpty) {
@@ -64,172 +60,145 @@ class HomeHorizontalListProductCard extends StatelessWidget {
     } else {
       mainPrice = double.parse(productModel.price.toString());
     }
+
     if (isFlashSale) {
-      if (productModel.offerPrice.toString().isNotEmpty) {
-        final discount =
-            appSetting.settingModel!.flashSale.offer / 100 * offerPrice;
-
-        flashPrice = offerPrice - discount;
-      } else {
-        final discount =
-            appSetting.settingModel!.flashSale.offer / 100 * mainPrice;
-
-        flashPrice = mainPrice - discount;
-      }
+      final discount = appSetting.settingModel!.flashSale.offer /
+          100 *
+          (productModel.offerPrice.toString().isNotEmpty
+              ? offerPrice
+              : mainPrice);
+      flashPrice = (productModel.offerPrice.toString().isNotEmpty
+              ? offerPrice
+              : mainPrice) -
+          discount;
     }
+
     return Container(
       height: height,
       width: width,
-      margin: const EdgeInsets.only(right: 8),
+      margin: const EdgeInsets.only(right: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        // Subtle grey border for professional definition
+        border: Border.all(color: const Color(0xFFF0F0F0), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(context, RouteNames.productDetailsScreen,
-              arguments: productModel.slug);
-        },
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => Navigator.pushNamed(context, RouteNames.productDetailsScreen,
+            arguments: productModel.slug),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildImage(),
-            const SizedBox(width: 10),
-            Flexible(
-              child: Column(
-                children: [
-                  const SizedBox(height: 30.0),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 4.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
+            // 1. Left Side: Image Section
+            _buildImageSection(),
+
+            // 2. Right Side: Info Section
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Rating
+                    Row(
                       children: [
-                        RatingBar.builder(
-                          initialRating: productModel.rating,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          ignoreGestures: true,
-                          itemCount: 5,
-                          itemSize: 14,
-                          glow: true,
-                          // glowColor: lightningYellowColor,
-                          tapOnlyMode: true,
-                          itemPadding:
-                              const EdgeInsets.symmetric(horizontal: 0.0),
-                          itemBuilder: (context, _) => const Icon(
-                            Icons.star,
-                            color: Colors.yellow,
-                          ),
-                          onRatingUpdate: (rating) {},
+                        const Icon(Icons.star_rounded,
+                            color: Color(0xFFFFC107), size: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          productModel.rating.toStringAsFixed(1),
+                          style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black54),
                         ),
-                        const SizedBox(height: 6.0),
-                        AutoSizeText(
-                          productModel.name.capitalizeByWord(),
-                          textAlign: TextAlign.left,
-                          maxLines: 1,
-                          maxFontSize: 16,
-                          minFontSize: 12,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(fontSize: 16.0, fontWeight: FontWeight.w700, color: Colors.black),
-                        ),
-                        const SizedBox(height: 6.0),
-                        if (isFlashSale) ...[
-                          PriceCardWidget(
-                            price: mainPrice.toString(),
-                            offerPrice: flashPrice.toString(),
-                          ),
-                        ] else ...[
-                          PriceCardWidget(
-                            price: mainPrice.toString(),
-                            offerPrice: offerPrice.toString(),
-                          ),
-                        ],
                       ],
                     ),
-                  ),
-                  const Spacer(),
-                  addToCartButton(context)
-                ],
+                    const SizedBox(height: 6),
+                    // Title
+                    AutoSizeText(
+                      productModel.name.capitalizeByWord(),
+                      maxLines: 2,
+                      minFontSize: 13,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                        height: 1.2,
+                      ),
+                    ),
+                    const Spacer(),
+                    // Price
+                    PriceCardWidget(
+                      price: mainPrice.toString(),
+                      offerPrice: isFlashSale
+                          ? flashPrice.toString()
+                          : offerPrice.toString(),
+                    ),
+                  ],
+                ),
               ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImage() {
-    return Container(
-      margin: const EdgeInsets.all(12.0).copyWith(right: 4.0),
-      decoration: BoxDecoration(
-          color: const Color(0xFFF6F6F6), borderRadius: Utils.borderRadius(r: 10.0)),
-      height: height - 2,
-      width: width / 2.5,
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Stack(
-          clipBehavior: Clip.none,
-          fit: StackFit.expand,
-          children: [
-            CustomImage(
-              path: RemoteUrls.imageUrl(productModel.thumbImage),
-              fit: BoxFit.fitHeight,
             ),
-            Positioned(
-                left: -14.0,
-                top: -12.0,
-                child: FavoriteButton(productId: productModel.id)),
           ],
         ),
       ),
     );
   }
 
-  Widget addToCartButton(BuildContext context) {
-    return SizedBox(
-      height: 38.0,
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: GestureDetector(
-          onTap: () {
-            final AddToCartModel addToCart = AddToCartModel(
-              quantity: 1,
-              productId: productModel.id,
-              image: productModel.thumbImage,
-              slug: productModel.slug,
-              token: "",
-              variantItems: variantItems,
-            );
-            context.read<AddToCartCubit>().addToCart(addToCart);
-          },
-          child: Container(
-            width: 40.0,
-            height: 36.0,
-            alignment: Alignment.center,
-            margin: const EdgeInsets.only(top: 3.0),
-            decoration: const BoxDecoration(
-                // color: Utils.dynamicPrimaryColor(context).withOpacity(0.2),
-                borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(24.0),
-              bottomRight: Radius.circular(4.0),
-            )),
-            child: Icon(
-              Icons.add,
-              color: Colors.black,
-              size: 30.0,
+  Widget _buildImageSection() {
+    return Stack(
+      children: [
+        Container(
+          width: width * 0.38, // Refined proportion
+          height: height,
+          decoration: const BoxDecoration(
+            color: Color(0xFFF9F9F9), // Light grey background for product contrast
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              bottomLeft: Radius.circular(12),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: CustomImage(
+              path: RemoteUrls.imageUrl(productModel.thumbImage),
+              fit: BoxFit.contain,
             ),
           ),
         ),
-      ),
+        // Heart Icon Circle
+        Positioned(
+          top: 8,
+          left: 8,
+          child: Container(
+            height: 30,
+            width: 30,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                )
+              ],
+            ),
+            child: Center(
+              child: FavoriteButton(productId: productModel.id),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

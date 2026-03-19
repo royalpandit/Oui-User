@@ -50,8 +50,8 @@ import 'package:equatable/equatable.dart';
 
 class SectionTitleModel extends Equatable {
   final String key;
-  String? defaultTitle;
-  String? custom;
+  final String? defaultTitle;
+  final String? custom;
 
   SectionTitleModel(
       {required this.key, required this.defaultTitle, required this.custom});

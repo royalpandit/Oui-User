@@ -79,7 +79,7 @@ class CategoryLoad extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                mainAxisExtent: 230,
+                mainAxisExtent: 290,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {

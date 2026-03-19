@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../modules/authentication/models/auth_error_model.dart';
@@ -18,26 +19,42 @@ class NetworkParser {
       final response = await callClientMethod();
       final request = response.request;
 
-      print("========== API REQUEST ==========");
-      print("METHOD: ${request?.method}");
-      print("URL: ${request?.url}");
-      print("HEADERS: ${request?.headers}");
+      debugPrint("========== API REQUEST ==========");
+      debugPrint("METHOD: ${request?.method}");
+      debugPrint("URL: ${request?.url}");
+      debugPrint("HEADERS: ${request?.headers}");
 
-      // 👇 Query params (GET case)
-      print("QUERY PARAMS: ${request?.url.queryParameters}");
+      // Query params
+      final queryParams = request?.url.queryParametersAll;
+      if (queryParams != null && queryParams.isNotEmpty) {
+        // Remove token from printed params for cleaner logs
+        final cleanParams = Map<String, dynamic>.from(queryParams);
+        if (cleanParams.containsKey('token')) {
+          cleanParams['token'] = '***';
+        }
+        debugPrint("QUERY PARAMS: $cleanParams");
+      }
 
-      print("========== API RESPONSE ==========");
-      print("STATUS CODE: ${response.statusCode}");
-      print("BODY: ${response.body}");
-      print("===================================");
+      // Request body / payload (POST, PUT, DELETE, PATCH)
+      if (request is http.Request) {
+        final reqBody = request.body;
+        if (reqBody.isNotEmpty) {
+          debugPrint("REQUEST BODY: $reqBody");
+        }
+      }
 
-      log("====================================", name: _className);
-      log("API URL: ${response.request?.url}", name: _className);
-      log("STATUS CODE: ${response.statusCode}", name: _className);
-      log("RESPONSE: ${response.body}", name: _className);
-      log("====================================", name: _className);
-      log(response.statusCode.toString(), name: _className);
-      log(response.body, name: _className);
+      debugPrint("========== API RESPONSE ==========");
+      debugPrint("STATUS CODE: ${response.statusCode}");
+      // Pretty-print JSON response body
+      try {
+        final decoded = json.decode(response.body);
+        final prettyBody = const JsonEncoder.withIndent('  ').convert(decoded);
+        debugPrint("RESPONSE BODY:\n$prettyBody");
+      } catch (_) {
+        debugPrint("RESPONSE BODY: ${response.body}");
+      }
+      debugPrint("===================================");
+
       return _responseParser(response);
     } on SocketException {
       log('SocketException', name: _className);
@@ -89,8 +106,8 @@ class NetworkParser {
 
         ///Unprocessable Entity
         final errorMsg = parsingError(response.body);
-        print("errorMsg");
-        print(errorMsg.toString());
+        debugPrint("errorMsg");
+        debugPrint(errorMsg.toString());
         throw InvalidInputException(Errors.fromMap(errorMsg), 422);
       case 500:
 
