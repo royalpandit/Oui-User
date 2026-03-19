@@ -57,7 +57,7 @@ class _CartScreenState extends State<CartScreen> {
           } else {
             Utils.closeDialog(context);
             if (state is CartStateDecIncError) {
-              //Utils.errorSnackBar(context, state.message);
+              Utils.errorSnackBar(context, state.message);
             }
             if (state is CartStateRemove) {
               Utils.showSnackBar(context, state.message);

@@ -75,6 +75,8 @@ class ProductSearchScreenState extends State<ProductSearchScreen> {
         listener: (context, state) {
           if (state is SearchStateMoreError) {
             Utils.errorSnackBar(context, state.message);
+          } else if (state is SearchStateError) {
+            Utils.errorSnackBar(context, state.message);
           }
         },
         builder: (context, state) {

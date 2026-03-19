@@ -13,10 +13,10 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).padding.top;
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
+      body: SafeArea(
+        child: Stack(
+          children: <Widget>[
           Container(color: Colors.transparent),
           SizedBox(
             height: 160,
@@ -25,13 +25,14 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
           ),
           Positioned(
-            top: media + 80.0,
+            top: 80.0,
             left: 20.0,
             bottom: 20.0,
             right: 20.0,
             child: _buildItemList(),
           ),
         ],
+        ),
       ),
     );
   }

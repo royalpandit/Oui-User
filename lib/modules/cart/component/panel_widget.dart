@@ -160,6 +160,9 @@ class _PanelComponentState extends State<PanelComponent> {
                   Utils.loadingDialog(context);
                 } else {
                   Utils.closeDialog(context);
+                  if (state is CartCouponStateError) {
+                    Utils.errorSnackBar(context, state.message);
+                  }
                 }
               }, builder: (context, state) {
                 if (state is CartCouponStateError) {

@@ -136,6 +136,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               context.read<AddressCubit>().getAddress();
             } else if (state is AddressStateUpdated) {
               Utils.closeDialog(context);
+              Utils.showSnackBar(context, 'Address added successfully');
               Navigator.pop(context);
             }
           }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/router_name.dart';
+import '../../utils/utils.dart';
 import 'controller/forgot_password/forgot_password_cubit.dart';
 
 class ForgotScreen extends StatelessWidget {
@@ -9,7 +11,24 @@ class ForgotScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<ForgotPasswordCubit>();
-    return Scaffold(
+    return BlocListener<ForgotPasswordCubit, ForgotPasswordState>(
+      listener: (context, state) {
+        if (state is ForgotPasswordStateLoading) {
+          Utils.loadingDialog(context);
+        } else {
+          Utils.closeDialog(context);
+          if (state is ForgotPasswordStateError) {
+            Utils.errorSnackBar(context, state.errorMsg);
+          } else if (state is ForgotPasswordFormValidate) {
+            final emailErrors = state.errors.email;
+            Utils.errorSnackBar(context, emailErrors.isNotEmpty ? emailErrors.first : 'Validation error');
+          } else if (state is ForgotPasswordStateLoaded) {
+            Utils.showSnackBar(context, 'Recovery code sent to ${state.email}');
+            Navigator.pushNamed(context, RouteNames.verificationCodeScreen);
+          }
+        }
+      },
+      child: Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -105,6 +124,7 @@ class ForgotScreen extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }

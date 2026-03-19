@@ -57,6 +57,8 @@ class _WishlistOfferScreenState extends State<WishlistOfferScreen> {
             Utils.errorSnackBar(context, state.message);
           } else if (state is WishListStateSuccess) {
             Utils.showSnackBar(context, state.message);
+          } else if (state is WishListStateError) {
+            Utils.errorSnackBar(context, state.message);
           }
         },
         builder: (context, state) {

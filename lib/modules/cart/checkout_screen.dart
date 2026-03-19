@@ -75,14 +75,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ),
       body: BlocConsumer<CheckoutCubit, CheckoutState>(
         listener: (_, state) {
-          //   if (state is CheckoutStateLoading) {
-          //     Utils.loadingDialog(context);
-          //   } else {
-          //     Utils.closeDialog(context);
-          //     if (state is CartStateDecIncretError) {
-          //       Utils.errorSnackBar(context, state.message);
-          //     }
-          //   }
+          if (state is CheckoutStateError) {
+            Utils.errorSnackBar(context, state.message);
+          }
         },
         builder: (context, state) {
           if (state is CheckoutStateLoading || state is CheckoutStateInitial) {

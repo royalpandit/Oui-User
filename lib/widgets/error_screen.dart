@@ -16,8 +16,9 @@ class ErrorScreen extends StatelessWidget {
     final id = appSetting.settingModel!.maintainTextModel!.id;
     debugPrint('ID : $id');
     return Scaffold(
-      body: BlocBuilder<AppSettingCubit, AppSettingState>(
-        builder: (context, state) {
+      body: SafeArea(
+        child: BlocBuilder<AppSettingCubit, AppSettingState>(
+          builder: (context, state) {
           if (state is AppSettingStateLoading) {
             return const Center(
                 child: SizedBox(
@@ -45,6 +46,7 @@ class ErrorScreen extends StatelessWidget {
           }
           return const SizedBox();
         },
+      ),
       ),
     );
   }

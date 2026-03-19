@@ -54,15 +54,22 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 final loadedData = state.state as SignUpStateLoaded;
                 Navigator.pushNamed(context, RouteNames.verificationCodeScreen);
                 Utils.showSnackBar(context, loadedData.msg);
+              } else if (state.state is SignUpStateLoadedError) {
+                final errorData = state.state as SignUpStateLoadedError;
+                Utils.errorSnackBar(context, errorData.errorMsg);
+              } else if (state.state is SignUpStateFormError) {
+                final errorData = state.state as SignUpStateFormError;
+                Utils.errorSnackBar(context, errorData.errorMsg);
               }
             },
           ),
         ],
         child: Scaffold(
           backgroundColor: Colors.black,
-          body: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
+          body: SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
               children: [
                 const SizedBox(height: 70),
                 _buildHeader(),
@@ -83,6 +90,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 const SizedBox(height: 40),
               ],
             ),
+          ),
           ),
         ),
       ),

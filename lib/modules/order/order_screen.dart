@@ -34,7 +34,9 @@ class _OrderScreenState extends State<OrderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: BlocBuilder<OrderCubit, OrderState>(
+      body: SafeArea(
+        bottom: false,
+        child: BlocBuilder<OrderCubit, OrderState>(
         builder: (context, state) {
           if (state is OrderStateLoading) {
             return const Center(
@@ -60,6 +62,7 @@ class _OrderScreenState extends State<OrderScreen> {
             return const SizedBox();
           }
         },
+      ),
       ),
     );
   }

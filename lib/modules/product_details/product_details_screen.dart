@@ -49,7 +49,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Builder(builder: (context) {
+      body: SafeArea(
+        top: false,
+        child: Builder(builder: (context) {
         return BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
           builder: (context, state) {
             if (state is ProductDetailsStateLoading) {
@@ -71,6 +73,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           },
         );
       }),
+      ),
     );
   }
 

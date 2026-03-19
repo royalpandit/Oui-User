@@ -208,6 +208,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
               }
               if (state is AddressStateUpdated) {
                 Utils.closeDialog(context);
+                Utils.showSnackBar(context, 'Address updated successfully');
                 context.read<AddressCubit>().getAddress();
                 Navigator.of(context).pop();
               }

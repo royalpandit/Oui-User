@@ -61,6 +61,8 @@ class _AddressScreenState extends State<AddressScreen> {
           if (state is AddressStateError) {
             if (state.statusCode == 503) {
               Utils.serviceUnAvailable(context, state.message);
+            } else {
+              Utils.errorSnackBar(context, state.message);
             }
           }
         },
