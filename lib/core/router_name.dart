@@ -60,6 +60,8 @@ class RouteNames {
   static const String errorScreen = '/errorScreen';
   static const String editAddressScreen = '/editAddressScreen';
   static const String tryOnScreen = '/tryOnScreen';
+  static const String splashTermsScreen = '/splashTermsScreen';
+  static const String splashPrivacyScreen = '/splashPrivacyScreen';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -303,6 +305,15 @@ class RouteNames {
       case RouteNames.flashScreen:
         return MaterialPageRoute(
             settings: settings, builder: (_) => const FlashScreen());
+
+      case RouteNames.splashTermsScreen:
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (_) => const SplashTermsScreen());
+      case RouteNames.splashPrivacyScreen:
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (_) => const SplashPrivacyScreen());
 
       case RouteNames.tryOnScreen:
         final args = settings.arguments as Map<String, dynamic>;

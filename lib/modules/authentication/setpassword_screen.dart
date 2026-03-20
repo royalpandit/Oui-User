@@ -1,19 +1,14 @@
+﻿import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_us/widgets/shimmer_loader.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
-import 'package:shop_us/widgets/capitalized_word.dart';
 
-import '../../../../utils/constants.dart';
-import '../../../../widgets/primary_button.dart';
-import '../../utils/k_images.dart';
-import '../../utils/language_string.dart';
+import '../../core/router_name.dart';
 import '../../utils/utils.dart';
-import '../../widgets/custom_image.dart';
-import '../../widgets/field_error_text.dart';
 import 'controller/forgot_password/forgot_password_cubit.dart';
 
 class SetpasswordScreen extends StatefulWidget {
@@ -24,196 +19,517 @@ class SetpasswordScreen extends StatefulWidget {
 }
 
 class _SetpasswordScreenState extends State<SetpasswordScreen> {
+  static const _bgColor = Color(0xFF131313);
+
+  int _page = 0; // 0 = recovery code, 1 = new password
   bool _passwordVisible = false;
   bool _passwordVisible2 = false;
 
+  // Timer
+  Timer? _timer;
+  int _remainingSeconds = 299; // 4:59
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _remainingSeconds = 299;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds > 0) {
+        setState(() => _remainingSeconds--);
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  String get _timerText {
+    final m = (_remainingSeconds ~/ 60).toString().padLeft(2, '0');
+    final s = (_remainingSeconds % 60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final bloc = context.read<ForgotPasswordCubit>();
     return BlocListener<ForgotPasswordCubit, ForgotPasswordState>(
       listener: (context, state) {
         if (state is ForgotPasswordStateError) {
           Utils.errorSnackBar(context, state.errorMsg);
         } else if (state is PasswordSetStateLoaded) {
-          Navigator.pop(context);
           Utils.showSnackBar(context, state.message);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            RouteNames.authenticationScreen,
+            (route) => false,
+          );
         }
       },
-      child: Scaffold(
-        body: SafeArea(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            width: size.width,
-            height: size.height,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.center,
-                end: Alignment.bottomRight,
-                colors: [Colors.white, Color(0xFFF0F0F0)],
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: Scaffold(
+          backgroundColor: _bgColor,
+          body: Stack(
+            children: [
+              // Right-side subtle panel
+              Positioned(
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: 130,
+                child: Container(
+                  color: const Color(0xFF1B1B1B).withOpacity(0.2),
+                ),
               ),
-            ),
-            child: Center(
-              child: SingleChildScrollView(child: _buildForm(bloc)),
-            ),
+              SafeArea(
+                child: Column(
+                  children: [
+                    // App bar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 16),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              if (_page == 1) {
+                                setState(() => _page = 0);
+                              } else {
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: const Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            _page == 0 ? 'RECOVERY' : 'RESET PASSWORD',
+                            style: GoogleFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                              letterSpacing: 4,
+                            ),
+                          ),
+                          const Spacer(),
+                          const SizedBox(width: 20),
+                        ],
+                      ),
+                    ),
+                    // Body
+                    Expanded(
+                      child: _page == 0
+                          ? _buildRecoveryCodePage(bloc)
+                          : _buildNewPasswordPage(bloc),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildForm(ForgotPasswordCubit bloc) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        CircleAvatar(
-          radius: 96,
-          backgroundColor: Colors.grey.withOpacity(0.1),
-          child: const CustomImage(path: KImages.forgotIcon),
-        ),
-        const SizedBox(height: 55),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            Language.updatePassword.capitalizeByWord(),
-            style: GoogleFonts.poppins(
-                height: 1, fontSize: 30, fontWeight: FontWeight.bold),
+  // ─── Page 0: Enter Recovery Code ──────────────────────────
+
+  Widget _buildRecoveryCodePage(ForgotPasswordCubit bloc) {
+    final defaultTheme = PinTheme(
+      width: 48,
+      height: 64,
+      textStyle: GoogleFonts.manrope(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: Colors.white,
+      ),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1B1B1B),
+        border: Border.all(color: const Color(0xFF919191)),
+      ),
+    );
+
+    final focusedTheme = defaultTheme.copyDecorationWith(
+      border: Border.all(color: Colors.white, width: 1.5),
+    );
+
+    return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      padding: const EdgeInsets.only(left: 32, right: 32, top: 64, bottom: 48),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Enter\nRecovery Code',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.notoSerif(
+              fontSize: 36,
+              fontWeight: FontWeight.w400,
+              color: Colors.white,
+              height: 1.11,
+              letterSpacing: -0.9,
+            ),
           ),
-        ),
-        const SizedBox(height: 22),
-        _buildValidationCode(bloc),
-        const SizedBox(height: 16),
-        _buildPassword(bloc),
-        const SizedBox(height: 16),
-        _buildConfirmPass(bloc),
-        const SizedBox(height: 28),
-        BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
-          builder: (context, state) {
-            if (state is ForgotPasswordStateLoading) {
+          const SizedBox(height: 24),
+          Text(
+            'Enter the 6-digit code sent to your email.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.manrope(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFFC7C6C6),
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 64),
+          Pinput(
+            length: 6,
+            defaultPinTheme: defaultTheme,
+            focusedPinTheme: focusedTheme,
+            submittedPinTheme: defaultTheme,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            onChanged: (value) {
+              bloc.codeController.text = value;
+              log('code: $value');
+            },
+            onCompleted: (value) {
+              log('code complete: $value');
+            },
+          ),
+          const SizedBox(height: 32),
+          // Timer
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.access_time_rounded,
+                size: 16,
+                color: const Color(0xFFABABAB).withOpacity(0.6),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'EXPIRES IN $_timerText',
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFFABABAB),
+                  letterSpacing: 3,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 64),
+          // Verify Code button
+          BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
+            builder: (context, state) {
+              if (state is ForgotPasswordStateLoading) {
                 return const Center(
-                  child: SizedBox(
-                    height: 28,
-                    width: 120,
-                    child: ShimmerLoader.rect(height: 12, width: 120)));
-            }
-
-            return PrimaryButton(
-              text: Language.updatePassword.capitalizeByWord(),
-              onPressed: () {
-                bloc.setNewPassword();
-                // Navigator.pushReplacementNamed(
-                //     context, RouteNames.mainPage);
-              },
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildValidationCode(ForgotPasswordCubit bloc) {
-    return Pinput(
-      defaultPinTheme: PinTheme(
-        height: 52,
-        width: 52,
-        textStyle: GoogleFonts.poppins(fontSize: 26, color: blackColor),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: borderColor),
-          borderRadius: BorderRadius.circular(8),
-        ),
+                  child: CircularProgressIndicator(color: Colors.white),
+                );
+              }
+              return GestureDetector(
+                onTap: () {
+                  if (bloc.codeController.text.length == 6) {
+                    setState(() => _page = 1);
+                  } else {
+                    Utils.errorSnackBar(
+                        context, 'Please enter the full 6-digit code');
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  color: Colors.white,
+                  child: Center(
+                    child: Text(
+                      'VERIFY CODE',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF1A1C1C),
+                        letterSpacing: 4.2,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 32),
+          // Resend code
+          GestureDetector(
+            onTap: () {
+              _startTimer();
+              Utils.showSnackBar(context, 'Recovery code resent');
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFF474747)),
+              ),
+              child: Text(
+                'RESEND CODE',
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF919191),
+                  letterSpacing: 2,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 64),
+          // Copyright
+          Opacity(
+            opacity: 0.2,
+            child: Container(
+              width: double.infinity,
+              height: 1,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0x00474747),
+                    Color(0xFF474747),
+                    Color(0x00474747),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '\u00A9 2025 OUI \u2014 THE PREMIUM STORE',
+            style: GoogleFonts.inter(
+              fontSize: 9,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF919191).withOpacity(0.4),
+              letterSpacing: 2,
+            ),
+          ),
+        ],
       ),
-      autofocus: true,
-      keyboardType: TextInputType.number,
-      length: 6,
-      validator: (String? s) {
-        if (s == null || s.isEmpty) {
-          return Language.verificationCode.capitalizeByWord();
-        }
-        return null;
-      },
-      onChanged: (String s) {
-        bloc.codeController.text = s;
-        log(bloc.codeController.text);
-      },
-      onCompleted: (String s) {
-        log('onComplete');
-      },
-      onSubmitted: (String s) {
-        log('onSUbmit');
-      },
     );
   }
 
-  Widget _buildPassword(ForgotPasswordCubit bloc) {
-    return BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
-      builder: (context, state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              keyboardType: TextInputType.visiblePassword,
-              controller: bloc.paswordController,
-              obscureText: !_passwordVisible,
-              decoration: InputDecoration(
-                hintText: Language.password.capitalizeByWord(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: grayColor,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _passwordVisible = !_passwordVisible;
-                    });
-                  },
-                ),
-              ),
-            ),
-            if (state is ForgotPasswordFormValidate) ...[
-              if (state.errors.password.isNotEmpty)
-                ErrorText(text: state.errors.password.first)
-            ]
-          ],
-        );
-      },
-    );
-  }
+  // ─── Page 1: Create New Password ─────────────────────────
 
-  Widget _buildConfirmPass(ForgotPasswordCubit bloc) {
-    return BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
-      builder: (context, state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              keyboardType: TextInputType.visiblePassword,
-              controller: bloc.paswordConfirmController,
-              obscureText: !_passwordVisible2,
-              decoration: InputDecoration(
-                hintText: Language.confirmPassword.capitalizeByWord(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _passwordVisible2 ? Icons.visibility : Icons.visibility_off,
-                    color: grayColor,
+  Widget _buildNewPasswordPage(ForgotPasswordCubit bloc) {
+    return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      padding: const EdgeInsets.only(left: 32, right: 32, top: 48, bottom: 96),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Create New\nPassword',
+            style: GoogleFonts.notoSerif(
+              fontSize: 36,
+              fontWeight: FontWeight.w400,
+              color: Colors.white,
+              height: 1.11,
+              letterSpacing: -0.9,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Your new password must be different\nfrom previously used passwords.',
+            style: GoogleFonts.manrope(
+              fontSize: 18,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFFC7C6C6),
+              height: 1.63,
+            ),
+          ),
+          const SizedBox(height: 64),
+          // New password
+          Text(
+            'NEW PASSWORD',
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF919191),
+              letterSpacing: 2,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFF919191)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: bloc.paswordController,
+                    obscureText: !_passwordVisible,
+                    style: GoogleFonts.manrope(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
+                    cursorColor: Colors.white,
+                    decoration: InputDecoration(
+                      hintText: 'Enter new password',
+                      hintStyle: GoogleFonts.manrope(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF353535),
+                      ),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                      filled: false,
+                      isDense: true,
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _passwordVisible2 = !_passwordVisible2;
-                    });
-                  },
+                ),
+                GestureDetector(
+                  onTap: () =>
+                      setState(() => _passwordVisible = !_passwordVisible),
+                  child: Icon(
+                    _passwordVisible
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                    color: const Color(0xFF919191),
+                    size: 20,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+          // Confirm password
+          Text(
+            'CONFIRM NEW PASSWORD',
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF919191),
+              letterSpacing: 2,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFF919191)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: bloc.paswordConfirmController,
+                    obscureText: !_passwordVisible2,
+                    style: GoogleFonts.manrope(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
+                    cursorColor: Colors.white,
+                    decoration: InputDecoration(
+                      hintText: 'Confirm new password',
+                      hintStyle: GoogleFonts.manrope(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF353535),
+                      ),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                      filled: false,
+                      isDense: true,
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () =>
+                      setState(() => _passwordVisible2 = !_passwordVisible2),
+                  child: Icon(
+                    _passwordVisible2
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                    color: const Color(0xFF919191),
+                    size: 20,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 64),
+          // Gradient divider
+          Opacity(
+            opacity: 0.2,
+            child: Container(
+              width: double.infinity,
+              height: 1,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0x00474747),
+                    Color(0xFF474747),
+                    Color(0x00474747),
+                  ],
                 ),
               ),
             ),
-            if (state is ForgotPasswordFormValidate) ...[
-              if (state.errors.password.isNotEmpty)
-                ErrorText(text: state.errors.password.first)
-            ]
-          ],
-        );
-      },
+          ),
+          const SizedBox(height: 48),
+          // Reset Password button
+          BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
+            builder: (context, state) {
+              if (state is ForgotPasswordStateLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                );
+              }
+              return GestureDetector(
+                onTap: () => bloc.setNewPassword(),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  color: Colors.white,
+                  child: Center(
+                    child: Text(
+                      'RESET PASSWORD',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF1A1C1C),
+                        letterSpacing: 4.2,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

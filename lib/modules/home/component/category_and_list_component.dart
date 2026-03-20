@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../category/component/product_card.dart';
 import '../model/product_model.dart';
@@ -22,7 +22,6 @@ class CategoryAndListComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     if (productList.isEmpty) return const SliverToBoxAdapter();
 
-    // Title Case: "hot  shot category" -> "Hot Shot Category"
     final String formattedCategory = category
         .trim()
         .split(RegExp(r'\s+'))
@@ -42,19 +41,19 @@ class CategoryAndListComponent extends StatelessWidget {
               headerText: formattedCategory,
               onTap: onTap,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             SizedBox(
-              height: 300,
+              height: 280,
               child: ListView.separated(
-                physics: const BouncingScrollPhysics(),
+                physics: const ClampingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 scrollDirection: Axis.horizontal,
-                itemCount: productList.length,
+                itemCount: productList.length > 8 ? 8 : productList.length,
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemBuilder: (context, index) {
                   return ProductCard(
                     productModel: productList[index],
-                    width: 165,
+                    width: 160,
                   );
                 },
               ),

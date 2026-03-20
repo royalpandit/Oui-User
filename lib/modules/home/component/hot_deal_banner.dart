@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -38,14 +38,13 @@ class HotDealBanner extends StatelessWidget {
             imageUrl: RemoteUrls.rootUrl + banner.image,
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(
-              color: const Color(0xFFF5F5F5),
+              color: const Color(0xFF1B1B1B),
             ),
             errorWidget: (context, url, error) => Container(
-              color: const Color(0xFFF5F5F5),
-              child: const Icon(Icons.image_not_supported, color: Colors.grey),
+              color: const Color(0xFF1B1B1B),
+              child: const Icon(Icons.image_not_supported, color: Color(0xFF474747)),
             ),
           ),
-          // Gradient overlay for text readability
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -53,14 +52,13 @@ class HotDealBanner extends StatelessWidget {
                   begin: alignRight ? Alignment.centerRight : Alignment.centerLeft,
                   end: alignRight ? Alignment.centerLeft : Alignment.centerRight,
                   colors: [
-                    Colors.black.withOpacity(0.5),
+                    const Color(0xFF131313).withValues(alpha: 0.7),
                     Colors.transparent,
                   ],
                 ),
               ),
             ),
           ),
-          // Text content
           Positioned(
             left: alignRight ? null : 20.0,
             right: alignRight ? 20.0 : null,
@@ -84,7 +82,7 @@ class HotDealBanner extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 9,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black,
+                        color: const Color(0xFF1A1C1C),
                         letterSpacing: 1,
                       ),
                     ),
@@ -93,10 +91,11 @@ class HotDealBanner extends StatelessWidget {
                   Text(
                     banner.titleOne,
                     textAlign: alignRight ? TextAlign.right : TextAlign.left,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.notoSerif(
                       fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Colors.white,
+                      fontStyle: FontStyle.italic,
                       height: 1.2,
                     ),
                   ),
@@ -107,7 +106,7 @@ class HotDealBanner extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      color: Colors.white.withOpacity(0.9),
+                      color: const Color(0xFFC7C6C6),
                       height: 1.4,
                     ),
                   ),

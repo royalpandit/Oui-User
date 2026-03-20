@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../../core/router_name.dart';
@@ -20,7 +20,6 @@ class BestSellerGridView extends StatelessWidget {
   Widget build(BuildContext context) {
     if (sellers.isEmpty) return const SliverToBoxAdapter();
 
-    // Proper Capitalization: "best sellers" -> "Best Sellers"
     String formattedTitle = sectionTitle.split(' ').map((word) {
       if (word.isEmpty) return "";
       return word[0].toUpperCase() + word.substring(1).toLowerCase();
@@ -42,20 +41,16 @@ class BestSellerGridView extends StatelessWidget {
               },
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 16.0)),
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
           SliverToBoxAdapter(
             child: SizedBox(
-              // Increased height to accommodate labels and high-quality square icons
-              height: 110, 
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              height: 105,
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
+                physics: const ClampingScrollPhysics(),
                 itemCount: sellers.length > 8 ? 8 : sellers.length,
-                separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemBuilder: (context, index) {
-                  // Ensure your SingleCircularSeller is renamed or updated 
-                  // to show a rounded square instead of a circle.
                   return SingleCircularSeller(seller: sellers[index]);
                 },
               ),

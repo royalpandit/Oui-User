@@ -64,7 +64,7 @@ class CustomImage extends StatelessWidget {
             height: 48,
             width: 48,
             child: ShimmerLoader.rect(height: 48, width: 48))),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
+        errorWidget: (context, url, error) => const SizedBox.shrink(),
       );
     }
     return Image.asset(

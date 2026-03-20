@@ -1,7 +1,9 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/router_name.dart';
 import '/widgets/field_error_text.dart';
 import '../controller/sign_up/sign_up_bloc.dart';
 import '../models/auth_error_model.dart';
@@ -19,38 +21,27 @@ class _SignUpFormState extends State<SignUpForm> {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<SignUpBloc>();
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            _buildNameField(bloc),
-            const SizedBox(height: 20),
-            _buildEmailField(bloc),
-            const SizedBox(height: 20),
-            _buildPhoneField(bloc),
-            const SizedBox(height: 20),
-            _buildPasswordField(bloc),
-            const SizedBox(height: 20),
-            _buildConfirmPasswordField(bloc),
-            const SizedBox(height: 24),
-            _buildTerms(bloc),
-            const SizedBox(height: 32),
-            _buildFormError(),
-            _buildSubmitButton(bloc),
-            const SizedBox(height: 20),
-            Text(
-              'By signing up, you agree to receive personalized updates and offers.',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                color: Colors.black.withOpacity(0.45),
-                fontSize: 12,
-                height: 1.4,
-              ),
-            ),
-          ],
-        ),
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildNameField(bloc),
+          const SizedBox(height: 40),
+          _buildEmailField(bloc),
+          const SizedBox(height: 40),
+          _buildPhoneField(bloc),
+          const SizedBox(height: 40),
+          _buildPasswordField(bloc),
+          const SizedBox(height: 40),
+          _buildConfirmPasswordField(bloc),
+          const SizedBox(height: 24),
+          _buildTerms(bloc),
+          const SizedBox(height: 16),
+          _buildFormError(),
+          const SizedBox(height: 24),
+          _buildSubmitButton(bloc),
+        ],
       ),
     );
   }
@@ -62,13 +53,11 @@ class _SignUpFormState extends State<SignUpForm> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
-              style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
+            _buildField(
+              label: 'FULL NAME',
+              hintText: 'John Doe',
               onChanged: (v) => bloc.add(SignUpEventName(v)),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Name is required' : null,
-              decoration:
-                  _premiumInput('Full Name', Icons.person_outline_rounded),
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Name is required' : null,
             ),
             if (errors != null && errors.name.isNotEmpty)
               ErrorText(text: errors.name.first),
@@ -85,14 +74,12 @@ class _SignUpFormState extends State<SignUpForm> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
-              style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
+            _buildField(
+              label: 'EMAIL ADDRESS',
+              hintText: 'email@example.com',
               keyboardType: TextInputType.emailAddress,
               onChanged: (v) => bloc.add(SignUpEventEmail(v)),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Email is required' : null,
-              decoration:
-                  _premiumInput('Email Address', Icons.alternate_email_rounded),
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Email is required' : null,
             ),
             if (errors != null && errors.email.isNotEmpty)
               ErrorText(text: errors.email.first),
@@ -109,13 +96,12 @@ class _SignUpFormState extends State<SignUpForm> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
-              style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
+            _buildField(
+              label: 'PHONE NUMBER',
+              hintText: '+1 234 567 890',
               keyboardType: TextInputType.phone,
               onChanged: (v) => bloc.add(SignUpEventPhone(v)),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Phone is required' : null,
-              decoration: _premiumInput('Phone Number', Icons.phone_outlined),
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Phone is required' : null,
             ),
             if (errors != null && errors.phone.isNotEmpty)
               ErrorText(text: errors.phone.first),
@@ -132,25 +118,18 @@ class _SignUpFormState extends State<SignUpForm> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
+            _buildField(
+              label: 'PASSWORD',
+              hintText: '••••••••',
               obscureText: state.showPassword,
-              style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
               onChanged: (v) => bloc.add(SignUpEventPassword(v)),
-              validator: (v) =>
-                  (v == null || v.isEmpty) ? 'Password is required' : null,
-              decoration:
-                  _premiumInput('Secure Password', Icons.lock_outline_rounded)
-                      .copyWith(
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    state.showPassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                    color: Colors.black.withOpacity(0.45),
-                    size: 20,
-                  ),
-                  onPressed: () =>
-                      bloc.add(SignUpEventShowPassword(state.showPassword)),
+              validator: (v) => (v == null || v.isEmpty) ? 'Password is required' : null,
+              suffixIcon: GestureDetector(
+                onTap: () => bloc.add(SignUpEventShowPassword(state.showPassword)),
+                child: Icon(
+                  state.showPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                  color: const Color(0xFF919191),
+                  size: 20,
                 ),
               ),
             ),
@@ -165,28 +144,22 @@ class _SignUpFormState extends State<SignUpForm> {
   Widget _buildConfirmPasswordField(SignUpBloc bloc) {
     return BlocBuilder<SignUpBloc, SignUpModelState>(
       builder: (context, state) {
-        return TextFormField(
+        return _buildField(
+          label: 'CONFIRM PASSWORD',
+          hintText: '••••••••',
           obscureText: state.showConfirmPassword,
-          style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
           onChanged: (v) => bloc.add(SignUpEventPasswordConfirm(v)),
           validator: (v) {
             if (v == null || v.isEmpty) return 'Confirm password is required';
-            if (v != state.password) return 'Confirm password does not match';
+            if (v != state.password) return 'Passwords do not match';
             return null;
           },
-          decoration:
-              _premiumInput('Confirm Password', Icons.lock_reset_outlined)
-                  .copyWith(
-            suffixIcon: IconButton(
-              icon: Icon(
-                state.showConfirmPassword
-                    ? Icons.visibility_off
-                    : Icons.visibility,
-color: Colors.black.withOpacity(0.45),
-                size: 20,
-              ),
-              onPressed: () => bloc.add(
-                  SignUpEventShowConfirmPassword(state.showConfirmPassword)),
+          suffixIcon: GestureDetector(
+            onTap: () => bloc.add(SignUpEventShowConfirmPassword(state.showConfirmPassword)),
+            child: Icon(
+              state.showConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+              color: const Color(0xFF919191),
+              size: 20,
             ),
           ),
         );
@@ -197,58 +170,125 @@ color: Colors.black.withOpacity(0.45),
   Widget _buildTerms(SignUpBloc bloc) {
     return BlocBuilder<SignUpBloc, SignUpModelState>(
       builder: (context, state) {
-        return Theme(
-          data: ThemeData(unselectedWidgetColor: Colors.black.withOpacity(0.4)),
-          child: CheckboxListTile(
-            value: state.agree == 1,
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              'I agree to the Terms of Service and Privacy Policy',
-              style: GoogleFonts.inter(
-                color: Colors.black.withOpacity(0.7),
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () => bloc.add(SignUpEventAgree(state.agree == 1 ? 0 : 1)),
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: state.agree == 1 ? Colors.white : const Color(0xFF474747),
+                    width: 1,
+                  ),
+                  color: state.agree == 1 ? Colors.white : Colors.transparent,
+                ),
+                child: state.agree == 1
+                    ? const Icon(Icons.check, size: 14, color: Color(0xFF131313))
+                    : null,
               ),
             ),
-            activeColor: Colors.black,
-            checkColor: Colors.white,
-            dense: true,
-            side: BorderSide(color: Colors.black.withOpacity(0.3)),
-            controlAffinity: ListTileControlAffinity.leading,
-            onChanged: (v) => bloc.add(SignUpEventAgree(v! ? 1 : 0)),
-          ),
-        );
-      },
-    );
-  }
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'I agree to the ',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFC7C6C6),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          height: 1.63,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Terms of Service',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => Navigator.pushNamed(
+                              context, RouteNames.splashTermsScreen),
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' and ',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFC7C6C6),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          height: 1.63,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Privacy Policy',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => Navigator.pushNamed(
+                              context, RouteNames.splashPrivacyScreen),
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '.',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFC7C6C6),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          height: 1.63,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
 
   Widget _buildSubmitButton(SignUpBloc bloc) {
     return BlocBuilder<SignUpBloc, SignUpModelState>(
       builder: (context, state) {
         if (state.state is SignUpStateLoading) {
           return const Center(
-              child: CircularProgressIndicator(color: Colors.black));
+            child: CircularProgressIndicator(color: Colors.white),
+          );
         }
-        return SizedBox(
-          width: double.infinity,
-          height: 58,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-            ),
-            onPressed: () {
-              if (_formKey.currentState?.validate() ?? true) {
-                bloc.add(SignUpEventSubmit());
-              }
-            },
-            child: Text(
-              'Create My Account',
-              style:
-                  GoogleFonts.inter(fontWeight: FontWeight.w800, fontSize: 16),
+        return GestureDetector(
+          onTap: () {
+            if (_formKey.currentState?.validate() ?? true) {
+              bloc.add(SignUpEventSubmit());
+            }
+          },
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            decoration: const BoxDecoration(color: Colors.white),
+            child: Center(
+              child: Text(
+                'CREATE MY ACCOUNT',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF1A1C1C),
+                  letterSpacing: 3.6,
+                ),
+              ),
             ),
           ),
         );
@@ -260,12 +300,10 @@ color: Colors.black.withOpacity(0.45),
     return BlocBuilder<SignUpBloc, SignUpModelState>(
       builder: (context, state) {
         if (state.state is SignUpStateFormError) {
-          return ErrorText(
-              text: (state.state as SignUpStateFormError).errorMsg);
+          return ErrorText(text: (state.state as SignUpStateFormError).errorMsg);
         }
         if (state.state is SignUpStateLoadedError) {
-          return ErrorText(
-              text: (state.state as SignUpStateLoadedError).errorMsg);
+          return ErrorText(text: (state.state as SignUpStateLoadedError).errorMsg);
         }
         return const SizedBox.shrink();
       },
@@ -279,22 +317,71 @@ color: Colors.black.withOpacity(0.45),
     return null;
   }
 
-  InputDecoration _premiumInput(String hint, IconData icon) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: GoogleFonts.inter(
-          color: Colors.black.withOpacity(0.3), fontSize: 14),
-      prefixIcon: Icon(icon, color: Colors.black.withOpacity(0.45), size: 20),
-      filled: true,
-      fillColor: Colors.black.withOpacity(0.04),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: Colors.black.withOpacity(0.15)),
+  Widget _buildField({
+    required String label,
+    required String hintText,
+    bool obscureText = false,
+    TextInputType? keyboardType,
+    required ValueChanged<String> onChanged,
+    String? Function(String?)? validator,
+    Widget? suffixIcon,
+  }) {
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Color(0xFF474747), width: 1),
+        ),
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Colors.black, width: 1.5),
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF919191),
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  obscureText: obscureText,
+                  keyboardType: keyboardType,
+                  onChanged: onChanged,
+                  validator: validator,
+                  style: GoogleFonts.manrope(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
+                  ),
+                  cursorColor: Colors.white,
+                  decoration: InputDecoration(
+                    hintText: hintText,
+                    hintStyle: GoogleFonts.manrope(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xFF353535),
+                    ),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    focusedErrorBorder: InputBorder.none,
+                    filled: false,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                  ),
+                ),
+              ),
+              if (suffixIcon != null) suffixIcon,
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../../../utils/k_images.dart';
-import '../../../widgets/custom_image.dart';
 import '../../category/component/product_card.dart';
 import '../model/product_model.dart';
+import 'section_header.dart';
 
 class NewArrivalComponent extends StatelessWidget {
   const NewArrivalComponent({
@@ -30,33 +28,21 @@ class NewArrivalComponent extends StatelessWidget {
         children: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    formattedTitle,
-                    style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15.0,
-                      color: Colors.black,
-                      letterSpacing: -0.2,
-                    ),
-                  ),
-                ],
+              padding: const EdgeInsets.only(top: 24, bottom: 16),
+              child: SectionHeader(
+                headerText: formattedTitle,
               ),
             ),
           ),
           SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 14,
-              mainAxisSpacing: 20,
-              mainAxisExtent: 280.0,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 14,
+              mainAxisExtent: 270,
             ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                // Return your main ProductCard here
                 return ProductCard(productModel: productList[index]);
               },
               childCount: productList.length > 8 ? 8 : productList.length,

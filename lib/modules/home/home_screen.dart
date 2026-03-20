@@ -1,4 +1,5 @@
-import 'dart:developer';
+﻿import 'dart:developer';
+import 'dart:math' show Random;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,9 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../../core/router_name.dart';
+import '../../core/router_name.dart';
 import '../../utils/utils.dart';
-import '../../../utils/notifications.dart';
+import '../../utils/notifications.dart';
 import '../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../cart/controllers/cart/add_to_cart/add_to_cart_cubit.dart';
 import '../cart/controllers/cart/cart_cubit.dart';
@@ -20,21 +21,30 @@ import 'component/home_app_bar.dart';
 import 'component/hot_deal_banner_slider.dart';
 import 'component/new_arrival_component.dart';
 import 'component/offer_banner_slider.dart';
+import 'component/auto_scroll_product_strip.dart';
+import 'component/featured_highlight_card.dart';
 import 'component/populer_product_component.dart';
+import 'component/quote_section.dart';
 import 'controller/cubit/home_controller_cubit.dart';
 import 'model/banner_model.dart';
 import 'model/home_model.dart';
-import '/widgets/shimmer_loader.dart';
+import 'model/product_model.dart';
+
+/// Checks dynamic visibility flag (handles bool, int, String from API)
+bool _isVisible(dynamic flag) {
+  if (flag == true || flag == 1 || flag == '1') return true;
+  return false;
+}
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-  final _className = 'HomeScreen';
+  static const _className = 'HomeScreen';
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AddToCartCubit, AddToCartState>(
       listenWhen: (previous, current) => true,
-          listener: (context, state) {
+      listener: (context, state) {
         if (state is AddToCartStateLoading) {
           Utils.loadingDialog(context);
         } else {
@@ -50,7 +60,7 @@ class HomeScreen extends StatelessWidget {
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color(0xFF131313),
           body: BlocBuilder<HomeControllerCubit, HomeControllerState>(
             builder: (context, state) {
               log(state.toString(), name: _className);
@@ -64,14 +74,24 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Text(
                         state.errorMessage,
-                        style: GoogleFonts.inter(fontSize: 14, color: Colors.red),
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: const Color(0xFF919191),
+                        ),
                       ),
                       const SizedBox(height: 10),
-                      IconButton(
-                        onPressed: () {
-                          context.read<HomeControllerCubit>().getHomeData();
-                        },
-                        icon: const Icon(Icons.refresh_outlined),
+                      Semantics(
+                        button: true,
+                        label: 'Retry loading home page',
+                        child: IconButton(
+                          onPressed: () {
+                            context.read<HomeControllerCubit>().getHomeData();
+                          },
+                          icon: const Icon(
+                            Icons.refresh_outlined,
+                            color: Color(0xFFE2E2E2),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -100,214 +120,229 @@ class _LoadedHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appSetting = context.read<AppSettingCubit>().settingModel!.setting;
+    final combineBannerList = _buildCombineBanners();
+    final h = homeModel;
+    String st(int i) =>
+        '${h.sectionTitle[i].custom ?? h.sectionTitle[i].defaultTitle}';
+
+    return CustomScrollView(
+      physics: const ClampingScrollPhysics(),
+      slivers: [
+        HomeAppBar(
+          logo: context.read<AppSettingCubit>().settingModel!.setting!.logo,
+        ),
+
+        // Categories
+        CategoryGridView(
+          homeCategories: h.homeCategories,
+          sectionTitle: st(0),
+        ),
+
+        // Banner slider
+        if (_isVisible(h.sliderVisibilty))
+          SliverToBoxAdapter(
+            child: OfferBannerSlider(sliders: h.sliders),
+          ),
+
+        // Quote section 1
+        if (_isVisible(h.quoteVisibility))
+          SliverToBoxAdapter(
+            child: QuoteSection(quotes: h.quotes, index: 0),
+          ),
+
+        // Popular products
+        if (_isVisible(h.popularCategoryVisibilty))
+          HorizontalProductComponent(
+            productList: h.popularCategoryProducts,
+            category: st(1),
+            onTap: () => Navigator.pushNamed(
+              context,
+              RouteNames.allPopulerProductScreen,
+              arguments: {'keyword': 'popular_category', 'app_bar': st(1)},
+            ),
+          ),
+
+        // Featured highlight card (random product each build)
+        if (_isVisible(h.featuredHighlightVisibility) &&
+            h.featuredCategoryProducts.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 28),
+              child: FeaturedHighlightCard(
+                product: h.featuredCategoryProducts[
+                    Random().nextInt(h.featuredCategoryProducts.length)],
+              ),
+            ),
+          ),
+
+        // Flash sale
+        SliverToBoxAdapter(
+          child: FlashSaleComponent(flashSale: h.flashSale),
+        ),
+
+        // Best sellers (multivendor)
+        if (appSetting!.enableMultivendor == 1 &&
+            _isVisible(h.sellerVisibility))
+          BestSellerGridView(
+            sellers: h.sellers,
+            sectionTitle: st(3),
+          ),
+
+        // Top rated products
+        if (_isVisible(h.topRatedVisibility))
+          CategoryAndListComponent(
+            productList: h.topRatedProducts,
+            category: st(2),
+            onTap: () => Navigator.pushNamed(
+              context,
+              RouteNames.allPopulerProductScreen,
+              arguments: {'keyword': 'popular_category', 'app_bar': st(3)},
+            ),
+          ),
+
+        // Featured products
+        if (_isVisible(h.featuredProductVisibility))
+          HorizontalProductComponent(
+            productList: h.featuredCategoryProducts,
+            category: st(5),
+            onTap: () => Navigator.pushNamed(
+              context,
+              RouteNames.allPopulerProductScreen,
+              arguments: {'keyword': 'featured_product', 'app_bar': st(5)},
+            ),
+          ),
+
+        // Best products
+        if (_isVisible(h.newArrivalProductVisibility))
+          HorizontalProductComponent(
+            productList: h.bestProducts,
+            category: st(4),
+            onTap: () => Navigator.pushNamed(
+              context,
+              RouteNames.allPopulerProductScreen,
+              arguments: {'keyword': 'best_product', 'app_bar': st(6)},
+            ),
+          ),
+
+        // Quote section 2
+        if (_isVisible(h.quoteVisibility) && h.quotes.length > 1)
+          SliverToBoxAdapter(
+            child: QuoteSection(quotes: h.quotes, index: 1),
+          ),
+
+        // Auto-scroll trending strip
+        if (_isVisible(h.trendingVisibility) && h.trendingProducts.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 28),
+              child: AutoScrollProductStrip(
+                products: h.trendingProducts,
+                title: h.trendingSectionTitle,
+              ),
+            ),
+          ),
+
+        // Combined banners slider
+        SliverToBoxAdapter(
+          child: CombineBannerSlider(banners: combineBannerList),
+        ),
+
+        // New arrivals grid
+        if (_isVisible(h.bestProductVisibility))
+          NewArrivalComponent(
+            productList: h.newArrivalProducts,
+            sectionTitle: st(5),
+          ),
+
+        // Quote section 3
+        if (_isVisible(h.quoteVisibility) && h.quotes.length > 2)
+          SliverToBoxAdapter(
+            child: QuoteSection(quotes: h.quotes, index: 2),
+          ),
+
+        // "Just For You" — shuffled mix from all product lists
+        if (_buildJustForYou(h).isNotEmpty)
+          HorizontalProductComponent(
+            productList: _buildJustForYou(h),
+            category: 'Just For You',
+            onTap: () => Navigator.pushNamed(
+              context,
+              RouteNames.allPopulerProductScreen,
+              arguments: {'keyword': 'popular_category', 'app_bar': 'Just For You'},
+            ),
+          ),
+
+        // Quote section 4
+        if (_isVisible(h.quoteVisibility) && h.quotes.length > 3)
+          SliverToBoxAdapter(
+            child: QuoteSection(quotes: h.quotes, index: 3),
+          ),
+
+        // "Editors Picks" — another curated mix
+        if (_buildEditorsPicks(h).isNotEmpty)
+          HorizontalProductComponent(
+            productList: _buildEditorsPicks(h),
+            category: 'Editor\'s Picks',
+            onTap: () => Navigator.pushNamed(
+              context,
+              RouteNames.allPopulerProductScreen,
+              arguments: {'keyword': 'best_product', 'app_bar': 'Editor\'s Picks'},
+            ),
+          ),
+
+        // Final quote
+        if (_isVisible(h.quoteVisibility) && h.quotes.length > 4)
+          SliverToBoxAdapter(
+            child: QuoteSection(quotes: h.quotes, index: 4),
+          ),
+
+        const SliverToBoxAdapter(child: SizedBox(height: 80)),
+      ],
+    );
+  }
+
+  /// Shuffled mix of featured + top-rated products
+  List<ProductModel> _buildJustForYou(HomeModel h) {
+    final seen = <int>{};
+    final list = <ProductModel>[];
+    for (final p in [...h.featuredCategoryProducts, ...h.topRatedProducts]) {
+      if (seen.add(p.id)) list.add(p);
+    }
+    list.shuffle(Random());
+    return list.take(10).toList();
+  }
+
+  /// Shuffled mix of best + new arrival products
+  List<ProductModel> _buildEditorsPicks(HomeModel h) {
+    final seen = <int>{};
+    final list = <ProductModel>[];
+    for (final p in [...h.bestProducts, ...h.newArrivalProducts]) {
+      if (seen.add(p.id)) list.add(p);
+    }
+    list.shuffle(Random());
+    return list.take(10).toList();
+  }
+
+  List<BannerModel> _buildCombineBanners() {
     final rawBannerList = <BannerModel>[
       if (homeModel.sliderBannerOne != null) homeModel.sliderBannerOne!,
       if (homeModel.sliderBannerTwo != null) homeModel.sliderBannerTwo!,
       if (homeModel.twoColumnBannerOne != null) homeModel.twoColumnBannerOne!,
       if (homeModel.twoColumnBannerTwo != null) homeModel.twoColumnBannerTwo!,
     ];
-
-    // Assign each banner to the corresponding category by index
-    final categorySlugs =
-        homeModel.homeCategories.map((c) => c.slug).toList();
-    final combineBannerList = <BannerModel>[];
+    final categorySlugs = homeModel.homeCategories.map((c) => c.slug).toList();
+    final result = <BannerModel>[];
     for (int i = 0; i < rawBannerList.length; i++) {
       if (i < categorySlugs.length) {
-        combineBannerList.add(rawBannerList[i].copyWith(
+        result.add(rawBannerList[i].copyWith(
           slug: categorySlugs[i],
           titleOne: homeModel.homeCategories[i].name,
         ));
       } else {
-        combineBannerList.add(rawBannerList[i]);
+        result.add(rawBannerList[i]);
       }
     }
-
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: [
-        HomeAppBar(
-          logo: context.read<AppSettingCubit>().settingModel!.setting!.logo,
-        ),
-        //const SliverToBoxAdapter(child: SizedBox(height: 20)),
-        CategoryGridView(
-          homeCategories: homeModel.homeCategories,
-          sectionTitle:
-              '${homeModel.sectionTitle[0].custom ?? homeModel.sectionTitle[0].defaultTitle}',
-        ),
-
-        ///Banner slider start
-        if (homeModel.sliderVisibilty is bool ||
-            homeModel.sliderVisibilty is int ||
-            homeModel.sliderVisibilty is String) ...[
-          if (homeModel.sliderVisibilty == true ||
-              homeModel.sliderVisibilty == 1 ||
-              homeModel.sliderVisibilty == '1') ...[
-            SliverToBoxAdapter(
-                child: OfferBannerSlider(sliders: homeModel.sliders))
-          ],
-        ] else ...[
-          const SliverToBoxAdapter(child: SizedBox.shrink())
-        ],
-
-        ///Banner slider end
-
-        ///popular product slider start
-        if (homeModel.popularCategoryVisibilty is bool ||
-            homeModel.popularCategoryVisibilty is int ||
-            homeModel.popularCategoryVisibilty is String) ...[
-          if (homeModel.popularCategoryVisibilty == true ||
-              homeModel.popularCategoryVisibilty == 1 ||
-              homeModel.popularCategoryVisibilty == '1') ...[
-            HorizontalProductComponent(
-              productList: homeModel.popularCategoryProducts,
-              bgColor: Colors.white,
-              category:
-                  '${homeModel.sectionTitle[1].custom ?? homeModel.sectionTitle[1].defaultTitle}',
-              onTap: () => Navigator.pushNamed(
-                context,
-                RouteNames.allPopulerProductScreen,
-                arguments: {
-                  'keyword': "popular_category",
-                  'app_bar':
-                      '${homeModel.sectionTitle[1].custom ?? homeModel.sectionTitle[1].defaultTitle}',
-                },
-              ),
-            ),
-          ]
-        ] else ...[
-          const SliverToBoxAdapter(child: SizedBox.shrink())
-        ],
-
-        ///popular product slider end
-        SliverToBoxAdapter(
-            child: FlashSaleComponent(flashSale: homeModel.flashSale)),
-
-        if (appSetting!.enableMultivendor == 1) ...[
-          if (homeModel.sellerVisibility is bool ||
-              homeModel.sellerVisibility is int ||
-              homeModel.sellerVisibility is String) ...[
-            if (homeModel.sellerVisibility == true ||
-                homeModel.sellerVisibility == 1 ||
-                homeModel.sellerVisibility == '1') ...[
-              BestSellerGridView(
-                sellers: homeModel.sellers,
-                sectionTitle:
-                    '${homeModel.sectionTitle[3].custom ?? homeModel.sectionTitle[3].defaultTitle}',
-              )
-            ]
-          ] else ...[
-            const SliverToBoxAdapter(child: SizedBox.shrink())
-          ],
-        ] else ...[
-          const SliverToBoxAdapter(child: SizedBox.shrink())
-        ],
-
-        ///top rated product slider end
-
-        if (homeModel.topRatedVisibility is bool ||
-            homeModel.topRatedVisibility is int ||
-            homeModel.topRatedVisibility is String) ...[
-          if (homeModel.topRatedVisibility == true ||
-              homeModel.topRatedVisibility == 1 ||
-              homeModel.topRatedVisibility == '1') ...[
-            CategoryAndListComponent(
-              productList: homeModel.topRatedProducts,
-              bgColor: Colors.white,
-              category:
-                  '${homeModel.sectionTitle[2].custom ?? homeModel.sectionTitle[2].defaultTitle}',
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  RouteNames.allPopulerProductScreen,
-                  arguments: {
-                    'keyword': "popular_category",
-                    'app_bar':
-                        '${homeModel.sectionTitle[3].custom ?? homeModel.sectionTitle[3].defaultTitle}'
-                  },
-                );
-              },
-            ),
-          ]
-        ] else ...[
-          const SliverToBoxAdapter(child: SizedBox.shrink())
-        ],
-
-        if (homeModel.featuredProductVisibility is bool ||
-            homeModel.featuredProductVisibility is int ||
-            homeModel.featuredProductVisibility is String) ...[
-          if (homeModel.featuredProductVisibility == true ||
-              homeModel.featuredProductVisibility == 1 ||
-              homeModel.featuredProductVisibility == '1') ...[
-            HorizontalProductComponent(
-              productList: homeModel.featuredCategoryProducts,
-              bgColor: Colors.white,
-              category:
-                  '${homeModel.sectionTitle[5].custom ?? homeModel.sectionTitle[5].defaultTitle}',
-              onTap: () {
-                Navigator.pushNamed(context, RouteNames.allPopulerProductScreen,
-                    arguments: {
-                      'keyword': "featured_product",
-                      'app_bar':
-                          '${homeModel.sectionTitle[5].custom ?? homeModel.sectionTitle[5].defaultTitle}'
-                    });
-              },
-            ),
-          ]
-        ] else ...[
-          const SliverToBoxAdapter(child: SizedBox.shrink())
-        ],
-
-        if (homeModel.newArrivalProductVisibility is bool ||
-            homeModel.newArrivalProductVisibility is int ||
-            homeModel.newArrivalProductVisibility is String) ...[
-          if (homeModel.newArrivalProductVisibility == true ||
-              homeModel.newArrivalProductVisibility == 1 ||
-              homeModel.newArrivalProductVisibility == '1') ...[
-            HorizontalProductComponent(
-              productList: homeModel.bestProducts,
-              bgColor: Colors.white,
-              category:
-                  '${homeModel.sectionTitle[4].custom ?? homeModel.sectionTitle[4].defaultTitle}',
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  RouteNames.allPopulerProductScreen,
-                  arguments: {
-                    'keyword': "best_product",
-                    'app_bar':
-                        '${homeModel.sectionTitle[6].custom ?? homeModel.sectionTitle[6].defaultTitle}'
-                  },
-                );
-              },
-            ),
-          ]
-        ] else ...[
-          const SliverToBoxAdapter(child: SizedBox.shrink())
-        ],
-
-        SliverToBoxAdapter(
-          child: CombineBannerSlider(banners: combineBannerList),
-        ),
-
-        if (homeModel.bestProductVisibility is bool ||
-            homeModel.bestProductVisibility is int ||
-            homeModel.bestProductVisibility is String) ...[
-          if (homeModel.bestProductVisibility == true ||
-              homeModel.bestProductVisibility == 1 ||
-              homeModel.bestProductVisibility == '1') ...[
-            NewArrivalComponent(
-              productList: homeModel.newArrivalProducts,
-              sectionTitle:
-                  '${homeModel.sectionTitle[5].custom ?? homeModel.sectionTitle[5].defaultTitle}',
-            ),
-          ]
-        ] else ...[
-          const SliverToBoxAdapter(child: SizedBox.shrink())
-        ],
-
-        const SliverToBoxAdapter(child: SizedBox(height: 30)),
-      ],
-    );
+    return result;
   }
 }
 
@@ -317,8 +352,8 @@ class _HomeSkeletonLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: const Color(0xFFE8E8E8),
-      highlightColor: const Color(0xFFF2F2F2),
+      baseColor: const Color(0xFF1B1B1B),
+      highlightColor: const Color(0xFF2A2A2A),
       child: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
         child: Column(
@@ -326,15 +361,12 @@ class _HomeSkeletonLoader extends StatelessWidget {
           children: [
             // App bar placeholder
             Container(
-              height: 80,
+              height: 70,
               width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
-              ),
+              color: const Color(0xFF1B1B1B),
             ),
             const SizedBox(height: 24),
-            // Category pills row
+            // Category circles row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
@@ -343,8 +375,8 @@ class _HomeSkeletonLoader extends StatelessWidget {
                   5,
                   (_) => Column(
                     children: [
-                      _skBox(58, 58, 14),
-                      const SizedBox(height: 6),
+                      _skBox(54, 54, 27),
+                      const SizedBox(height: 8),
                       _skBox(44, 10, 4),
                     ],
                   ),
@@ -352,13 +384,13 @@ class _HomeSkeletonLoader extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            // Banner slider
+            // Banner placeholder
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _skBox(double.infinity, 160, 16),
+              child: _skBox(double.infinity, 180, 16),
             ),
             const SizedBox(height: 24),
-            // Section: popular (vertical cards)
+            // Section header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
@@ -366,26 +398,27 @@ class _HomeSkeletonLoader extends StatelessWidget {
                 children: [_skBox(120, 18, 4), _skBox(56, 14, 4)],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
+            // Product cards row
             SizedBox(
-              height: 300,
+              height: 280,
               child: ListView.separated(
                 physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 scrollDirection: Axis.horizontal,
                 itemCount: 4,
                 separatorBuilder: (_, __) => const SizedBox(width: 12),
-                itemBuilder: (_, __) => _skBox(165, 300, 12),
+                itemBuilder: (_, __) => _skBox(160, 280, 12),
               ),
             ),
             const SizedBox(height: 24),
-            // Flash sale banner
+            // Flash sale placeholder
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _skBox(double.infinity, 120, 16),
+              child: _skBox(double.infinity, 140, 16),
             ),
             const SizedBox(height: 24),
-            // Section: top rated (vertical cards)
+            // Another section header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
@@ -393,44 +426,23 @@ class _HomeSkeletonLoader extends StatelessWidget {
                 children: [_skBox(100, 18, 4), _skBox(56, 14, 4)],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             SizedBox(
-              height: 300,
+              height: 280,
               child: ListView.separated(
                 physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 scrollDirection: Axis.horizontal,
                 itemCount: 4,
                 separatorBuilder: (_, __) => const SizedBox(width: 12),
-                itemBuilder: (_, __) => _skBox(165, 300, 12),
+                itemBuilder: (_, __) => _skBox(160, 280, 12),
               ),
             ),
             const SizedBox(height: 24),
             // Combined banner
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _skBox(double.infinity, 150, 16),
-            ),
-            const SizedBox(height: 24),
-            // Section: new arrivals (horizontal scroll)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [_skBox(110, 18, 4), _skBox(56, 14, 4)],
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 300,
-              child: ListView.separated(
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                scrollDirection: Axis.horizontal,
-                itemCount: 4,
-                separatorBuilder: (_, __) => const SizedBox(width: 12),
-                itemBuilder: (_, __) => _skBox(165, 300, 12),
-              ),
+              child: _skBox(double.infinity, 160, 16),
             ),
             const SizedBox(height: 30),
           ],
@@ -443,7 +455,7 @@ class _HomeSkeletonLoader extends StatelessWidget {
         width: w,
         height: h,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFF1B1B1B),
           borderRadius: BorderRadius.circular(r),
         ),
       );

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../category/component/product_card.dart';
 import '../model/product_model.dart';
 import 'section_header.dart';
@@ -21,7 +21,6 @@ class HorizontalProductComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     if (productList.isEmpty) return const SliverToBoxAdapter();
 
-    // Title Case: "top rated products" -> "Top Rated Products"
     String formattedCategory = category.trim().split(RegExp(r'\s+')).map((word) {
       if (word.isEmpty) return '';
       return word[0].toUpperCase() + word.substring(1).toLowerCase();
@@ -30,7 +29,7 @@ class HorizontalProductComponent extends StatelessWidget {
     return SliverToBoxAdapter(
       child: Container(
         color: bgColor ?? Colors.transparent,
-        margin: const EdgeInsets.only(top: 12.0),
+        margin: const EdgeInsets.only(top: 16),
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,11 +38,11 @@ class HorizontalProductComponent extends StatelessWidget {
               headerText: formattedCategory,
               onTap: onTap,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             SizedBox(
-              height: 300.0,
+              height: 280,
               child: ListView.separated(
-                physics: const BouncingScrollPhysics(),
+                physics: const ClampingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 scrollDirection: Axis.horizontal,
                 itemCount: productList.length > 8 ? 8 : productList.length,
@@ -51,7 +50,7 @@ class HorizontalProductComponent extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return ProductCard(
                     productModel: productList[index],
-                    width: 165,
+                    width: 160,
                   );
                 },
               ),

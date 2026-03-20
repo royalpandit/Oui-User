@@ -3,6 +3,15 @@ class RemoteUrls {
    // Product url
    static const String baseUrl = '${rootUrl}api/';
   static const String homeUrl = baseUrl;
+
+  // Dynamic home content endpoints (add to backend CRUD)
+  // GET  - returns { quotes: [...], quoteVisibility: bool }
+  static const String homeQuotesUrl = '${baseUrl}home-quotes';
+  // GET  - returns { trendingProducts: [...], trendingVisibility: bool, trendingSectionTitle: string }
+  static const String homeTrendingUrl = '${baseUrl}home-trending';
+  // GET  - returns { featuredHighlightVisibility: bool, featuredHighlightSectionTitle: string }
+  static const String homeFeaturedHighlightUrl = '${baseUrl}home-featured-highlight';
+
   static const String userRegister = '${baseUrl}store-register';
   static const String userLogin = '${baseUrl}store-login';
 

@@ -11,6 +11,8 @@ export '/modules/place_order/paystack_payment_screen.dart';
 export '/modules/place_order/sslcommerce.dart';
 export '../modules/animated_splash_screen/splash_screen.dart';
 export '../modules/authentication/authentication_screen.dart';
+export '../modules/authentication/splash_terms.dart';
+export '../modules/authentication/splash_privacy.dart';
 export '../modules/authentication/forgot_screen.dart';
 export '../modules/authentication/setpassword_screen.dart';
 export '../modules/authentication/verification_code_screen.dart';

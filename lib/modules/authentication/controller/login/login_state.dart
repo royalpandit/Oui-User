@@ -8,10 +8,8 @@ class LoginModelState extends Equatable {
   final LoginState state;
 
   const LoginModelState({
-    /*   this.email = 'hijigov511@pahed.com',
-    this.password = '1234',*/
-    this.email = 'user@gmail.com',
-    this.password = '1234',
+    this.email = '',
+    this.password = '',
     this.showPassword = true,
     this.active = false,
     this.state = const LoginStateInitial(),

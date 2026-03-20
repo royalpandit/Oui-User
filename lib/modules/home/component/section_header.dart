@@ -1,51 +1,48 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 
 class SectionHeader extends StatelessWidget {
   const SectionHeader({
     super.key,
-    this.color = Colors.black,
     this.onTap,
     required this.headerText,
-    this.isSeeAll = true,
   });
-  final Color? color;
   final String headerText;
   final VoidCallback? onTap;
-  final bool isSeeAll;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            headerText.capitalizeByWord(),
-            style: GoogleFonts.inter(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-              letterSpacing: -0.2,
+          Expanded(
+            child: Text(
+              headerText.capitalizeByWord(),
+              style: GoogleFonts.notoSerif(
+                fontSize: 28,
+                fontWeight: FontWeight.w400,
+                fontStyle: FontStyle.italic,
+                color: const Color(0xFFE2E2E2),
+                height: 1.20,
+              ),
             ),
           ),
-          isSeeAll? InkWell(
-            onTap: onTap,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+          if (onTap != null)
+            GestureDetector(
+              onTap: onTap,
               child: Text(
-                Language.seeAll.capitalizeByWord(),
+                'View All',
                 style: GoogleFonts.inter(
                   fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey.shade500,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF919191),
+                  letterSpacing: 0.3,
                 ),
               ),
             ),
-          ):const SizedBox(),
         ],
       ),
     );

@@ -1,4 +1,4 @@
-import 'package:auto_size_text/auto_size_text.dart';
+﻿import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -9,8 +9,8 @@ class PriceCardWidget extends StatelessWidget {
     super.key,
     required this.price,
     required this.offerPrice,
-    this.textSize = 16,
-    this.priceColor = Colors.black,
+    this.textSize = 14,
+    this.priceColor = const Color(0xFFE2E2E2),
   });
   final String price;
   final double textSize;
@@ -25,24 +25,22 @@ class PriceCardWidget extends StatelessWidget {
 
     return Row(
       mainAxisSize: MainAxisSize.min,
-      // crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         AutoSizeText(
           Utils.formatPrice(price, context),
           textAlign: TextAlign.left,
-          maxFontSize: textSize - 4,
+          maxFontSize: textSize - 2,
           minFontSize: textSize - 4,
           style: TextStyle(
-            // fontWeight: FontWeight.w500,
             decoration: TextDecoration.lineThrough,
-            decorationColor: priceColor,
-            color: priceColor,
+            decorationColor: const Color(0xFF919191),
+            color: const Color(0xFF919191),
             height: 1.5,
             fontSize: textSize,
           ),
           maxLines: 1,
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 8),
         _buildPrice(Utils.formatPrice(offerPrice, context), context),
       ],
     );
@@ -51,18 +49,12 @@ class PriceCardWidget extends StatelessWidget {
   Widget _buildPrice(String price, BuildContext context) {
     return Text(
       price,
-      style: GoogleFonts.roboto(
-          // color: Utils.dynamicPrimaryColor(context),
-          color: priceColor,
-          height: 1.5,
-          fontSize: textSize,
-          fontWeight: FontWeight.w500),
+      style: GoogleFonts.manrope(
+        color: priceColor,
+        height: 1.43,
+        fontSize: textSize,
+        fontWeight: FontWeight.w400,
+      ),
     );
   }
 }
-
-// offerPrice = 15;
-// price = 25;
-//
-// afterDiscount = 0.2 * 25 = 5;
-// finalOfferPrice = price - afterDiscount = 20;

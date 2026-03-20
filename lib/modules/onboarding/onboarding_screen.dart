@@ -3,10 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '/utils/language_string.dart';
-import '/widgets/capitalized_word.dart';
 import '../../core/router_name.dart';
-import '../../widgets/custom_image.dart';
 import '../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 
 class OnBoardingScreen extends StatefulWidget {
@@ -21,10 +18,30 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   int _currentPage = 0;
   final int _numPages = 3;
 
+  static const _bgColor = Color(0xFF131313);
+
+  final List<String> _images = [
+    'assets/icons/1.png',
+    'assets/icons/2.png',
+    'assets/icons/3.png',
+  ];
+
+  final List<String> _titles = [
+    'FIND YOUR\nFAVORITE\nCLOTHES',
+    'EASY WAY\nTO SHOP',
+    'TRY BEFORE\nYOU BUY',
+  ];
+
+  final List<String> _subtitles = [
+    'Explore the latest styles and discover outfits\nyou\'ll love, all in one place.',
+    'Browse, choose, and shop your favorites\nquickly with a smooth experience.',
+    'Experience virtual try-on and see how outfits\nlook on you instantly.',
+  ];
+
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: 0);
+    _pageController = PageController();
   }
 
   @override
@@ -33,188 +50,254 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark, // Dark icons for white background
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            children: [
-              // --- TOP SECTION: Skip Button ---
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8, top: 8),
-                  child: TextButton(
-                    onPressed: _navigateToLogin,
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey.shade600,
-                    ),
-                    child: Text(
-                      Language.skipForNow.capitalizeByWord(),
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              // --- MIDDLE SECTION: Large Image ---
-              Expanded(
-                flex: 5,
-                child: PageView.builder(
-                  controller: _pageController,
-                  onPageChanged: (int page) {
-                    setState(() {
-                      _currentPage = page;
-                    });
-                  },
-                  itemCount: _numPages,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                      child: Center(
-                        child: CustomImage(
-                          path: 'assets/icon/${index + 1}.png',
-                          fit: BoxFit.contain,
-                          width: size.width * 0.75,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-              // --- BOTTOM SECTION: Content & Actions ---
-              Expanded(
-                flex: 4,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Column(
-                    children: [
-                      // Step Indicator Pill
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(
-                          _numPages,
-                          (index) => _buildDot(index),
-                        ),
-                      ),
-                      const SizedBox(height: 48),
-
-                      // Animated Text Content
-                      Text(
-                        _getTitle(_currentPage),
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w800,
-                          color: const Color(0xFF1A1A1A), // Near black
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        _getSubtitle(_currentPage),
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
-                          fontSize: 15,
-                          color: Colors.grey.shade600,
-                          height: 1.6,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-
-                      const Spacer(),
-
-                      // Action Button - High Contrast Professional Style
-                      SizedBox(
-                        width: double.infinity,
-                        height: 58,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_currentPage == _numPages - 1) {
-                              _navigateToLogin();
-                            } else {
-                              _pageController.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.easeInOutCubic,
-                              );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1A1A1A), // Solid Black
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Text(
-                            _currentPage == _numPages - 1
-                                ? "Get Started"
-                                : Language.next.capitalizeByWord(),
-                            style: GoogleFonts.inter(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   void _navigateToLogin() {
     context.read<AppSettingCubit>().cachOnBoarding();
     Navigator.pushNamedAndRemoveUntil(
         context, RouteNames.authenticationScreen, (route) => false);
   }
 
-  Widget _buildDot(int index) {
-    bool isSelected = _currentPage == index;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      height: 6,
-      width: isSelected ? 28 : 8,
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFF1A1A1A) : Colors.grey.shade300,
-        borderRadius: BorderRadius.circular(3),
+  void _onNext() {
+    if (_currentPage == _numPages - 1) {
+      _navigateToLogin();
+    } else {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOutCubic,
+      );
+    }
+  }
+
+  void _onBack() {
+    if (_currentPage > 0) {
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOutCubic,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        backgroundColor: _bgColor,
+        body: Stack(
+          children: [
+            // PageView for swipeable content
+            PageView.builder(
+              controller: _pageController,
+              onPageChanged: (page) => setState(() => _currentPage = page),
+              itemCount: _numPages,
+              itemBuilder: (context, index) => _buildPage(index),
+            ),
+
+            // Top bar: OUI + SKIP
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'OUI',
+                      style: GoogleFonts.notoSerif(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                        letterSpacing: -1.2,
+                      ),
+                    ),
+                    if (_currentPage < _numPages - 1)
+                      GestureDetector(
+                        onTap: _navigateToLogin,
+                        child: Text(
+                          'SKIP',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                    if (_currentPage == _numPages - 1)
+                      const SizedBox.shrink(),
+                  ],
+                ),
+              ),
+            ),
+
+            // Bottom bar: Back + NEXT
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Back arrow - hidden on first page
+                      if (_currentPage > 0)
+                        GestureDetector(
+                          onTap: _onBack,
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox(width: 52),
+                      // NEXT / GET STARTED button
+                      GestureDetector(
+                        onTap: _onNext,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                          decoration: const BoxDecoration(color: Colors.white),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _currentPage == _numPages - 1 ? 'GET STARTED' : 'NEXT',
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              const Icon(
+                                Icons.arrow_forward,
+                                color: Colors.black,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  String _getTitle(int index) {
-    List<String> titles = [
-      "Find Your Favorites",
-      "Easy Payment",
-      "Fast Delivery"
-    ];
-    return titles[index];
-  }
+  Widget _buildPage(int index) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Image at top
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          height: MediaQuery.of(context).size.height * 0.55,
+          child: ClipRect(
+            child: Image.asset(
+              _images[index],
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+            ),
+          ),
+        ),
 
-  String _getSubtitle(int index) {
-    List<String> subs = [
-      "Discover the best groceries and daily essentials from your favorite local stores.",
-      "Secure and seamless checkout with multiple payment options for your convenience.",
-      "Get your groceries delivered to your doorstep within minutes, fresh and safe."
-    ];
-    return subs[index];
+        // Gradient overlay - top fade only
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          height: MediaQuery.of(context).size.height * 0.55,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  _bgColor,
+                  _bgColor.withOpacity(0.6),
+                  Colors.transparent,
+                  Colors.transparent,
+                ],
+                stops: const [0.0, 0.15, 0.4, 1.0],
+              ),
+            ),
+          ),
+        ),
+
+        // Content at bottom - fixed top position for consistent alignment
+        Positioned(
+          left: 42,
+          right: 42,
+          top: MediaQuery.of(context).size.height * 0.55 + 20,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Page indicator: 01 / 03
+              Text(
+                '${(index + 1).toString().padLeft(2, '0')} / 0$_numPages',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF919191),
+                  letterSpacing: 3.6,
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Title
+              Text(
+                _titles[index],
+                style: GoogleFonts.notoSerif(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                  height: 1.25,
+                  letterSpacing: 3.6,
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Subtitle
+              Text(
+                _subtitles[index],
+                style: GoogleFonts.manrope(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFFC7C6C6),
+                  height: 1.63,
+                  letterSpacing: 0.35,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Line indicators
+              Row(
+                children: List.generate(_numPages, (i) {
+                  return Container(
+                    width: 48,
+                    height: 2,
+                    margin: EdgeInsets.only(right: i < _numPages - 1 ? 16 : 0),
+                    color: i == index ? Colors.white : const Color(0xFF353535),
+                  );
+                }),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }

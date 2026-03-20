@@ -9,6 +9,7 @@ import 'banner_model.dart';
 import 'brand_model.dart';
 import 'flash_sale_model.dart';
 import 'home_categories_model.dart';
+import 'home_quote_model.dart';
 import 'home_seller_model.dart';
 import 'product_model.dart';
 import 'slider_model.dart';
@@ -45,6 +46,15 @@ class HomeModel extends Equatable {
   final List<BrandModel> brands;
   final List<HomeSellerModel> sellers;
 
+  // Dynamic home content (API-driven with fallback)
+  final List<HomeQuoteModel> quotes;
+  final List<ProductModel> trendingProducts;
+  final dynamic quoteVisibility;
+  final dynamic trendingVisibility;
+  final dynamic featuredHighlightVisibility;
+  final String trendingSectionTitle;
+  final String featuredHighlightSectionTitle;
+
   const HomeModel({
     required this.popularCategories,
     required this.homeCategories,
@@ -66,6 +76,13 @@ class HomeModel extends Equatable {
     required this.bestProducts,
     required this.brands,
     required this.sellers,
+    required this.quotes,
+    required this.trendingProducts,
+    required this.quoteVisibility,
+    required this.trendingVisibility,
+    required this.featuredHighlightVisibility,
+    required this.trendingSectionTitle,
+    required this.featuredHighlightSectionTitle,
     this.singleBannerTwo,
     this.singleBannerOne,
     this.twoColumnBannerTwo,
@@ -132,6 +149,28 @@ class HomeModel extends Equatable {
           ? List<HomeSellerModel>.from(
               map['sellers'].map((x) => HomeSellerModel.fromMap(x)))
           : [],
+
+      // Dynamic content — parse from API, fallback to defaults
+      quotes: map['quotes'] != null
+          ? List<HomeQuoteModel>.from(
+              map['quotes'].map((x) => HomeQuoteModel.fromMap(x)))
+          : HomeQuoteModel.defaults,
+      trendingProducts: map['trendingProducts'] != null
+          ? List<ProductModel>.from(
+              map['trendingProducts'].map((x) => ProductModel.fromMap(x)))
+          : (map['topRatedProducts'] != null
+              ? List<ProductModel>.from(
+                  map['topRatedProducts'].map((x) => ProductModel.fromMap(x)))
+              : []),
+      quoteVisibility: map['quoteVisibility'] ?? true,
+      trendingVisibility: map['trendingVisibility'] ?? true,
+      featuredHighlightVisibility:
+          map['featuredHighlightVisibility'] ?? map['featuredProductVisibility'] ?? true,
+      trendingSectionTitle:
+          map['trendingSectionTitle'] as String? ?? 'Trending Now',
+      featuredHighlightSectionTitle:
+          map['featuredHighlightSectionTitle'] as String? ?? 'Spotlight',
+
       twoColumnBannerTwo: map['banner_three'] != null
           ? BannerModel.fromMap(map['banner_three'])
           : null,
@@ -181,6 +220,8 @@ class HomeModel extends Equatable {
       topRatedProducts,
       brands,
       sellers,
+      quotes,
+      trendingProducts,
     ];
   }
 }

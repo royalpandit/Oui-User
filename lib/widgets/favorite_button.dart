@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '/modules/profile/profile_offer/controllers/wish_list/wish_list_cubit.dart';
@@ -50,13 +50,11 @@ class _FavoriteButtonState extends State<FavoriteButton> {
 
   @override
   Widget build(BuildContext context) {
-    // bool isFav = false;
     return BlocListener<WishListCubit, WishListState>(
         listener: (context, state) {
       if (state is WishListStateLoading) {
-        //Utils.loadingDialog(context);
+        // loading
       } else {
-        //Utils.closeDialog(context);
         if (state is WishListStateError) {
           Utils.errorSnackBar(context, state.message);
         } else if (state is WishListStateSuccess) {
@@ -88,89 +86,18 @@ class _FavoriteButtonState extends State<FavoriteButton> {
             width: 36,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: const Color(0xFF1B1B1B).withValues(alpha: 0.7),
               shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFF474747), width: 0.5),
             ),
             child: Icon(
               isFav ? Icons.favorite : Icons.favorite_border,
-              color: isFav ? Colors.red : Colors.black,
-              size: 20,
+              color: isFav ? Colors.redAccent : const Color(0xFFE2E2E2),
+              size: 18,
             ),
           ),
         );
       },
     ));
   }
-
-  BlocConsumer<WishListCubit, WishListState> buildBlocConsumer() {
-    return BlocConsumer<WishListCubit, WishListState>(
-      listener: (context, state) {
-        if (state is WishListStateLoading) {
-          //Utils.loadingDialog(context);
-        } else {
-          //Utils.closeDialog(context);
-          if (state is WishListStateError) {
-            Utils.errorSnackBar(context, state.message);
-          } else if (state is WishListStateSuccess) {
-            Utils.showSnackBar(context, state.message);
-          }
-        }
-      },
-      builder: (context, state) {
-        return StatefulBuilder(builder: (context, StateSetter setState) {
-          if (state is WishListStateLoaded) {
-            wishItem = state.productList
-                .where((element) => element.id == widget.productId)
-                .toSet();
-          }
-          return InkWell(
-            onTap: () async {
-              if (isFav) {
-                if (wishItem.isNotEmpty) {
-                  await context
-                      .read<WishListCubit>()
-                      .removeWishList(wishItem.first);
-                } else {
-                  Utils.showSnackBar(context, "Something went wrong");
-                }
-              } else {
-                await context.read<WishListCubit>().addWishList(widget.productId);
-              }
-              setState(() => isFav = !isFav);
-            },
-            child: Container(
-              height: height,
-              width: height,
-              alignment: Alignment.center,
-              // margin: const EdgeInsets.only(top: 10.0, left: 10.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Icon(
-                  isFav ? Icons.favorite : Icons.favorite_border,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          );
-        });
-      },
-    );
-  }
-}
-
-Widget favorite(BuildContext context) {
-  return Container(
-    height: 40.0,
-    width: 40.0,
-    margin: const EdgeInsets.only(top: 10.0, left: 10.0),
-    alignment: Alignment.center,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(4.0),
-    ),
-    child: Icon(Icons.favorite_outline_sharp,
-        color: Colors.black, size: 28.0),
-  );
 }

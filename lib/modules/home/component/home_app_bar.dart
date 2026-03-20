@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart' as badges;
+﻿import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,78 +18,60 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final cartProducts = context.read<CartCubit>();
-    
+
     return SliverAppBar(
-      toolbarHeight: 80.0,
+      toolbarHeight: 70,
       pinned: true,
       elevation: 0,
-      // Fix: Prevent Material 3 from changing color to blue on scroll
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF131313),
       surfaceTintColor: Colors.transparent,
       systemOverlayStyle: SystemUiOverlayStyle.light,
-      // Shape: Rounded bottom corners over the white body
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(24),
-        ),
-      ),
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4.0),
         child: Row(
           children: [
-            // 1. Logo on the Left Side
-            Image.asset(
-              'assets/icon/login.png',
-              height: 40,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => Text(
-                'OUI',
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 20,
-                ),
+            Text(
+              'OUI',
+              style: GoogleFonts.notoSerif(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 24,
+                fontStyle: FontStyle.italic,
+                letterSpacing: 2,
               ),
             ),
             const Spacer(),
-            
-            // 2. Search Icon (To the left of Wishlist)
             IconButton(
               onPressed: () => Navigator.pushNamed(context, RouteNames.productSearchScreen),
               icon: const Icon(
                 Icons.search_rounded,
-                color: Colors.white,
-                size: 26,
+                color: Color(0xFFE2E2E2),
+                size: 24,
               ),
             ),
-
-            // 3. Wishlist Icon (To the left of Cart)
             IconButton(
               onPressed: () => Navigator.pushNamed(context, RouteNames.wishlistOfferScreen),
               icon: const Icon(
                 Icons.favorite_border_rounded,
-                color: Colors.white,
-                size: 24,
+                color: Color(0xFFE2E2E2),
+                size: 22,
               ),
             ),
-
-            const SizedBox(width: 4.0),
-
-            // 4. Cart Icon (Far Right)
+            const SizedBox(width: 2),
             InkWell(
               onTap: () => Navigator.pushNamed(context, RouteNames.cartScreen),
               child: BlocBuilder<CartCubit, CartState>(
                 builder: (context, state) {
                   return CartBadge(
                     count: cartProducts.cartCount.toString(),
-                    iconColor: Colors.white,
+                    iconColor: const Color(0xFFE2E2E2),
                     badgeColor: Colors.white,
-                    countColor: Colors.black,
+                    countColor: const Color(0xFF131313),
                   );
                 },
               ),
             ),
-            const SizedBox(width: 8.0),
+            const SizedBox(width: 4),
           ],
         ),
       ),
@@ -97,7 +79,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(80.0);
+  Size get preferredSize => const Size.fromHeight(70);
 }
 
 class CartBadge extends StatelessWidget {
@@ -135,7 +117,7 @@ class CartBadge extends StatelessWidget {
       child: SvgPicture.asset(
         KImages.shoppingIcon,
         colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-        height: 24,
+        height: 22,
       ),
     );
   }

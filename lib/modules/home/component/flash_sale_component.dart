@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../../core/router_name.dart';
 import '../../../utils/language_string.dart';
@@ -23,21 +22,17 @@ class FlashSaleComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<FlashCubit>();
-    
-    // Safety check: trigger fetch if not already loaded
-    if (cubit.flashModel == null) {
-      cubit.getFalshSale();
-    }
 
     int endTime = DateTime.parse(flashSale.endTime).millisecondsSinceEpoch;
 
     return BlocBuilder<FlashCubit, FlashState>(
       builder: (context, state) {
-        // If data is available, show the component; else show skeleton
+        if (state is FlashInitial) {
+          cubit.getFalshSale();
+          return const SizedBox.shrink();
+        }
         if (state is FlashSaleLoaded && state.flashModel.products.isNotEmpty) {
           return _buildFlashContent(context, state.flashModel.products, endTime);
-        } else if (state is FlashSaleLoading) {
-          return const _FlashSaleSkeleton();
         }
         return const SizedBox.shrink();
       },
@@ -46,12 +41,12 @@ class FlashSaleComponent extends StatelessWidget {
 
   Widget _buildFlashContent(BuildContext context, List<ProductModel> products, int endTime) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      padding: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9F9F9), // Premium light off-white
-        borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(color: const Color(0xFFEEEEEE), width: 1),
+        color: const Color(0xFF1B1B1B),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF474747), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,18 +55,26 @@ class FlashSaleComponent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Flash Sale",
+                "FLASH SALE",
                 style: GoogleFonts.inter(
-                  fontSize: 15,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                  letterSpacing: -0.2,
+                  color: Colors.white,
+                  letterSpacing: 1.5,
                 ),
               ),
               CountdownTimer(
                 endTime: endTime,
                 widgetBuilder: (_, time) {
-                  if (time == null) return const Text("Sale Ended");
+                  if (time == null) {
+                    return Text(
+                      "ENDED",
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: const Color(0xFF919191),
+                      ),
+                    );
+                  }
                   return Row(
                     children: [
                       _buildTimerUnit(time.days ?? 0, 'D'),
@@ -87,17 +90,17 @@ class FlashSaleComponent extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           SizedBox(
-            height: 290,
+            height: 280,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
+              physics: const ClampingScrollPhysics(),
               itemCount: products.length > 6 ? 6 : products.length,
               separatorBuilder: (context, index) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
                 return ProductCard(
-                  width: 155, 
+                  width: 155,
                   productModel: products[index],
                 );
               },
@@ -105,14 +108,22 @@ class FlashSaleComponent extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Center(
-            child: TextButton(
-              onPressed: () => Navigator.pushNamed(context, RouteNames.flashScreen),
-              child: Text(
-                Language.seeAll.capitalizeByWord(),
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey.shade500,
+            child: GestureDetector(
+              onTap: () => Navigator.pushNamed(context, RouteNames.flashScreen),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFF474747), width: 1),
+                ),
+                child: Text(
+                  Language.seeAll.capitalizeByWord().toUpperCase(),
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFFC7C6C6),
+                    letterSpacing: 1.0,
+                  ),
                 ),
               ),
             ),
@@ -126,52 +137,42 @@ class FlashSaleComponent extends StatelessWidget {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(4),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
             value.toString().padLeft(2, '0'),
-            style: GoogleFonts.robotoMono(
-              color: Colors.white,
+            style: GoogleFonts.inter(
+              color: const Color(0xFF1A1C1C),
               fontSize: 13,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
         const SizedBox(height: 2),
         Text(
           unit,
-          style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
-        )
+          style: GoogleFonts.inter(
+            fontSize: 9,
+            color: const Color(0xFF919191),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildTimerDivider() => const Padding(
-    padding: EdgeInsets.only(bottom: 12, left: 4, right: 4),
-    child: Text(":", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-  );
-}
-
-// Minimalist Shimmer Skeleton
-class _FlashSaleSkeleton extends StatelessWidget {
-  const _FlashSaleSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: const Color(0xFFE0E0E0),
-      highlightColor: const Color(0xFFF5F5F5),
-      child: Container(
-        height: 300,
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
+  Widget _buildTimerDivider() => Padding(
+    padding: const EdgeInsets.only(bottom: 12, left: 3, right: 3),
+    child: Text(
+      ":",
+      style: GoogleFonts.inter(
+        fontWeight: FontWeight.bold,
+        fontSize: 14,
+        color: const Color(0xFF919191),
       ),
-    );
-  }
+    ),
+  );
 }

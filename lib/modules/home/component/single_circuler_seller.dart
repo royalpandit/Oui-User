@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_us/widgets/custom_image.dart';
 
@@ -26,39 +26,34 @@ class SingleCircularSeller extends StatelessWidget {
             'keyword': seller.slug,
           },
         );
-        // print(seller.shopName);
-        // print(seller.slug);
       },
       child: Container(
-        width: 95.0,
-        height: 98.0,
-        margin: const EdgeInsets.only(right: 12.0),
-        padding: const EdgeInsets.all(5.0),
+        width: 90,
+        margin: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-            color: const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(12.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ]),
+          color: const Color(0xFF1B1B1B),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFF474747), width: 0.5),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              height: 54.0,
-              width: 54.0,
+              height: 50,
+              width: 50,
               alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A2A),
                 shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFF474747), width: 0.5),
               ),
-              child: CustomImage(
-                height: 34.0,
-                width: 35.0,
-                path: RemoteUrls.imageUrl(seller.logo),
+              child: ClipOval(
+                child: CustomImage(
+                  height: 32,
+                  width: 32,
+                  path: RemoteUrls.imageUrl(seller.logo),
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -67,7 +62,11 @@ class SingleCircularSeller extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(fontSize: 14.0, fontWeight: FontWeight.w700, color: Colors.black),
+              style: GoogleFonts.inter(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFFC7C6C6),
+              ),
             ),
           ],
         ),
@@ -75,5 +74,3 @@ class SingleCircularSeller extends StatelessWidget {
     );
   }
 }
-
-//FAE8F7

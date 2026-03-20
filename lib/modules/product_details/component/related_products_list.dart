@@ -22,7 +22,6 @@ class RelatedProductsList extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 12.0),
           child: SectionHeader(
             headerText: Language.relatedProduct.capitalizeByWord(),
-            isSeeAll: false,
           ),
         ),
         SizedBox(

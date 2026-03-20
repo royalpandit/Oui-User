@@ -1,4 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
+﻿import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
 import '../model/banner_model.dart';
@@ -17,7 +17,7 @@ class CombineBannerSlider extends StatefulWidget {
 }
 
 class _CombineBannerSliderState extends State<CombineBannerSlider> {
-  final double height = 160; // Slightly increased for a more modern aspect ratio
+  final double height = 160;
   int _currentIndex = 0;
 
   @override
@@ -31,15 +31,13 @@ class _CombineBannerSliderState extends State<CombineBannerSlider> {
           itemCount: widget.banners.length,
           options: CarouselOptions(
             height: height,
-            // 0.85 allows a professional "peek" at adjacent banners
             viewportFraction: 0.85,
             initialPage: 0,
             autoPlay: true,
             autoPlayInterval: const Duration(seconds: 4),
             autoPlayAnimationDuration: const Duration(milliseconds: 1000),
             autoPlayCurve: Curves.easeInOutCubic,
-            // Adds a subtle focus effect to the center banner
-            enlargeCenterPage: true, 
+            enlargeCenterPage: true,
             onPageChanged: (index, reason) {
               setState(() {
                 _currentIndex = index;
@@ -55,22 +53,20 @@ class _CombineBannerSliderState extends State<CombineBannerSlider> {
                 borderRadius: BorderRadius.circular(16),
                 child: HotDealBanner(
                   banner: banner,
-                  // Logic: align right every second banner for visual rhythm
-                  alignRight: index % 2 != 0, 
+                  alignRight: index % 2 != 0,
                 ),
               ),
             );
           },
         ),
-        const SizedBox(height: 16),
-        // Custom Expanding Pill Indicator
-        _buildExpandingPillIndicator(),
+        const SizedBox(height: 14),
+        _buildPillIndicator(),
         const SizedBox(height: 16),
       ],
     );
   }
 
-  Widget _buildExpandingPillIndicator() {
+  Widget _buildPillIndicator() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: widget.banners.asMap().entries.map((entry) {
@@ -78,12 +74,11 @@ class _CombineBannerSliderState extends State<CombineBannerSlider> {
         return AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           height: 4,
-          // Pill stretches when active
-          width: isActive ? 24 : 6, 
+          width: isActive ? 24 : 4,
           margin: const EdgeInsets.symmetric(horizontal: 3),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: isActive ? Colors.black : Colors.black.withOpacity(0.1),
+            color: isActive ? Colors.white : const Color(0xFF474747),
           ),
         );
       }).toList(),
