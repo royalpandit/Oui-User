@@ -158,12 +158,13 @@ class _PanelComponentState extends State<PanelComponent> {
               BlocConsumer<CartCubit, CartState>(listener: (context, state) {
                 if (state is CartCouponStateLoading) {
                   Utils.loadingDialog(context);
-                } else {
+                } else if (state is CartCouponStateLoaded) {
                   Utils.closeDialog(context);
-                  if (state is CartCouponStateError) {
-                    Utils.errorSnackBar(context, state.message);
-                  }
+                } else if (state is CartCouponStateError) {
+                  Utils.closeDialog(context);
+                  Utils.errorSnackBar(context, state.message);
                 }
+                // Ignore all other CartState emissions (CartStateLoading, CartStateOrderSuccess, etc.)
               }, builder: (context, state) {
                 if (state is CartCouponStateError) {
                   return Text(state.message);
@@ -237,24 +238,31 @@ class _PanelComponentState extends State<PanelComponent> {
       child: Row(
         children: [
           Expanded(
-            child: TextFormField(
-              controller: textController,
-              textInputAction: TextInputAction.done,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                hintText: Language.promoCode.capitalizeByWord(),
-                hintStyle: GoogleFonts.inter(fontSize: 14, color: Colors.grey),
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-                fillColor: Colors.transparent,
-                filled: true,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                // Absorb tap to prevent panel navigation
+              },
+              child: TextFormField(
+                controller: textController,
+                textInputAction: TextInputAction.done,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  hintText: Language.promoCode.capitalizeByWord(),
+                  hintStyle: GoogleFonts.inter(fontSize: 14, color: Colors.grey),
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                  fillColor: Colors.transparent,
+                  filled: true,
+                ),
+                style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
               ),
-              style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
             ),
           ),
           GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () {
               if (textController.text.isEmpty) {
                 return;

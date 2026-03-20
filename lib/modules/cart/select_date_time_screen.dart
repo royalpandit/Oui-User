@@ -357,15 +357,9 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
               listener: (context, state) {
                 if (state is CartStateOrderSuccess) {
                   Utils.showSnackBar(context, state.message);
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
+                  Navigator.of(context).pushNamedAndRemoveUntil(
                     RouteNames.orderScreen,
-                    (route) {
-                      if (route.settings.name == RouteNames.mainPage) {
-                        return true;
-                      }
-                      return false;
-                    },
+                    (route) => route.settings.name == RouteNames.mainPage,
                   );
                 } else if (state is CartStateError) {
                   Utils.errorSnackBar(context, state.message);

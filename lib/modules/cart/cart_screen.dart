@@ -53,17 +53,19 @@ class _CartScreenState extends State<CartScreen> {
         listener: (_, state) {
           if (state is CartStateDecIncrementLoading) {
             Utils.loadingDialog(context);
-          } else if (state is CartStateOrderSuccess) {
-            // Handled by SelectDateTimeScreen listener
-          } else {
+          } else if (state is CartDecIncState) {
+            // Increment/decrement completed - close loading dialog
             Utils.closeDialog(context);
-            if (state is CartStateDecIncError) {
-              Utils.errorSnackBar(context, state.message);
-            }
-            if (state is CartStateRemove) {
-              Utils.showSnackBar(context, state.message);
-            }
+          } else if (state is CartStateDecIncError) {
+            Utils.closeDialog(context);
+            Utils.errorSnackBar(context, state.message);
+          } else if (state is CartStateRemove) {
+            Utils.closeDialog(context);
+            Utils.showSnackBar(context, state.message);
+          } else if (state is CartStateOrderSuccess) {
+            // Handled by SelectDateTimeScreen listener - do nothing
           }
+          // CartStateLoading, CartStateLoaded, CartStateError - no dialog action needed
         },
         builder: (context, state) {
           if (state is CartStateLoading) {
