@@ -31,7 +31,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: SystemUiOverlayStyle.dark,
       child: MultiBlocListener(
         listeners: [
           // SUCCESS NAVIGATION LOGIC RESTORED HERE
@@ -65,7 +65,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           ),
         ],
         child: Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.white,
           body: SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -107,7 +107,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             style: GoogleFonts.inter(
               fontWeight: FontWeight.w800,
               fontSize: 34.0,
-              color: Colors.white,
+              color: Colors.black,
               letterSpacing: -1.2,
             ),
           ),
@@ -117,7 +117,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 ? "Sign in to access your premium grocery dashboard."
                 : "Join OUI for the finest grocery selection.",
             style: GoogleFonts.inter(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.black.withOpacity(0.6),
               fontSize: 16,
               height: 1.4,
             ),
@@ -133,7 +133,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       height: 50,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.black.withOpacity(0.06),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -154,7 +154,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
+            color: isSelected ? Colors.black : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Center(
@@ -163,7 +163,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: isSelected ? Colors.black : Colors.white.withOpacity(0.5),
+                color: isSelected ? Colors.white : Colors.black.withOpacity(0.5),
               ),
             ),
           ),

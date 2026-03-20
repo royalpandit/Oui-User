@@ -5,11 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 class PrimaryButton extends StatelessWidget {
   PrimaryButton({
     super.key,
-    this.maximumSize = const Size(double.infinity, 52),
+    this.maximumSize = const Size(double.infinity, 44),
     required this.text,
     this.fontSize = 18.0,
     required this.onPressed,
-    this.minimumSize = const Size(double.infinity, 52),
+    this.minimumSize = const Size(double.infinity, 44),
     this.borderRadiusSize = 12.0,
     this.bgColor,
     this.textColor = Colors.white,

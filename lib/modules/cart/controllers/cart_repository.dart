@@ -25,11 +25,14 @@ abstract class CartRepository {
       String productId, String token);
 
   Future<Either<Failure, CouponResponseModel>> applyCoupon(
-      String coupon, String token);
+      String coupon, int sellerId, String token);
 
   Either<Failure, CouponResponseModel> getAppliedCoupon();
 
   Future<Either<Failure, String>> addToCart(AddToCartModel dataModel);
+
+  Future<Either<Failure, String>> pickupAtStoreOrder(
+      String date, String time, int billingAddressId, String? coupon, String token);
 
   void saveCartCalculation(CartCalculation cartCalculation);
 
@@ -101,9 +104,9 @@ class CartRepositoryImp extends CartRepository {
 
   @override
   Future<Either<Failure, CouponResponseModel>> applyCoupon(
-      String coupon, String token) async {
+      String coupon, int sellerId, String token) async {
     try {
-      final result = await remoteDataSource.applyCoupon(coupon, token);
+      final result = await remoteDataSource.applyCoupon(coupon, sellerId, token);
       localDataSource.cacheCouponResponse(result);
 
       return Right(result);
@@ -117,6 +120,18 @@ class CartRepositoryImp extends CartRepository {
     try {
       final result = await remoteDataSource.addToCart(dataModel);
 
+      return Right(result);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.statusCode));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> pickupAtStoreOrder(
+      String date, String time, int billingAddressId, String? coupon, String token) async {
+    try {
+      final result =
+          await remoteDataSource.pickupAtStoreOrder(date, time, billingAddressId, coupon, token);
       return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, e.statusCode));

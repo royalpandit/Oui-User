@@ -13,7 +13,7 @@ class GuestButton extends StatelessWidget {
         children: [
           Text(
             "OR",
-            style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 12, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.black.withOpacity(0.3), fontSize: 12, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -22,12 +22,12 @@ class GuestButton extends StatelessWidget {
             child: OutlinedButton(
               onPressed: () => Navigator.pushNamedAndRemoveUntil(context, RouteNames.mainPage, (route) => false),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.white.withOpacity(0.2)),
+                side: BorderSide(color: Colors.black.withOpacity(0.25)),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
               child: Text(
                 'Continue as Guest',
-                style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
+                style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black),
               ),
             ),
           ),

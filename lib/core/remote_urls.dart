@@ -103,8 +103,11 @@ class RemoteUrls {
   static String decrementQuantity(String id, String token) =>
       "${baseUrl}cart-item-decrement/$id?token=$token";
 
-  static String applyCoupon(String coupon, String token) =>
-      "${baseUrl}apply-coupon?coupon=$coupon&token=$token";
+  static String applyCoupon(String coupon, int sellerId, String token) =>
+      "${baseUrl}apply-coupon?coupon=$coupon&seller_id=$sellerId&token=$token";
+
+  static String pickupAtStore(String token) =>
+      '${baseUrl}user/checkout/pickup-at-store?token=$token';
 
   static String removeCartItem(String id, String token) =>
       "${baseUrl}cart-item-remove/$id?token=$token";

@@ -35,6 +35,7 @@ class RouteNames {
   static const String addNewPaymentCardScreen = '/addNewPaymentCardScreen';
   static const String cartScreen = '/cartScreen';
   static const String checkoutScreen = '/checkoutScreen';
+  static const String selectDateTimeScreen = '/selectDateTimeScreen';
   static const String productDetailsScreen = '/productDetailsScreen';
   static const String submitFeedBackScreen = '/submitFeedBackScreen';
   static const String addressScreen = '/addressScreen';
@@ -210,9 +211,12 @@ class RouteNames {
       case RouteNames.cartScreen:
         return MaterialPageRoute(
             settings: settings, builder: (_) => const CartScreen());
-      case RouteNames.checkoutScreen:
+      // case RouteNames.checkoutScreen:
+      //   return MaterialPageRoute(
+      //       settings: settings, builder: (_) => const CheckoutScreen());
+      case RouteNames.selectDateTimeScreen:
         return MaterialPageRoute(
-            settings: settings, builder: (_) => const CheckoutScreen());
+            settings: settings, builder: (_) => const SelectDateTimeScreen());
       case RouteNames.productDetailsScreen:
         final slug = settings.arguments as String;
         return MaterialPageRoute(
@@ -233,12 +237,11 @@ class RouteNames {
           builder: (_) => SubmitFeedBackScreen(orderItem: orderItem),
         );
 
-      case RouteNames.placeOrderScreen:
-        // final shippingMethod = settings.arguments as Map<String, dynamic>;
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => const PlaceOrderScreen(),
-        );
+      // case RouteNames.placeOrderScreen:
+      //   return MaterialPageRoute(
+      //     settings: settings,
+      //     builder: (_) => const PlaceOrderScreen(),
+      //   );
 
       case RouteNames.paypalScreen:
         final paypalUrl = settings.arguments as String;

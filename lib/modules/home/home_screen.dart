@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../core/router_name.dart';
 import '../../utils/utils.dart';
@@ -54,11 +55,7 @@ class HomeScreen extends StatelessWidget {
             builder: (context, state) {
               log(state.toString(), name: _className);
               if (state is HomeControllerLoading) {
-                return const Center(
-                    child: SizedBox(
-                        height: 28,
-                        width: 120,
-                        child: ShimmerLoader.rect(height: 12, width: 120)));
+                return const _HomeSkeletonLoader();
               }
               if (state is HomeControllerError) {
                 return Center(
@@ -163,7 +160,7 @@ class _LoadedHomePage extends StatelessWidget {
               homeModel.popularCategoryVisibilty == '1') ...[
             HorizontalProductComponent(
               productList: homeModel.popularCategoryProducts,
-              bgColor: const Color(0xffF6F6F6),
+              bgColor: Colors.white,
               category:
                   '${homeModel.sectionTitle[1].custom ?? homeModel.sectionTitle[1].defaultTitle}',
               onTap: () => Navigator.pushNamed(
@@ -215,7 +212,7 @@ class _LoadedHomePage extends StatelessWidget {
               homeModel.topRatedVisibility == '1') ...[
             CategoryAndListComponent(
               productList: homeModel.topRatedProducts,
-              bgColor: const Color(0xffF6F6F6),
+              bgColor: Colors.white,
               category:
                   '${homeModel.sectionTitle[2].custom ?? homeModel.sectionTitle[2].defaultTitle}',
               onTap: () {
@@ -243,7 +240,7 @@ class _LoadedHomePage extends StatelessWidget {
               homeModel.featuredProductVisibility == '1') ...[
             HorizontalProductComponent(
               productList: homeModel.featuredCategoryProducts,
-              bgColor: const Color(0xffF6F6F6),
+              bgColor: Colors.white,
               category:
                   '${homeModel.sectionTitle[5].custom ?? homeModel.sectionTitle[5].defaultTitle}',
               onTap: () {
@@ -268,7 +265,7 @@ class _LoadedHomePage extends StatelessWidget {
               homeModel.newArrivalProductVisibility == '1') ...[
             HorizontalProductComponent(
               productList: homeModel.bestProducts,
-              bgColor: const Color(0xffF6F6F6),
+              bgColor: Colors.white,
               category:
                   '${homeModel.sectionTitle[4].custom ?? homeModel.sectionTitle[4].defaultTitle}',
               onTap: () {
@@ -312,4 +309,142 @@ class _LoadedHomePage extends StatelessWidget {
       ],
     );
   }
+}
+
+class _HomeSkeletonLoader extends StatelessWidget {
+  const _HomeSkeletonLoader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: const Color(0xFFE8E8E8),
+      highlightColor: const Color(0xFFF2F2F2),
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // App bar placeholder
+            Container(
+              height: 80,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Category pills row
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(
+                  5,
+                  (_) => Column(
+                    children: [
+                      _skBox(58, 58, 14),
+                      const SizedBox(height: 6),
+                      _skBox(44, 10, 4),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Banner slider
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _skBox(double.infinity, 160, 16),
+            ),
+            const SizedBox(height: 24),
+            // Section: popular (vertical cards)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [_skBox(120, 18, 4), _skBox(56, 14, 4)],
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 300,
+              child: ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (_, __) => _skBox(165, 300, 12),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Flash sale banner
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _skBox(double.infinity, 120, 16),
+            ),
+            const SizedBox(height: 24),
+            // Section: top rated (vertical cards)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [_skBox(100, 18, 4), _skBox(56, 14, 4)],
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 300,
+              child: ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (_, __) => _skBox(165, 300, 12),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Combined banner
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _skBox(double.infinity, 150, 16),
+            ),
+            const SizedBox(height: 24),
+            // Section: new arrivals (horizontal scroll)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [_skBox(110, 18, 4), _skBox(56, 14, 4)],
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 300,
+              child: ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (_, __) => _skBox(165, 300, 12),
+              ),
+            ),
+            const SizedBox(height: 30),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget _skBox(double w, double h, double r) => Container(
+        width: w,
+        height: h,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(r),
+        ),
+      );
 }

@@ -6,9 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
 import '../../core/router_name.dart';
-import '../../dummy_data/all_dummy_data.dart';
 import '../../utils/utils.dart';
-import '../cart/component/address_card_component.dart';
 import 'controllers/address/address_cubit.dart';
 import 'controllers/country_state_by_id/country_state_by_id_cubit.dart';
 import 'model/billing_shipping_model.dart';
@@ -102,153 +100,257 @@ class _LoadedWidget extends StatefulWidget {
 }
 
 class _LoadedWidgetState extends State<_LoadedWidget> {
-  final _pageController = PageController(initialPage: 0, keepPage: true, viewportFraction: 1);
-  String addressTypeSelect = Language.billingAddress.capitalizeByWord();
-  int billingAddressId = 0;
-  int shippingAddressId = 0;
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: addressType.asMap().entries.map((e) {
-              final isSelected = addressTypeSelect == e.value;
-              return Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      addressTypeSelect = e.value;
-                      _pageController.animateToPage(e.key,
-                          duration: const Duration(milliseconds: 300), curve: Curves.ease);
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.black : Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: isSelected ? Colors.black : Colors.grey.shade300),
-                    ),
-                    child: Text(
-                      e.value,
+    if (widget.address.addresses.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.location_off_outlined,
+                  size: 40, color: Colors.black38),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No addresses yet',
+              style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Tap the + button to add your first address.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                  fontSize: 13, color: Colors.grey.shade500),
+            ),
+          ],
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
+      itemCount: widget.address.addresses.length,
+      itemBuilder: (context, index) {
+        final addr = widget.address.addresses[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Dismissible(
+            key: Key(addr.id.toString()),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 24),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(Icons.delete_outline_rounded,
+                  color: Colors.red, size: 24),
+            ),
+            confirmDismiss: (_) async {
+              return await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  backgroundColor: Colors.white,
+                  surfaceTintColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  title: Text(Language.areYouSure.capitalizeByWord(),
                       style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected ? Colors.white : Colors.grey.shade600,
-                      ),
+                          fontWeight: FontWeight.w700, fontSize: 16)),
+                  content: Text(Language.wishToDelete.capitalizeByWord(),
+                      style: GoogleFonts.inter(
+                          color: Colors.grey.shade600, fontSize: 14)),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(false),
+                      child: Text(Language.cancel.toUpperCase(),
+                          style: GoogleFonts.inter(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w600)),
                     ),
-                  ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final result = await context
+                            .read<AddressCubit>()
+                            .deleteSingleAddress(addr.id.toString());
+                        result.fold(
+                          (failure) =>
+                              Utils.errorSnackBar(context, failure.message),
+                          (success) {
+                            widget.address.addresses.removeAt(index);
+                            setState(() {});
+                            Utils.showSnackBar(context, success);
+                          },
+                        );
+                        Navigator.of(ctx).pop(true);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: Text(Language.delete.capitalizeByWord(),
+                          style: const TextStyle(color: Colors.white)),
+                    ),
+                  ],
                 ),
               );
-            }).toList(),
-          ),
-        ),
-        if (widget.address.addresses.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
-            child: Text(
-              Language.swipeToDelete.capitalizeByWord(),
-              style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade400),
-            ),
-          ),
-        Expanded(
-          child: PageView.builder(
-            itemCount: addressType.length,
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, pageIndex) {
-              return ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                itemCount: widget.address.addresses.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(14),
-                      onTap: () {
-                        if (addressTypeSelect == Language.billingAddress.capitalizeByWord()) {
-                          billingAddressId = widget.address.addresses[index].id;
-                        } else {
-                          shippingAddressId = widget.address.addresses[index].id;
-                        }
-                        setState(() {});
-                      },
-                      child: Dismissible(
-                        key: Key(widget.address.addresses[index].toString()),
-                        onDismissed: (_) {
-                          Utils.showSnackBar(context, 'Address Delete Successfully');
-                        },
-                        confirmDismiss: (v) async {
-                          return await showDialog(
-                            context: context,
-                            builder: (BuildContext ctx) {
-                              return AlertDialog(
-                                backgroundColor: Colors.white,
-                                surfaceTintColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                                title: Text(Language.areYouSure.capitalizeByWord(),
-                                    style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
-                                content: Text(Language.wishToDelete.capitalizeByWord(),
-                                    style: GoogleFonts.inter(color: Colors.grey.shade600)),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.of(ctx).pop(false),
-                                    child: Text(Language.cancel.toUpperCase(),
-                                        style: GoogleFonts.inter(color: Colors.grey)),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      final item = widget.address.addresses[index];
-                                      final result = await context
-                                          .read<AddressCubit>()
-                                          .deleteSingleAddress(item.id.toString());
-                                      result.fold(
-                                        (failure) => Utils.errorSnackBar(context, failure.message),
-                                        (success) {
-                                          widget.address.addresses.removeAt(index);
-                                          setState(() {});
-                                          Utils.showSnackBar(context, success);
-                                        },
-                                      );
-                                      Navigator.of(ctx).pop(true);
+            },
+            onDismissed: (_) =>
+                Utils.showSnackBar(context, 'Address deleted'),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.location_on_outlined,
+                          size: 20, color: Colors.black),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  addr.name,
+                                  style: GoogleFonts.inter(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  addr.type == '1' ? 'Office' : 'Home',
+                                  style: GoogleFonts.inter(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                      letterSpacing: 0.5),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            addr.address,
+                            style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: Colors.grey.shade600,
+                                height: 1.4),
+                          ),
+                          if (addr.city != null ||
+                              addr.countryState != null ||
+                              addr.country != null) ...
+                            [
+                              const SizedBox(height: 2),
+                              Text(
+                                [
+                                  addr.city?.name ?? '',
+                                  addr.countryState?.name ?? '',
+                                  addr.country?.name ?? '',
+                                ]
+                                    .where((s) => s.isNotEmpty)
+                                    .join(', '),
+                                style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade500),
+                              ),
+                            ],
+                          const SizedBox(height: 4),
+                          Text(
+                            addr.phone,
+                            style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: Colors.grey.shade500),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  onPressed: () => Navigator.pushNamed(
+                                    context,
+                                    RouteNames.addAddressScreen,
+                                    arguments: {
+                                      'type': 'edit',
+                                      'address_id': addr.id,
                                     },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.black,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                    ),
-                                    child: Text(Language.delete.capitalizeByWord(),
-                                        style: const TextStyle(color: Colors.white)),
                                   ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        child: AddressCardComponent(
-                          selectAddress: addressTypeSelect == Language.billingAddress.capitalizeByWord()
-                              ? billingAddressId
-                              : shippingAddressId,
-                          addressModel: widget.address.addresses[index],
-                          type: widget.address.addresses[index].type,
-                          isEditButtonShow: false,
-                        ),
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    side: BorderSide(
+                                        color: Colors.grey.shade300),
+                                  ),
+                                  icon: const Icon(
+                                      Icons.edit_outlined,
+                                      size: 15,
+                                      color: Colors.black),
+                                  label: Text(
+                                    'Edit',
+                                    style: GoogleFonts.inter(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-              );
-            },
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

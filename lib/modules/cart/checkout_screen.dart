@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shop_us/widgets/shimmer_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -82,10 +81,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         builder: (context, state) {
           if (state is CheckoutStateLoading || state is CheckoutStateInitial) {
             return const Center(
-              child: SizedBox(
-                height: 28,
-                width: 120,
-                child: ShimmerLoader.rect(height: 12, width: 120)));
+              child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2));
           } else if (state is CheckoutStateError) {
             return Center(
               child: Text(

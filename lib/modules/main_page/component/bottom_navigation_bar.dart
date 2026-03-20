@@ -86,7 +86,7 @@ class MyBottomNavigationBar extends StatelessWidget {
         decoration: BoxDecoration(
           // 1. Box behind icon and name when selected
           color: isSelected ? Colors.black : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

@@ -7,6 +7,7 @@ Future<void> showBottomPopup(BuildContext context,
   final route = showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
+    barrierColor: Colors.black54,
     isScrollControlled: false,
     builder: (_) => SafeArea(
       child: BottomPopupCard(message: message, success: success),

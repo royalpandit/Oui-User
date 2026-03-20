@@ -29,12 +29,12 @@ class ForgotScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -49,10 +49,10 @@ class ForgotScreen extends StatelessWidget {
                 height: 64,
                 width: 64,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.black.withOpacity(0.06),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Icon(Icons.key_rounded, color: Colors.white, size: 32),
+                child: const Icon(Icons.key_rounded, color: Colors.black, size: 32),
               ),
               const SizedBox(height: 32),
               Text(
@@ -60,7 +60,7 @@ class ForgotScreen extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 32,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: Colors.black,
                   letterSpacing: -1.2,
                 ),
               ),
@@ -68,29 +68,29 @@ class ForgotScreen extends StatelessWidget {
               Text(
                 "Don't worry, it happens. Enter the email address associated with your account and we will send you a recovery code.",
                 style: GoogleFonts.inter(
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.black.withOpacity(0.55),
                   fontSize: 16,
                   height: 1.6,
                 ),
               ),
               const SizedBox(height: 48),
               TextFormField(
-                style: GoogleFonts.inter(color: Colors.white, fontSize: 16),
+                style: GoogleFonts.inter(color: Colors.black, fontSize: 16),
                 controller: bloc.emailController,
                 decoration: InputDecoration(
                   hintText: "Email Address",
-                  hintStyle: GoogleFonts.inter(color: Colors.white.withOpacity(0.3)),
-                  prefixIcon: Icon(Icons.email_outlined, color: Colors.white.withOpacity(0.4), size: 20),
+                  hintStyle: GoogleFonts.inter(color: Colors.black.withOpacity(0.35)),
+                  prefixIcon: Icon(Icons.email_outlined, color: Colors.black.withOpacity(0.45), size: 20),
                   filled: true,
-                  fillColor: Colors.white.withOpacity(0.06),
+                  fillColor: Colors.black.withOpacity(0.04),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                    borderSide: BorderSide(color: Colors.black.withOpacity(0.15)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: const BorderSide(color: Colors.white, width: 1.5),
+                    borderSide: const BorderSide(color: Colors.black, width: 1.5),
                   ),
                 ),
               ),
@@ -98,7 +98,7 @@ class ForgotScreen extends StatelessWidget {
               Text(
                 "We’ll never share your email with anyone else.",
                 style: GoogleFonts.inter(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.black.withOpacity(0.4),
                   fontSize: 13,
                 ),
               ),
@@ -108,8 +108,8 @@ class ForgotScreen extends StatelessWidget {
                 height: 58,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   onPressed: () => bloc.forgotPassWord(),

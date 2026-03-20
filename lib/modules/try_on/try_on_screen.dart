@@ -1,16 +1,15 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:shop_us/widgets/shimmer_loader.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/remote_urls.dart';
 import '../../widgets/custom_image.dart';
-import '../../widgets/rounded_app_bar.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class TryOnScreen extends StatefulWidget {
   const TryOnScreen({
@@ -35,7 +34,6 @@ class _TryOnScreenState extends State<TryOnScreen> {
   String? _error;
   String? _resultImageBase64;
 
-  /// PNG magic bytes: 89 50 4E 47 0D 0A 1A 0A
   static bool _isPngBytes(List<int> bytes) {
     if (bytes.length < 8) return false;
     return bytes[0] == 0x89 &&
@@ -59,44 +57,34 @@ class _TryOnScreenState extends State<TryOnScreen> {
         });
       }
     } catch (e) {
-      if (mounted) {
-        setState(() => _error = 'Failed to pick image: $e');
-      }
+      if (mounted) setState(() => _error = 'Failed to pick image: $e');
     }
   }
 
   Future<void> _runTryOn() async {
     if (_personImagePath == null) {
-      setState(() => _error = 'Please capture or upload your photo first.');
+      setState(() => _error = 'Please add your photo first.');
       return;
     }
-
     setState(() {
       _loading = true;
       _error = null;
       _resultImageBase64 = null;
     });
-
     try {
-      // Optional: health check
       try {
-        final healthRes = await http
+        await http
             .get(Uri.parse(RemoteUrls.tryOnHealthUrl))
             .timeout(const Duration(seconds: 10));
-        if (!healthRes.statusCode.toString().startsWith('2')) {
-          debugPrint('[TryOn] Health returned ${healthRes.statusCode}');
-        }
       } catch (_) {}
 
       final uri = Uri.parse(RemoteUrls.tryOnApiUrl);
       final request = http.MultipartRequest('POST', uri);
       request.headers['Accept'] = 'application/json';
       request.headers['User-Agent'] = 'Oui-User/1.0';
-
       request.fields['cloth_type'] = widget.clothType;
-      // Backend requires image/jpeg or image/png (rejects application/octet-stream)
-      final personFile = File(_personImagePath!);
-      final personBytes = await personFile.readAsBytes();
+
+      final personBytes = await File(_personImagePath!).readAsBytes();
       final personIsPng = _isPngBytes(personBytes);
       request.files.add(http.MultipartFile.fromBytes(
         'person_image',
@@ -106,7 +94,6 @@ class _TryOnScreenState extends State<TryOnScreen> {
       ));
 
       final clothBytes = await http.readBytes(Uri.parse(widget.clothImageUrl));
-      // Backend requires image/jpeg or image/png (rejects application/octet-stream)
       final isPng = _isPngBytes(clothBytes) ||
           widget.clothImageUrl.toLowerCase().contains('.png');
       request.files.add(http.MultipartFile.fromBytes(
@@ -116,22 +103,18 @@ class _TryOnScreenState extends State<TryOnScreen> {
         contentType: MediaType('image', isPng ? 'png' : 'jpeg'),
       ));
 
-      final streamed = await request.send().timeout(
-            const Duration(seconds: 180),
-            onTimeout: () => throw Exception('Try-on timed out'),
-          );
+      final streamed = await request
+          .send()
+          .timeout(const Duration(seconds: 180), onTimeout: () => throw Exception('Try-on timed out'));
       final response = await http.Response.fromStream(streamed);
 
       if (!mounted) return;
 
       if (!response.statusCode.toString().startsWith('2')) {
-        final body = response.body;
-        String detail = 'Request failed ${response.statusCode}';
+        String detail = 'Request failed (${response.statusCode})';
         try {
-          final json = jsonDecode(body) as Map<String, dynamic>?;
-          if (json != null && json['detail'] != null) {
-            detail = json['detail'].toString();
-          }
+          final json = jsonDecode(response.body) as Map<String, dynamic>?;
+          if (json?['detail'] != null) detail = json!['detail'].toString();
         } catch (_) {}
         setState(() {
           _loading = false;
@@ -145,11 +128,10 @@ class _TryOnScreenState extends State<TryOnScreen> {
       if (base64 == null || base64.isEmpty) {
         setState(() {
           _loading = false;
-          _error = 'Invalid response: no image';
+          _error = 'Invalid response from server.';
         });
         return;
       }
-
       setState(() {
         _loading = false;
         _resultImageBase64 = base64;
@@ -165,166 +147,444 @@ class _TryOnScreenState extends State<TryOnScreen> {
     }
   }
 
+  void _reset() {
+    setState(() {
+      _personImagePath = null;
+      _resultImageBase64 = null;
+      _error = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: RoundedAppBar(
-        titleText: 'Virtual Try-On',
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Try on: ${widget.productName}',
-                style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildClothPreview(),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildPersonPreview(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              if (_error != null) ...[
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    _error!,
-                    style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600).copyWith(color: Colors.red),
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _loading ? null : () => _pickImage(ImageSource.camera),
-                      icon: const Icon(Icons.camera_alt),
-                      label: const Text('Camera'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _loading ? null : () => _pickImage(ImageSource.gallery),
-                      icon: const Icon(Icons.photo_library),
-                      label: const Text('Gallery'),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _loading ? null : _runTryOn,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: _loading
-                      ? const SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: ShimmerLoader.rect(height: 20, width: 20),
-                          ),
-                        )
-                      : const Text('Try On'),
-                ),
-              ),
-              if (_resultImageBase64 != null) ...[
-                const SizedBox(height: 24),
-                Text('Result', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black)),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.memory(
-                    base64Decode(_resultImageBase64!),
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ],
-              const SizedBox(height: 24),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _personImagePath = null;
-                    _resultImageBase64 = null;
-                    _error = null;
-                  });
-                },
-                child: const Text('Start over'),
-              ),
-            ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
           ),
+          title: Text(
+            'Virtual Try-On',
+            style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+          ),
+          centerTitle: true,
+        ),
+        body: SafeArea(
+          child: _resultImageBase64 != null
+              ? _ResultView(
+                  base64: _resultImageBase64!,
+                  onRetry: _reset,
+                )
+              : _TryOnForm(
+                  productName: widget.productName,
+                  clothImageUrl: widget.clothImageUrl,
+                  personImagePath: _personImagePath,
+                  loading: _loading,
+                  error: _error,
+                  onPickCamera: () => _pickImage(ImageSource.camera),
+                  onPickGallery: () => _pickImage(ImageSource.gallery),
+                  onTryOn: _runTryOn,
+                ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildClothPreview() {
-    return Container(
-      height: 160,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF6F6F6),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: CustomImage(
-        path: widget.clothImageUrl,
-        fit: BoxFit.cover,
-        height: 160,
-        width: double.infinity,
-      ),
-    );
-  }
+// ─── Form view ───────────────────────────────────────────────────────────────
 
-  Widget _buildPersonPreview() {
-    return Container(
-      height: 160,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF6F6F6),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: _personImagePath != null
-          ? Image.file(
-              File(_personImagePath!),
-              fit: BoxFit.cover,
-            )
-          : Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+class _TryOnForm extends StatelessWidget {
+  const _TryOnForm({
+    required this.productName,
+    required this.clothImageUrl,
+    required this.personImagePath,
+    required this.loading,
+    required this.error,
+    required this.onPickCamera,
+    required this.onPickGallery,
+    required this.onTryOn,
+  });
+
+  final String productName;
+  final String clothImageUrl;
+  final String? personImagePath;
+  final bool loading;
+  final String? error;
+  final VoidCallback onPickCamera;
+  final VoidCallback onPickGallery;
+  final VoidCallback onTryOn;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Product badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.checkroom_outlined, size: 14, color: Colors.black54),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    productName,
+                    style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black87),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Step row
+          _StepRow(
+            step: '1',
+            label: 'Garment Preview',
+            done: true,
+          ),
+          const SizedBox(height: 10),
+
+          // Garment image — full width
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              height: 220,
+              width: double.infinity,
+              color: const Color(0xFFF5F5F5),
+              child: CustomImage(
+                path: clothImageUrl,
+                fit: BoxFit.contain,
+                height: 220,
+                width: double.infinity,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          _StepRow(
+            step: '2',
+            label: 'Your Photo',
+            done: personImagePath != null,
+          ),
+          const SizedBox(height: 10),
+
+          // Person preview card
+          GestureDetector(
+            onTap: loading ? null : onPickGallery,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                height: 220,
+                width: double.infinity,
+                color: const Color(0xFFF5F5F5),
+                child: personImagePath != null
+                    ? Image.file(
+                        File(personImagePath!),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.person_outline_rounded, size: 30, color: Colors.black45),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Tap to add your photo',
+                            style: GoogleFonts.inter(fontSize: 14, color: Colors.black45, fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Full body, plain background preferred',
+                            style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade400),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Camera / Gallery row
+          Row(
+            children: [
+              Expanded(
+                child: _ActionButton(
+                  icon: Icons.camera_alt_outlined,
+                  label: 'Camera',
+                  onTap: loading ? null : onPickCamera,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _ActionButton(
+                  icon: Icons.photo_library_outlined,
+                  label: 'Gallery',
+                  onTap: loading ? null : onPickGallery,
+                ),
+              ),
+            ],
+          ),
+
+          // Error banner
+          if (error != null) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Row(
                 children: [
-                  Icon(Icons.person, size: 48, color: Colors.grey),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Your photo',
-                    style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade600),
+                  const Icon(Icons.info_outline_rounded, size: 18, color: Colors.black54),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      error!,
+                      style: GoogleFonts.inter(fontSize: 13, color: Colors.black87),
+                    ),
                   ),
                 ],
               ),
             ),
+          ],
+
+          const SizedBox(height: 24),
+
+          _StepRow(step: '3', label: 'Generate', done: false),
+          const SizedBox(height: 10),
+
+          // Try On CTA
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton(
+              onPressed: loading ? null : onTryOn,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: Colors.grey.shade300,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                elevation: 0,
+              ),
+              child: loading
+                  ? const SizedBox(
+                      height: 22,
+                      width: 22,
+                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.auto_awesome_outlined, size: 18),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Try It On',
+                          style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Hint text
+          Center(
+            child: Text(
+              'Processing may take up to 60 seconds',
+              style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade400),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Result view ─────────────────────────────────────────────────────────────
+
+class _ResultView extends StatelessWidget {
+  const _ResultView({required this.base64, required this.onRetry});
+
+  final String base64;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Your Look',
+            style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.black),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Here is how you\'ll look in this outfit.',
+            style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade500),
+          ),
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.memory(
+              base64Decode(base64),
+              fit: BoxFit.contain,
+              width: double.infinity,
+            ),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: onRetry,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                elevation: 0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.refresh_rounded, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Try Again',
+                    style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: OutlinedButton(
+              onPressed: () => Navigator.pop(context),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.black12, width: 1.5),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+              child: Text(
+                'Back to Product',
+                style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black87),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Shared small widgets ────────────────────────────────────────────────────
+
+class _StepRow extends StatelessWidget {
+  const _StepRow({required this.step, required this.label, required this.done});
+
+  final String step;
+  final String label;
+  final bool done;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: done ? Colors.black : Colors.grey.shade200,
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: done
+              ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
+              : Text(
+                  step,
+                  style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.black54),
+                ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
+        ),
+      ],
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({required this.icon, required this.label, required this.onTap});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 18, color: onTap != null ? Colors.black : Colors.grey.shade400),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: onTap != null ? Colors.black : Colors.grey.shade400,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

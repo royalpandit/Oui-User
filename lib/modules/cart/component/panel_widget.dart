@@ -61,7 +61,7 @@ class PanelCollaspComponent extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, RouteNames.checkoutScreen);
+                Navigator.pushNamed(context, RouteNames.selectDateTimeScreen);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
@@ -71,7 +71,7 @@ class PanelCollaspComponent extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
-                Language.placeOrderNow.capitalizeByWord(),
+                'Select Date & Time',
                 style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
               ),
             ),
@@ -207,17 +207,17 @@ class _PanelComponentState extends State<PanelComponent> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, RouteNames.checkoutScreen);
+                Navigator.pushNamed(context, RouteNames.selectDateTimeScreen);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
-                Language.checkout.capitalizeByWord(),
+                'Select Date & Time',
                 style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
               ),
             ),
@@ -236,9 +236,10 @@ class _PanelComponentState extends State<PanelComponent> {
       ),
       child: Row(
         children: [
-          Flexible(
+          Expanded(
             child: TextFormField(
               controller: textController,
+              textInputAction: TextInputAction.done,
               decoration: InputDecoration(
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -246,6 +247,7 @@ class _PanelComponentState extends State<PanelComponent> {
                 hintText: Language.promoCode.capitalizeByWord(),
                 hintStyle: GoogleFonts.inter(fontSize: 14, color: Colors.grey),
                 isDense: true,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                 fillColor: Colors.transparent,
                 filled: true,
               ),

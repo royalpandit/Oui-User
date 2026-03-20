@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '/widgets/shimmer_loader.dart';
 import '/widgets/capitalized_word.dart';
 import '../../core/router_name.dart';
 import '../../utils/language_string.dart';
@@ -38,12 +37,9 @@ class _OrderScreenState extends State<OrderScreen> {
         bottom: false,
         child: BlocBuilder<OrderCubit, OrderState>(
         builder: (context, state) {
-          if (state is OrderStateLoading) {
+          if (state is OrderStateLoading || state is OrderStateInitial) {
             return const Center(
-                child: SizedBox(
-                    height: 28,
-                    width: 120,
-                    child: ShimmerLoader.rect(height: 12, width: 120)));
+                child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2));
           } else if (state is OrderStateError) {
             if (state.statusCode == 401) {
               return const PleaseSignInWidget();
@@ -108,8 +104,6 @@ class _OrderLoadedWidgetState extends State<OrderLoadedWidget> {
       context.read<OrderCubit>().orderStatusWithLenght(0),
       context.read<OrderCubit>().orderStatusWithLenght(1),
       context.read<OrderCubit>().orderStatusWithLenght(2),
-      context.read<OrderCubit>().orderStatusWithLenght(3),
-      context.read<OrderCubit>().orderStatusWithLenght(4),
     ];
 
     final routeName = ModalRoute.of(context)?.settings.name ?? '';

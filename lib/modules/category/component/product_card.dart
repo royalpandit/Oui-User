@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,8 +38,16 @@ class ProductCard extends StatelessWidget {
             width: width,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: const Color(0xFFF6F6F6),
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFFF0F0F0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 6,
+                  offset: const Offset(0, 1),
+                ),
+              ],
             ),
             child: Stack(
               fit: StackFit.expand,
@@ -50,10 +57,10 @@ class ProductCard extends StatelessWidget {
                       context, RouteNames.productDetailsScreen,
                       arguments: productModel.slug),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                     child: CustomImage(
                       path: RemoteUrls.imageUrl(productModel.thumbImage),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ),
@@ -70,49 +77,6 @@ class ProductCard extends StatelessWidget {
         _buildContent(appSetting),
       ],
     );
-    // return Column(
-    //   mainAxisSize: MainAxisSize.min,
-    //   crossAxisAlignment: CrossAxisAlignment.start,
-    //   children: [
-    //     Container(
-    //       width: width,
-    //       height: singleProductHeight,
-    //       margin: Utils.only(bottom: 10.0),
-    //       decoration: const BoxDecoration(
-    //         color: cardBgColor,
-    //         // color: white,
-    //         //  borderRadius: BorderRadius.circular(5.0),
-    //         // border: borderSide,
-    //       ),
-    //       child: Stack(
-    //         //mainAxisSize: MainAxisSize.min,
-    //         fit: StackFit.expand,
-    //         children: [
-    //           GestureDetector(
-    //             onTap: () => Navigator.pushNamed(
-    //                 context, RouteNames.productDetailsScreen,
-    //                 arguments: productModel.slug),
-    //             child: SizedBox(
-    //               //height: 235.0,
-    //               child: Column(
-    //                 crossAxisAlignment: CrossAxisAlignment.start,
-    //                 //mainAxisSize: MainAxisSize.min,
-    //                 children: [
-    //                   _buildImage(),
-    //                   //const SizedBox(height: 8),
-    //                   // _buildContent(appSetting),
-    //                 ],
-    //               ),
-    //             ),
-    //           ),
-    //           Positioned(
-    //               bottom: 0.0, right: 0.0, child: addToCartButton(context)),
-    //         ],
-    //       ),
-    //     ),
-    //     Flexible(fit: FlexFit.loose, child: _buildContent(appSetting)),
-    //   ],
-    // );
   }
 
   Widget addToCartButton(BuildContext context) {
@@ -193,113 +157,53 @@ class ProductCard extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 0, top: 6),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 6, bottom: 4),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Row(
-          //   crossAxisAlignment: CrossAxisAlignment.center,
-          //   children: [
-          //     // const Icon(
-          //     //   Icons.star,
-          //     //   size: 14,
-          //     //   color: Color(0xffF6D060),
-          //     // ),
-          //     // const SizedBox(width: 5),
-          //     Text(
-          //       productModel.rating.toStringAsFixed(1),
-          //       style: headlineTextStyle(12.0),
-          //     ),
-          //     //CustomRatingBar(count: 5, initial: productModel.rating),
-          //   ],
-          // ),
-          // const SizedBox(height: 4),
-          AutoSizeText(
-            productModel.name,
-            textAlign: TextAlign.left,
+          Row(
+            children: [
+              const Icon(Icons.star_rounded, color: Color(0xFFFFC107), size: 13),
+              const SizedBox(width: 3),
+              Text(
+                productModel.rating.toStringAsFixed(1),
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                  color: Colors.black54,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            productModel.name.length > 10
+                ? '${productModel.name.substring(0, 10)}...'
+                : productModel.name,
             maxLines: 1,
-            maxFontSize: 12,
-            minFontSize: 12,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
-              color: Colors.black,
+              fontWeight: FontWeight.w500,
+              fontSize: 13,
+              color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 0),
+          const SizedBox(height: 2),
           if (isFlashSale) ...[
             PriceCardWidget(
               price: mainPrice.toString(),
               offerPrice: flashPrice.toString(),
-              textSize: 16,
+              textSize: 14,
             ),
           ] else ...[
             PriceCardWidget(
               price: mainPrice.toString(),
               offerPrice: offerPrice.toString(),
-              textSize: 16,
+              textSize: 14,
             ),
           ],
         ],
-      ),
-    );
-  }
-
-  Widget _buildImage() {
-    return SizedBox(
-      height: 180.0,
-      //\width: double.infinity,
-      // alignment: Alignment.center,
-      child: Stack(
-        fit: StackFit.expand,
-        clipBehavior: Clip.none,
-        children: [
-          CustomImage(
-            path: RemoteUrls.imageUrl(productModel.thumbImage),
-            fit: BoxFit.fitHeight,
-          ),
-          // Positioned(
-          //     left: 10.0,
-          //     top: -50.0,
-          //     child: FavoriteButton(productId: productModel.id))
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOfferInPercentage() {
-    if (productModel.offerPrice.toString().isEmpty) {
-      return const Positioned(
-        top: 8,
-        right: 8,
-        child: SizedBox(),
-      );
-    }
-
-    final percentage = Utils.dorpPricePercentage(
-        productModel.price.toString(), productModel.offerPrice.toString());
-
-    return Positioned(
-      top: 0,
-      right: 0,
-      child: Container(
-        height: 22,
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            color: const Color(0xFF999999).withOpacity(0.6),
-            borderRadius:
-                const BorderRadius.only(topRight: Radius.circular(2))),
-        child: Text(
-          percentage,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
-          ),
-        ),
       ),
     );
   }

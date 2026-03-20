@@ -65,7 +65,7 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
               itemBuilder: (context, index) {
                 return CustomImage(
                   path: RemoteUrls.imageUrl(allImages[index]),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 );
               }),
         ),

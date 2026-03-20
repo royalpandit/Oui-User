@@ -194,15 +194,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             onTap: () {
               Navigator.pushNamed(context, RouteNames.cartScreen);
             },
-            child: SizedBox(
-              height: 50,
-              width: 50,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 14, right: 12, left: 4, bottom: 4),
               child: BlocBuilder<CartCubit, CartState>(
                 builder: (context, state) {
                   return CartBadge(
                     count: cartProducts.cartCount.toString(),
                     badgeColor: Colors.black,
                     iconColor: Colors.black,
+                    countColor: Colors.white,
                   );
                 },
               ),

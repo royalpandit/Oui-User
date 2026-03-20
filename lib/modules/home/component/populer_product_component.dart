@@ -21,16 +21,16 @@ class HorizontalProductComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     if (productList.isEmpty) return const SliverToBoxAdapter();
 
-    // Proper Capitalization: "top rated products" -> "Top Rated Products"
-    String formattedCategory = category.split(' ').map((word) {
-      if (word.isEmpty) return "";
+    // Title Case: "top rated products" -> "Top Rated Products"
+    String formattedCategory = category.trim().split(RegExp(r'\s+')).map((word) {
+      if (word.isEmpty) return '';
       return word[0].toUpperCase() + word.substring(1).toLowerCase();
     }).join(' ');
 
     return SliverToBoxAdapter(
       child: Container(
         color: bgColor ?? Colors.transparent,
-        margin: const EdgeInsets.only(top: 16.0),
+        margin: const EdgeInsets.only(top: 12.0),
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +41,6 @@ class HorizontalProductComponent extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             SizedBox(
-              // Reduced height to 280 for a tighter, professional look
               height: 300.0,
               child: ListView.separated(
                 physics: const BouncingScrollPhysics(),
@@ -51,8 +50,8 @@ class HorizontalProductComponent extends StatelessWidget {
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemBuilder: (context, index) {
                   return ProductCard(
-                    productModel: productList[index], 
-                    width: 165, // Standardized width for horizontal lists
+                    productModel: productList[index],
+                    width: 165,
                   );
                 },
               ),

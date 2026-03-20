@@ -31,7 +31,7 @@ class _SigninFormState extends State<SigninForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.black),
                       initialValue: state.email,
                       keyboardType: TextInputType.emailAddress,
                       onChanged: (value) => loginBloc.add(LoginEventUserName(value)),
@@ -51,7 +51,7 @@ class _SigninFormState extends State<SigninForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.black),
                       obscureText: state.showPassword,
                       initialValue: state.password,
                       onChanged: (value) => loginBloc.add(LoginEventPassword(value)),
@@ -60,7 +60,7 @@ class _SigninFormState extends State<SigninForm> {
                         suffixIcon: IconButton(
                           icon: Icon(
                             state.showPassword ? Icons.visibility_off : Icons.visibility,
-                            color: Colors.white.withOpacity(0.4),
+                            color: Colors.black.withOpacity(0.45),
                           ),
                           onPressed: () => loginBloc.add(LoginEventShowPassword(state.showPassword)),
                         ),
@@ -95,18 +95,18 @@ class _SigninFormState extends State<SigninForm> {
                 children: [
                   Checkbox(
                     value: state.active,
-                    activeColor: Colors.white,
-                    checkColor: Colors.black,
-                    side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                    activeColor: Colors.black,
+                    checkColor: Colors.white,
+                    side: BorderSide(color: Colors.black.withOpacity(0.3)),
                     onChanged: (v) => bloc.add(LoginEventActive(state.active)),
                   ),
-                  const Text("Remember me", style: TextStyle(color: Colors.white70, fontSize: 13)),
+                  const Text("Remember me", style: TextStyle(color: Colors.black87, fontSize: 13)),
                 ],
               ),
             ),
             TextButton(
               onPressed: () => Navigator.pushNamed(context, '/forgotScreen'),
-              child: const Text("Forgot Password?", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: const Text("Forgot Password?", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -118,15 +118,15 @@ class _SigninFormState extends State<SigninForm> {
     return BlocBuilder<LoginBloc, LoginModelState>(
       builder: (context, state) {
         if (state.state is LoginStateLoading) {
-          return const Center(child: CircularProgressIndicator(color: Colors.white));
+          return const Center(child: CircularProgressIndicator(color: Colors.black));
         }
         return SizedBox(
           width: double.infinity,
           height: 56,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
             onPressed: () {
@@ -144,18 +144,18 @@ class _SigninFormState extends State<SigninForm> {
   InputDecoration _premiumInput(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
-      prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.4), size: 20),
+      hintStyle: TextStyle(color: Colors.black.withOpacity(0.3)),
+      prefixIcon: Icon(icon, color: Colors.black.withOpacity(0.45), size: 20),
       filled: true,
-      fillColor: Colors.white.withOpacity(0.05),
+      fillColor: Colors.black.withOpacity(0.04),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+        borderSide: BorderSide(color: Colors.black.withOpacity(0.15)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Colors.white),
+        borderSide: const BorderSide(color: Colors.black),
       ),
     );
   }

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shimmer/shimmer.dart';
 
+import '../../category/component/product_card.dart';
 import '../model/product_model.dart';
-import 'home_horizontal_list_product_card.dart';
 import 'section_header.dart';
 
 class CategoryAndListComponent extends StatelessWidget {
@@ -22,77 +20,46 @@ class CategoryAndListComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // We only hide the section if it's explicitly null/empty in a real production state. 
-    // Otherwise, we show a skeleton to prevent layout shifts.
-    final bool isLoading = productList.isEmpty;
+    if (productList.isEmpty) return const SliverToBoxAdapter();
 
-    // Enhanced Title Case: Ensures "hot  shot category" -> "Hot Shot Category"
+    // Title Case: "hot  shot category" -> "Hot Shot Category"
     final String formattedCategory = category
         .trim()
         .split(RegExp(r'\s+'))
-        .map((word) => word.isNotEmpty 
-            ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}' 
+        .map((word) => word.isNotEmpty
+            ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}'
             : '')
         .join(' ');
 
     return SliverToBoxAdapter(
       child: Container(
         color: bgColor ?? Colors.transparent,
-        padding: const EdgeInsets.symmetric(vertical: 24),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. Header with standardized padding
             SectionHeader(
               headerText: formattedCategory,
               onTap: onTap,
             ),
-            
-            const SizedBox(height: 16),
-
-            // 2. Horizontal List Container
+            const SizedBox(height: 12),
             SizedBox(
-              height: 160, // Fixed height to prevent pixel overflow
+              height: 300,
               child: ListView.separated(
                 physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 scrollDirection: Axis.horizontal,
-                itemCount: isLoading ? 3 : productList.length,
+                itemCount: productList.length,
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemBuilder: (context, index) {
-                  if (isLoading) {
-                    return const _CardSkeleton();
-                  }
-                  return HomeHorizontalListProductCard(
+                  return ProductCard(
                     productModel: productList[index],
-                    height: 150,
-                    width: 280,
+                    width: 165,
                   );
                 },
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Professional Shimmer Skeleton for the Horizontal Cards
-class _CardSkeleton extends StatelessWidget {
-  const _CardSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: const Color(0xFFE0E0E0),
-      highlightColor: const Color(0xFFF5F5F5),
-      child: Container(
-        width: 280,
-        height: 150,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
         ),
       ),
     );

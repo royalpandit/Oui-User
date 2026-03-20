@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import '/widgets/shimmer_loader.dart';
 import '/modules/animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '/modules/home/component/home_app_bar.dart';
 import '/utils/language_string.dart';
@@ -54,6 +53,8 @@ class _CartScreenState extends State<CartScreen> {
         listener: (_, state) {
           if (state is CartStateDecIncrementLoading) {
             Utils.loadingDialog(context);
+          } else if (state is CartStateOrderSuccess) {
+            // Handled by SelectDateTimeScreen listener
           } else {
             Utils.closeDialog(context);
             if (state is CartStateDecIncError) {
@@ -67,10 +68,7 @@ class _CartScreenState extends State<CartScreen> {
         builder: (context, state) {
           if (state is CartStateLoading) {
             return const Center(
-                child: SizedBox(
-                    height: 28,
-                    width: 120,
-                    child: ShimmerLoader.rect(height: 12, width: 120)));
+                child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2));
           } else if (state is CartStateError) {
             if (state.statusCode == 401) {
               return const PleaseSignInWidget();
@@ -203,7 +201,7 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
               children: [
                 CartBadge(
                     count: count,
-                    iconColor: Colors.white,
+                    iconColor: Colors.black,
                     badgeColor: Colors.black),
                 const SizedBox(width: 20),
                 Text(

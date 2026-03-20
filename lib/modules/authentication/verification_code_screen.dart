@@ -38,13 +38,13 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new,
-              color: Colors.white, size: 20),
+              color: Colors.black, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -101,7 +101,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 32,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: Colors.black,
                   letterSpacing: -1,
                 ),
               ),
@@ -109,7 +109,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               Text(
                 "We've sent a 6-digit verification code to your email address.",
                 style: GoogleFonts.inter(
-                  color: Colors.white.withOpacity(0.5),
+                  color: Colors.black.withOpacity(0.5),
                   fontSize: 16,
                   height: 1.5,
                 ),
@@ -125,13 +125,13 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                     width: 50,
                     textStyle: GoogleFonts.inter(
                       fontSize: 22,
-                      color: Colors.white,
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.black.withOpacity(0.04),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      border: Border.all(color: Colors.black.withOpacity(0.15)),
                     ),
                   ),
                   focusedPinTheme: PinTheme(
@@ -139,13 +139,13 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                     width: 52,
                     textStyle: GoogleFonts.inter(
                       fontSize: 22,
-                      color: Colors.white,
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.black.withOpacity(0.06),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white, width: 1),
+                      border: Border.all(color: Colors.black, width: 1),
                     ),
                   ),
                   onCompleted: (String code) {
@@ -161,7 +161,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                     Text(
                       Language.didNotReceived.capitalizeByWord(),
                       style: GoogleFonts.inter(
-                        color: Colors.white.withOpacity(0.4),
+                        color: Colors.black.withOpacity(0.45),
                         fontSize: 14,
                       ),
                     ),
@@ -172,7 +172,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                       child: Text(
                         Language.resend.capitalizeByWord(),
                         style: GoogleFonts.inter(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                         ),
@@ -188,8 +188,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 height: 56,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -204,7 +204,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                           width: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                         )
                       : Text(

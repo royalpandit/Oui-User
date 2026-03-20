@@ -26,9 +26,10 @@ class SectionHeader extends StatelessWidget {
           Text(
             headerText.capitalizeByWord(),
             style: GoogleFonts.inter(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
               color: Colors.black,
+              letterSpacing: -0.2,
             ),
           ),
           isSeeAll? InkWell(
@@ -38,9 +39,9 @@ class SectionHeader extends StatelessWidget {
               child: Text(
                 Language.seeAll.capitalizeByWord(),
                 style: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade600,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey.shade500,
                 ),
               ),
             ),

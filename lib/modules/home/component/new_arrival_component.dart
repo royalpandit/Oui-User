@@ -37,10 +37,10 @@ class NewArrivalComponent extends StatelessWidget {
                   Text(
                     formattedTitle,
                     style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 18.0,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15.0,
                       color: Colors.black,
-                      letterSpacing: -0.5,
+                      letterSpacing: -0.2,
                     ),
                   ),
                 ],
@@ -52,9 +52,7 @@ class NewArrivalComponent extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 14,
               mainAxisSpacing: 20,
-              // mainAxisExtent increased to 320 to allow for the contained 
-              // image and the text description below.
-              mainAxisExtent: 320.0, 
+              mainAxisExtent: 280.0,
             ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {

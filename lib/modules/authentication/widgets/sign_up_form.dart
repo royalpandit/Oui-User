@@ -44,7 +44,7 @@ class _SignUpFormState extends State<SignUpForm> {
               'By signing up, you agree to receive personalized updates and offers.',
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.black.withOpacity(0.45),
                 fontSize: 12,
                 height: 1.4,
               ),
@@ -63,7 +63,7 @@ class _SignUpFormState extends State<SignUpForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 15),
+              style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
               onChanged: (v) => bloc.add(SignUpEventName(v)),
               validator: (v) =>
                   (v == null || v.trim().isEmpty) ? 'Name is required' : null,
@@ -86,7 +86,7 @@ class _SignUpFormState extends State<SignUpForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 15),
+              style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
               keyboardType: TextInputType.emailAddress,
               onChanged: (v) => bloc.add(SignUpEventEmail(v)),
               validator: (v) =>
@@ -110,7 +110,7 @@ class _SignUpFormState extends State<SignUpForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 15),
+              style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
               keyboardType: TextInputType.phone,
               onChanged: (v) => bloc.add(SignUpEventPhone(v)),
               validator: (v) =>
@@ -134,7 +134,7 @@ class _SignUpFormState extends State<SignUpForm> {
           children: [
             TextFormField(
               obscureText: state.showPassword,
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 15),
+              style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
               onChanged: (v) => bloc.add(SignUpEventPassword(v)),
               validator: (v) =>
                   (v == null || v.isEmpty) ? 'Password is required' : null,
@@ -146,7 +146,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     state.showPassword
                         ? Icons.visibility_off
                         : Icons.visibility,
-                    color: Colors.white.withOpacity(0.4),
+                    color: Colors.black.withOpacity(0.45),
                     size: 20,
                   ),
                   onPressed: () =>
@@ -167,7 +167,7 @@ class _SignUpFormState extends State<SignUpForm> {
       builder: (context, state) {
         return TextFormField(
           obscureText: state.showConfirmPassword,
-          style: GoogleFonts.inter(color: Colors.white, fontSize: 15),
+          style: GoogleFonts.inter(color: Colors.black, fontSize: 15),
           onChanged: (v) => bloc.add(SignUpEventPasswordConfirm(v)),
           validator: (v) {
             if (v == null || v.isEmpty) return 'Confirm password is required';
@@ -182,7 +182,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 state.showConfirmPassword
                     ? Icons.visibility_off
                     : Icons.visibility,
-                color: Colors.white.withOpacity(0.4),
+color: Colors.black.withOpacity(0.45),
                 size: 20,
               ),
               onPressed: () => bloc.add(
@@ -198,22 +198,22 @@ class _SignUpFormState extends State<SignUpForm> {
     return BlocBuilder<SignUpBloc, SignUpModelState>(
       builder: (context, state) {
         return Theme(
-          data: ThemeData(unselectedWidgetColor: Colors.white.withOpacity(0.4)),
+          data: ThemeData(unselectedWidgetColor: Colors.black.withOpacity(0.4)),
           child: CheckboxListTile(
             value: state.agree == 1,
             contentPadding: EdgeInsets.zero,
             title: Text(
               'I agree to the Terms of Service and Privacy Policy',
               style: GoogleFonts.inter(
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.black.withOpacity(0.7),
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
               ),
             ),
-            activeColor: Colors.white,
-            checkColor: Colors.black,
+            activeColor: Colors.black,
+            checkColor: Colors.white,
             dense: true,
-            side: BorderSide(color: Colors.white.withOpacity(0.2)),
+            side: BorderSide(color: Colors.black.withOpacity(0.3)),
             controlAffinity: ListTileControlAffinity.leading,
             onChanged: (v) => bloc.add(SignUpEventAgree(v! ? 1 : 0)),
           ),
@@ -227,15 +227,15 @@ class _SignUpFormState extends State<SignUpForm> {
       builder: (context, state) {
         if (state.state is SignUpStateLoading) {
           return const Center(
-              child: CircularProgressIndicator(color: Colors.white));
+              child: CircularProgressIndicator(color: Colors.black));
         }
         return SizedBox(
           width: double.infinity,
           height: 58,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
@@ -283,18 +283,18 @@ class _SignUpFormState extends State<SignUpForm> {
     return InputDecoration(
       hintText: hint,
       hintStyle: GoogleFonts.inter(
-          color: Colors.white.withOpacity(0.25), fontSize: 14),
-      prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.4), size: 20),
+          color: Colors.black.withOpacity(0.3), fontSize: 14),
+      prefixIcon: Icon(icon, color: Colors.black.withOpacity(0.45), size: 20),
       filled: true,
-      fillColor: Colors.white.withOpacity(0.06),
+      fillColor: Colors.black.withOpacity(0.04),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+        borderSide: BorderSide(color: Colors.black.withOpacity(0.15)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Colors.white, width: 1.5),
+        borderSide: const BorderSide(color: Colors.black, width: 1.5),
       ),
     );
   }

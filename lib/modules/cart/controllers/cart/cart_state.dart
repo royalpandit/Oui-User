@@ -88,3 +88,12 @@ class CartCouponStateError extends CartState {
 class CartCouponStateLoading extends CartState {
   const CartCouponStateLoading();
 }
+
+class CartStateOrderSuccess extends CartState {
+  final String message;
+
+  const CartStateOrderSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

@@ -129,7 +129,9 @@ abstract class RemoteDataSource {
 
   Future<String> bankPay(String token, Map<String, String> body);
 
-  Future<CouponResponseModel> applyCoupon(String coupon, String token);
+  Future<CouponResponseModel> applyCoupon(String coupon, int sellerId, String token);
+
+  Future<String> pickupAtStoreOrder(String date, String time, int billingAddressId, String? coupon, String token);
 
   Future<ProductCategoriesModel> getCategoryProducts(String slug);
 
@@ -216,8 +218,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<CouponResponseModel> applyCoupon(String coupon, String token) async {
-    final uri = Uri.parse(RemoteUrls.applyCoupon(coupon, token));
+  Future<CouponResponseModel> applyCoupon(String coupon, int sellerId, String token) async {
+    final uri = Uri.parse(RemoteUrls.applyCoupon(coupon, sellerId, token));
     final clientMethod = client.get(
       uri,
       headers: demoModeHeader2,
@@ -274,6 +276,33 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         await NetworkParser.callClientWithCatchException(() => clientMethod);
     log(responseJsonBody.toString(), name: 'cashOnDeliveryPayment');
 
+    return responseJsonBody['message'] as String;
+  }
+
+  @override
+  Future<String> pickupAtStoreOrder(
+      String date, String time, int billingAddressId, String? coupon, String token) async {
+    final uri = Uri.parse(RemoteUrls.pickupAtStore(token));
+    final headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+    };
+    final body = <String, dynamic>{
+      'date': date,
+      'time': time,
+      'billing_address_id': billingAddressId,
+    };
+    if (coupon != null && coupon.isNotEmpty) {
+      body['coupon'] = coupon;
+    }
+    final clientMethod = client.post(
+      uri,
+      headers: headers,
+      body: json.encode(body),
+    );
+    final responseJsonBody =
+        await NetworkParser.callClientWithCatchException(() => clientMethod);
     return responseJsonBody['message'] as String;
   }
 

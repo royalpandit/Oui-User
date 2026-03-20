@@ -74,22 +74,12 @@ class _FavoriteButtonState extends State<FavoriteButton> {
           onTap: () async {
             if (isFav) {
               if (wishItem.isNotEmpty) {
-                final r = await context
-                    .read<WishListCubit>()
-                    .removeWishList(wishItem.first);
-                r.fold(
-                  (failure) {
-                    Utils.showSnackBar(context, failure.message);
-                  },
-                  (success) {
-                    Utils.showSnackBar(context, success);
-                  },
-                );
+                await context.read<WishListCubit>().removeWishList(wishItem.first);
               } else {
                 Utils.showSnackBar(context, Language.somethingWentWrong);
               }
             } else {
-              context.read<WishListCubit>().addWishList(widget.productId);
+              await context.read<WishListCubit>().addWishList(widget.productId);
             }
             setState(() => isFav = !isFav);
           },
@@ -137,24 +127,14 @@ class _FavoriteButtonState extends State<FavoriteButton> {
             onTap: () async {
               if (isFav) {
                 if (wishItem.isNotEmpty) {
-                  final r = await context
+                  await context
                       .read<WishListCubit>()
                       .removeWishList(wishItem.first);
-                  // setState(() {});
-                  // debugPrint("r: $r");
-                  r.fold(
-                    (failure) {
-                      Utils.showSnackBar(context, failure.message);
-                    },
-                    (success) {
-                      Utils.showSnackBar(context, success);
-                    },
-                  );
                 } else {
                   Utils.showSnackBar(context, "Something went wrong");
                 }
               } else {
-                context.read<WishListCubit>().addWishList(widget.productId);
+                await context.read<WishListCubit>().addWishList(widget.productId);
               }
               setState(() => isFav = !isFav);
             },

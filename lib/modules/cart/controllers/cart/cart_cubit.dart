@@ -132,10 +132,19 @@ class CartCubit extends Cubit<CartState> {
       emit(const CartCouponStateError("Please login first", 401));
       return;
     }
+    
+    // Get seller_id from first cart product
+    final cartProducts = cartResponseModel?.cartProducts ?? [];
+    if (cartProducts.isEmpty) {
+      emit(const CartCouponStateError("Cart is empty", 400));
+      return;
+    }
+    final int sellerId = cartProducts.first.product.vendorId;
+    
     emit(const CartCouponStateLoading());
 
     final result = await _cartRepository.applyCoupon(
-        coupon, _loginBloc.userInfo!.accessToken);
+        coupon, sellerId, _loginBloc.userInfo!.accessToken);
 
     result.fold(
       (failure) {
@@ -150,15 +159,13 @@ class CartCubit extends Cubit<CartState> {
   }
 
   Future<void> getCoupon() async {
-    emit(const CartStateDecIncrementLoading());
     final result = _cartRepository.getAppliedCoupon();
     result.fold(
       (failure) {
-        emit(CartStateDecIncError(failure.message, failure.statusCode));
+        // No cached coupon is a normal state — silently ignore
       },
       (successData) {
         couponResponseModel = successData;
-
         emit(CartCouponStateLoaded(successData));
       },
     );
@@ -170,5 +177,20 @@ class CartCubit extends Cubit<CartState> {
 
   CartCalculation getCartCalculation() {
     return _cartRepository.getCartCalculation();
+  }
+
+  Future<void> pickupAtStoreOrder(String date, String time, int billingAddressId) async {
+    if (_loginBloc.userInfo == null) {
+      emit(const CartStateError('Please login first', 401));
+      return;
+    }
+    emit(const CartStateLoading());
+    final String? coupon = couponResponseModel?.code;
+    final result = await _cartRepository.pickupAtStoreOrder(
+        date, time, billingAddressId, coupon, _loginBloc.userInfo!.accessToken);
+    result.fold(
+      (failure) => emit(CartStateError(failure.message, failure.statusCode)),
+      (success) => emit(CartStateOrderSuccess(success)),
+    );
   }
 }

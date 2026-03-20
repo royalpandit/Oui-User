@@ -76,15 +76,24 @@ class Utils {
 
   // final icon =  BlocProvider.of<AppSettingCubit>(_).settingModel!.setting!.currencyIcon;
 
+  static String _normalizedCurrencyIcon(BuildContext context) {
+    final rawIcon = context.read<AppSettingCubit>().settingModel!.setting!.currencyIcon;
+    if (rawIcon.trim().isEmpty) return '₹';
+    var icon = rawIcon.trim();
+    icon = icon.replaceAll(RegExp(r'Rs\.?', caseSensitive: false), '₹');
+    if (icon.isEmpty) icon = '₹';
+    return icon;
+  }
+
   static String formatPrice(var price, BuildContext context) {
-    final icon =
-        context.read<AppSettingCubit>().settingModel!.setting!.currencyIcon;
+    final icon = _normalizedCurrencyIcon(context);
     if (price is double) return '$icon${price.toStringAsFixed(1)}';
     if (price is String) {
       final p = double.tryParse(price) ?? 0.0;
       return '$icon${p.toStringAsFixed(1)}';
     }
-    return price.toStringAsFixed(1);
+    if (price is int) return '$icon${price.toString()}';
+    return '$icon${price.toString()}';
   }
 
   static Color dynamicPrimaryColor(BuildContext context) {
@@ -92,14 +101,14 @@ class Utils {
   }
 
   static String formatPriceIcon(var price, BuildContext context) {
-    final icon =
-        context.read<AppSettingCubit>().settingModel!.setting!.currencyIcon;
+    final icon = _normalizedCurrencyIcon(context);
     if (price is double) return icon + price.toStringAsFixed(1);
     if (price is String) {
       final p = double.tryParse(price) ?? 0.0;
       return icon + p.toStringAsFixed(1);
     }
-    return icon + price.toStringAsFixed(1);
+    if (price is int) return icon + price.toString();
+    return icon + price.toString();
   }
 
   static double cartProductPrice(
@@ -387,6 +396,7 @@ class Utils {
     return showDialog(
       context: context,
       barrierDismissible: barrierDismissible,
+      barrierColor: Colors.black54,
       builder: (BuildContext context) {
         return Dialog(
           //insetPadding: Utils.symmetric(h: padding),
@@ -594,8 +604,6 @@ class Utils {
         return Language.delivered.capitalizeByWord();
       case '3':
         return Language.completed.capitalizeByWord();
-      // case '4':
-      //   return 'Declined';
       default:
         return Language.declined.capitalizeByWord();
     }

@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../core/router_name.dart';
 import '../../../utils/language_string.dart';
+import '../../../widgets/capitalized_word.dart';
 import '../../category/component/product_card.dart';
 import '../../flash/controller/cubit/flash_cubit.dart';
 import '../model/flash_sale_model.dart';
@@ -61,10 +62,10 @@ class FlashSaleComponent extends StatelessWidget {
               Text(
                 "Flash Sale",
                 style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                   color: Colors.black,
-                  letterSpacing: -0.5,
+                  letterSpacing: -0.2,
                 ),
               ),
               CountdownTimer(
@@ -107,12 +108,11 @@ class FlashSaleComponent extends StatelessWidget {
             child: TextButton(
               onPressed: () => Navigator.pushNamed(context, RouteNames.flashScreen),
               child: Text(
-                Language.seeAll.toUpperCase(),
+                Language.seeAll.capitalizeByWord(),
                 style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black,
-                  letterSpacing: 1,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey.shade500,
                 ),
               ),
             ),

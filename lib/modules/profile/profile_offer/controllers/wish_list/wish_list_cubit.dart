@@ -54,10 +54,9 @@ class WishListCubit extends Cubit<WishListState> {
 
     result.fold((failure) {
       emit(WishListStateError(failure.message, failure.statusCode));
-    }, (success) {
-      // getWishList();
-      wishList.removeWhere((element) => element.id==item.id);
-      emit(WishListStateSuccess(success));
+    }, (success) async {
+      wishList.removeWhere((element) => element.id == item.id);
+      emit(WishListStateLoaded(wishList));
     });
 
     return result;
@@ -93,9 +92,8 @@ class WishListCubit extends Cubit<WishListState> {
 
     result.fold((failure) {
       emit(WishListStateError(failure.message, failure.statusCode));
-    }, (success) {
-      getWishList();
-      emit(WishListStateSuccess(success));
+    }, (success) async {
+      await getWishList();
     });
     return result;
   }
