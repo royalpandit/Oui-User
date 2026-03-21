@@ -28,44 +28,89 @@ class SingleCircularSeller extends StatelessWidget {
         );
       },
       child: Container(
-        width: 90,
+        width: 140,
         margin: const EdgeInsets.only(right: 12),
-        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: const Color(0xFF1B1B1B),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFF474747), width: 0.5),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFF2A2A2A), width: 0.5),
         ),
+        clipBehavior: Clip.antiAlias,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              height: 50,
-              width: 50,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: const Color(0xFF2A2A2A),
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFF474747), width: 0.5),
-              ),
-              child: ClipOval(
-                child: CustomImage(
-                  height: 32,
-                  width: 32,
-                  path: RemoteUrls.imageUrl(seller.logo),
+            // Banner area
+            SizedBox(
+              height: 70,
+              width: double.infinity,
+              child: seller.bannerImage.isNotEmpty
+                  ? CustomImage(
+                      path: RemoteUrls.imageUrl(seller.bannerImage),
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFF2A2A2A),
+                            Color(0xFF1B1B1B),
+                          ],
+                        ),
+                      ),
+                    ),
+            ),
+            // Logo overlapping banner bottom
+            Transform.translate(
+              offset: const Offset(0, -22),
+              child: Container(
+                height: 44,
+                width: 44,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2A2A2A),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFF1B1B1B), width: 2),
+                ),
+                child: ClipOval(
+                  child: CustomImage(
+                    height: 28,
+                    width: 28,
+                    path: RemoteUrls.imageUrl(seller.logo),
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              seller.shopName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFFC7C6C6),
+            // Name + visit label
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 12),
+              child: Transform.translate(
+                offset: const Offset(0, -12),
+                child: Column(
+                  children: [
+                    Text(
+                      seller.shopName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.manrope(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFE2E2E2),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'VISIT STORE',
+                      style: GoogleFonts.inter(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF919191),
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

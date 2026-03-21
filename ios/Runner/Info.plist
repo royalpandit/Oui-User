@@ -47,5 +47,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>OUI needs camera access for virtual try-on photos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>OUI needs photo library access to select photos for virtual try-on</string>
 </dict>
 </plist>

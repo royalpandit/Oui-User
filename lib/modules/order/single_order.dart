@@ -112,9 +112,9 @@ class _OrderDetailsBody extends StatelessWidget {
         _buildDeliveryDate(),
         const SizedBox(height: 64),
 
-        // ── Tracking Progress ──
-        _buildTrackingProgress(),
-        const SizedBox(height: 64),
+        // ── Tracking Progress (hidden) ──
+        // _buildTrackingProgress(),
+        // const SizedBox(height: 64),
 
         // ── Products Section ──
         _buildProductsSection(context),

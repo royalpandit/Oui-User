@@ -113,7 +113,6 @@ class _LoadedHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appSetting = context.read<AppSettingCubit>().settingModel!.setting;
     final combineBannerList = _buildCombineBanners();
     final h = homeModel;
     String st(int i) =>
@@ -174,14 +173,6 @@ class _LoadedHomePage extends StatelessWidget {
           child: FlashSaleComponent(flashSale: h.flashSale),
         ),
 
-        // Best sellers (multivendor)
-        if (appSetting!.enableMultivendor == 1 &&
-            _isVisible(h.sellerVisibility))
-          BestSellerGridView(
-            sellers: h.sellers,
-            sectionTitle: st(3),
-          ),
-
         // Top rated products
         if (_isVisible(h.topRatedVisibility))
           CategoryAndListComponent(
@@ -240,6 +231,13 @@ class _LoadedHomePage extends StatelessWidget {
         SliverToBoxAdapter(
           child: CombineBannerSlider(banners: combineBannerList),
         ),
+
+        // Best sellers
+        if (_isVisible(h.sellerVisibility))
+          BestSellerGridView(
+            sellers: h.sellers,
+            sectionTitle: st(3),
+          ),
 
         // New arrivals grid
         if (_isVisible(h.bestProductVisibility))

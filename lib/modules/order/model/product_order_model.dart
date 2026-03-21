@@ -12,8 +12,8 @@ class OrderedProductModel extends Equatable {
   final double vat;
   final int qty;
 
-  // final String thumbImage;
-  // final String slug;
+  final String thumbImage;
+  final String slug;
   final String createdAt;
   final String updatedAt;
 
@@ -25,11 +25,11 @@ class OrderedProductModel extends Equatable {
     required this.productName,
     required this.unitPrice,
     required this.vat,
+    required this.thumbImage,
+    required this.slug,
     required this.qty,
-    // required this.thumbImage,
     required this.createdAt,
     required this.updatedAt,
-    // required this.slug,
   });
 
   OrderedProductModel copyWith({
@@ -55,10 +55,10 @@ class OrderedProductModel extends Equatable {
       unitPrice: unitPrice ?? this.unitPrice,
       vat: vat ?? this.vat,
       qty: qty ?? this.qty,
-      // thumbImage: thumbImage ?? this.thumbImage,
+      thumbImage: thumbImage ?? this.thumbImage,
+      slug: slug ?? this.slug,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      // slug: slug ?? this.slug,
     );
   }
 
@@ -73,10 +73,10 @@ class OrderedProductModel extends Equatable {
     result.addAll({'unit_price': unitPrice});
     result.addAll({'vat': vat});
     result.addAll({'qty': qty});
-    // result.addAll({'thumb_image': thumbImage});
+    result.addAll({'thumb_image': thumbImage});
+    result.addAll({'slug': slug});
     result.addAll({'created_at': createdAt});
     result.addAll({'updated_at': updatedAt});
-    // result.addAll({'slug': slug});
 
     return result;
   }
@@ -97,8 +97,8 @@ class OrderedProductModel extends Equatable {
           : 0,
       vat: map['vat'] != null ? double.parse(map['vat'].toString()) : 0,
       qty: map['qty'] != null ? int.parse(map['qty'].toString()) : 0,
-      // thumbImage: map['product']['thumb_image'] ?? '',
-      // slug: map['product']['slug'] ?? '',
+      thumbImage: map['product'] != null ? (map['product']['thumb_image'] ?? '') : '',
+      slug: map['product'] != null ? (map['product']['slug'] ?? '') : '',
       createdAt: map['created_at'] ?? '',
       updatedAt: map['updated_at'] ?? '',
     );
@@ -124,7 +124,8 @@ class OrderedProductModel extends Equatable {
         unitPrice,
         vat,
         qty,
-        // thumbImage,
+        thumbImage,
+        slug,
         createdAt,
         updatedAt
       ];

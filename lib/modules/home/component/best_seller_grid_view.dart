@@ -44,7 +44,7 @@ class BestSellerGridView extends StatelessWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
           SliverToBoxAdapter(
             child: SizedBox(
-              height: 105,
+              height: 150,
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 scrollDirection: Axis.horizontal,

@@ -6,10 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../core/remote_urls.dart';
 import '../../widgets/custom_image.dart';
+import 'try_on_camera_screen.dart';
+import 'try_on_gallery_screen.dart';
 
 class TryOnScreen extends StatefulWidget {
   const TryOnScreen({
@@ -28,7 +29,6 @@ class TryOnScreen extends StatefulWidget {
 }
 
 class _TryOnScreenState extends State<TryOnScreen> {
-  final ImagePicker _picker = ImagePicker();
   String? _personImagePath;
   bool _loading = false;
   String? _error;
@@ -42,22 +42,34 @@ class _TryOnScreenState extends State<TryOnScreen> {
         bytes[3] == 0x47;
   }
 
-  Future<void> _pickImage(ImageSource source) async {
-    try {
-      final XFile? file = await _picker.pickImage(
-        source: source,
-        imageQuality: 85,
-        maxWidth: 1024,
-      );
-      if (file != null && mounted) {
-        setState(() {
-          _personImagePath = file.path;
-          _error = null;
-          _resultImageBase64 = null;
-        });
-      }
-    } catch (e) {
-      if (mounted) setState(() => _error = 'Failed to pick image: $e');
+  Future<void> _openCamera() async {
+    final result = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (_) => const TryOnCameraScreen()),
+    );
+    if (result == null || !mounted) return;
+    if (result == 'OPEN_GALLERY') {
+      _openGallery();
+      return;
+    }
+    setState(() {
+      _personImagePath = result;
+      _error = null;
+      _resultImageBase64 = null;
+    });
+  }
+
+  Future<void> _openGallery() async {
+    final result = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (_) => const TryOnGalleryScreen()),
+    );
+    if (result != null && mounted) {
+      setState(() {
+        _personImagePath = result;
+        _error = null;
+        _resultImageBase64 = null;
+      });
     }
   }
 
@@ -188,8 +200,8 @@ class _TryOnScreenState extends State<TryOnScreen> {
                   personImagePath: _personImagePath,
                   loading: _loading,
                   error: _error,
-                  onPickCamera: () => _pickImage(ImageSource.camera),
-                  onPickGallery: () => _pickImage(ImageSource.gallery),
+                  onPickCamera: _openCamera,
+                  onPickGallery: _openGallery,
                   onTryOn: _runTryOn,
                 ),
         ),

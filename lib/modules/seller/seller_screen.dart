@@ -92,69 +92,96 @@ class SingleSellerInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
-        Container(
-            height: 130.0,
+        // Banner image
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: SizedBox(
+            height: 140.0,
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 0.0),
-            child: CustomImage(
-                  path: RemoteUrls.imageUrl(singleSellerModel.bannerImage),
-                  fit: BoxFit.cover)),
-        Positioned.fill(
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: 60.0,
-                      width: 60.0,
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle, color: Color(0xFF2A2A2A)),
-                      child: Center(
-                        child: CustomImage(
-                          path: RemoteUrls.imageUrl(singleSellerModel.logo),
-                          height: 30.0,
-                        ),
+            child: singleSellerModel.bannerImage.isNotEmpty
+                ? CustomImage(
+                    path: RemoteUrls.imageUrl(singleSellerModel.bannerImage),
+                    fit: BoxFit.cover,
+                  )
+                : Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFF2A2A2A), Color(0xFF1B1B1B)],
                       ),
                     ),
-                    const SizedBox(height: 2.0),
+                  ),
+          ),
+        ),
+        // Logo + name centered below banner
+        Transform.translate(
+          offset: const Offset(0, -30),
+          child: Column(
+            children: [
+              Container(
+                height: 60.0,
+                width: 60.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF2A2A2A),
+                  border: Border.all(color: const Color(0xFF131313), width: 3),
+                ),
+                child: ClipOval(
+                  child: CustomImage(
+                    path: RemoteUrls.imageUrl(singleSellerModel.logo),
+                    height: 36.0,
+                    width: 36.0,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                singleSellerModel.shopName,
+                style: GoogleFonts.manrope(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16.0,
+                  color: const Color(0xFFE5E2E1),
+                ),
+              ),
+              if (singleSellerModel.address.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  singleSellerModel.address,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12.0,
+                    color: const Color(0xFF919191),
+                  ),
+                ),
+              ],
+              if (singleSellerModel.averageRating.isNotEmpty &&
+                  singleSellerModel.averageRating != '0') ...[
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.star_rounded, color: Color(0xFFFFC107), size: 14),
+                    const SizedBox(width: 4),
                     Text(
-                      singleSellerModel.shopName,
+                      singleSellerModel.averageRating,
                       style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12.0,
-                        color: const Color(0xFFE5E2E1),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF919191),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ],
-            ),
+            ],
           ),
         ),
-      ],
-    );
-  }
-
-  Widget buildSellerInfo(IconData icon, String info) {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 6.0, right: 10.0),
-          child: Icon(
-            icon,
-            size: 20.0,
-          ),
-        ),
-        Text(info),
       ],
     );
   }
@@ -176,13 +203,27 @@ class SellerProduct extends StatelessWidget {
             SliverToBoxAdapter(
                 child: SingleSellerInfo(
                     singleSellerModel: sellerProduct.singleSellerModel)),
-            const SizedBox(height: 20),
+            // Products count label
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  '${sellerProduct.products.length} ${sellerProduct.products.length == 1 ? 'PRODUCT' : 'PRODUCTS'}',
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF919191),
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+            ),
             SliverGrid(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                mainAxisExtent: 300,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                mainAxisExtent: 280,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {

@@ -88,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.only(top: 32, bottom: 100),
                   child: Center(
                     child: Text(
-                      "L'ESSENCE DE OUI \u00a9 2024",
+                      "OUI The Premium Store \u00a9 2026",
                       style: GoogleFonts.inter(
                         fontSize: 9, fontWeight: FontWeight.w400,
                         color: const Color(0xFF5E5E5E),

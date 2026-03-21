@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/remote_urls.dart';
 import '../../core/router_name.dart';
 import '../../utils/utils.dart';
+import '../../widgets/custom_image.dart';
 import '../../widgets/please_sign_in_widget.dart';
 import 'controllers/order/order_cubit.dart';
 import 'model/order_model.dart';
@@ -392,17 +394,23 @@ class _OrderLoadedWidgetState extends State<_OrderLoadedWidget> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Product image placeholder
+                // Product image
                 Container(
                   width: 80,
                   height: 96,
                   clipBehavior: Clip.antiAlias,
                   decoration:
                       const BoxDecoration(color: Color(0xFF141414)),
-                  alignment: Alignment.center,
-                  child: Icon(Icons.shopping_bag_outlined,
-                      size: 24,
-                      color: Colors.white.withValues(alpha: 0.20)),
+                  child: order.orderProducts.isNotEmpty &&
+                          order.orderProducts.first.thumbImage.isNotEmpty
+                      ? CustomImage(
+                          path: RemoteUrls.imageUrl(
+                              order.orderProducts.first.thumbImage),
+                          fit: BoxFit.cover,
+                        )
+                      : Icon(Icons.shopping_bag_outlined,
+                          size: 24,
+                          color: Colors.white.withValues(alpha: 0.20)),
                 ),
                 const SizedBox(width: 16),
                 // Info column
@@ -480,75 +488,41 @@ class _OrderLoadedWidgetState extends State<_OrderLoadedWidget> {
               ],
             ),
             const SizedBox(height: 16),
-            // ── Action buttons ──
-            Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(
-                          context, RouteNames.singleOrderScreen,
-                          arguments: order.orderId);
-                    },
-                    child: Container(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white
-                              .withValues(alpha: 0.20),
-                          width: 1,
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        isDelivered
-                            ? 'ORDER AGAIN'
-                            : 'TRACK JOURNEY',
-                        style: GoogleFonts.manrope(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w400,
-                          color: isDelivered
-                              ? Colors.white
-                                  .withValues(alpha: 0.40)
-                              : Colors.white,
-                          height: 1.5,
-                          letterSpacing: 3.2,
-                        ),
-                      ),
-                    ),
+            // ── Action button ──
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                    context, RouteNames.singleOrderScreen,
+                    arguments: order.orderId);
+              },
+              child: Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.white
+                        .withValues(alpha: 0.20),
+                    width: 1,
                   ),
                 ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(
-                        context, RouteNames.singleOrderScreen,
-                        arguments: order.orderId);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color:
-                            Colors.white.withValues(alpha: 0.10),
-                        width: 1,
-                      ),
-                    ),
-                    child: Text(
-                      'DETAILS',
-                      style: GoogleFonts.manrope(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xFFA3A3A3),
-                        height: 1.5,
-                        letterSpacing: 3.2,
-                      ),
-                    ),
+                alignment: Alignment.center,
+                child: Text(
+                  isDelivered
+                      ? 'ORDER AGAIN'
+                      : 'TRACK JOURNEY',
+                  style: GoogleFonts.manrope(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w400,
+                    color: isDelivered
+                        ? Colors.white
+                            .withValues(alpha: 0.40)
+                        : Colors.white,
+                    height: 1.5,
+                    letterSpacing: 3.2,
                   ),
                 ),
-              ],
+              ),
             ),
           ],
         ),
