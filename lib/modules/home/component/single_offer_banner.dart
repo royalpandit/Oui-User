@@ -77,10 +77,7 @@ class SingleOfferBanner extends StatelessWidget {
                 onTap: onTap,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  color: Colors.white,
                   child: Text(
                     Language.shopNow.toUpperCase(),
                     style: GoogleFonts.inter(

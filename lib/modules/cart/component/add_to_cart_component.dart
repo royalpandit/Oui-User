@@ -35,18 +35,18 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
     return Container(
       height: height,
       margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        color: Colors.white,
+      decoration: const BoxDecoration(
+        border: Border.fromBorderSide(
+          BorderSide(color: Color(0xFF2A2A2A), width: 0.5),
+        ),
+        color: Color(0xFF1B1B1B),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             margin: const EdgeInsets.all(8).copyWith(right: 4),
-            decoration: BoxDecoration(
-                color: Colors.grey.shade50, borderRadius: BorderRadius.circular(8)),
+            color: const Color(0xFF262626),
             height: 110,
             width: 110,
             child: Padding(
@@ -73,7 +73,7 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
                   text: widget.product.product.name.capitalizeByWord(),
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
+                  color: const Color(0xFFE5E2E1),
                   maxLine: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -91,7 +91,7 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
                       text: Utils.formatPrice(
                           Utils.cartProductPrice(context, widget.product),
                           context),
-                      color: Colors.black,
+                      color: const Color(0xFFE2E2E2),
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -108,22 +108,27 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
+                      backgroundColor: const Color(0xFF1B1B1B),
                       insetPadding:
                           const EdgeInsets.symmetric(horizontal: 10.0),
-                      title: Text(Language.confirmation.capitalizeByWord()),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)),
+                      title: Text(Language.confirmation.capitalizeByWord(),
+                        style: const TextStyle(color: Color(0xFFE5E2E1)),
+                      ),
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero),
                       content: const Text(
                         "Are you sure you wish to remove this item?",
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16.0),
+                        style: TextStyle(fontSize: 16.0, color: Color(0xFF919191)),
                       ),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop(false);
                           },
-                          child: Text(Language.cancel.capitalizeByWord()),
+                          child: Text(Language.cancel.capitalizeByWord(),
+                            style: const TextStyle(color: Color(0xFF919191)),
+                          ),
                         ),
                         TextButton(
                             onPressed: () async {
@@ -144,7 +149,9 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
                               );
                               Navigator.of(context).pop(true);
                             },
-                            child: Text(Language.delete.capitalizeByWord())),
+                            child: Text(Language.delete.capitalizeByWord(),
+                              style: const TextStyle(color: Color(0xFFE5E2E1)),
+                            )),
                       ],
                     );
                   },
@@ -189,7 +196,7 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
               : null,
           child: Icon(
             Icons.remove_circle,
-            color: Colors.black,
+            color: const Color(0xFFE5E2E1),
           ),
         ),
         Padding(
@@ -211,7 +218,7 @@ class _AddToCartComponentState extends State<AddToCartComponent> {
             });
           },
           child:
-              Icon(Icons.add_circle, color: Colors.black),
+              Icon(Icons.add_circle, color: const Color(0xFFE5E2E1)),
         ),
       ],
     );

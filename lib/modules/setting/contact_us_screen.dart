@@ -26,32 +26,81 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        centerTitle: true,
-        title: Text(
-          Language.contactUs.capitalizeByWord(),
-          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
-        ),
-      ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      backgroundColor: const Color(0xFF131313),
+      body: SafeArea(
+        bottom: false,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const ContactUsFormWidget(),
-            const SizedBox(height: 40),
-            const ContactUsContentWidget(),
-            const SizedBox(height: 40),
+            // ── App Bar ──
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: const BoxDecoration(color: Color(0xE5131313)),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+            Opacity(
+              opacity: 0.10,
+              child: Container(width: double.infinity, height: 1, color: const Color(0xFF1C1B1B)),
+            ),
+
+            // ── Body ──
+            Expanded(
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 80),
+                children: [
+                  const SizedBox(height: 48),
+                  Text(
+                    'CONCIERGE',
+                    style: GoogleFonts.manrope(
+                      fontSize: 10, fontWeight: FontWeight.w400,
+                      color: Colors.white, height: 1.5, letterSpacing: 2,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Contact\nCurator',
+                    style: GoogleFonts.notoSerif(
+                      fontSize: 36, fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xFFE5E2E1), height: 1.25,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Reach out to our dedicated team.\nWe\'re here to assist you with any inquiry.',
+                    style: GoogleFonts.manrope(
+                      fontSize: 16, fontWeight: FontWeight.w300,
+                      color: const Color(0xFFC4C8C0), height: 1.63,
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+
+                  // ── Contact info ──
+                  const ContactUsContentWidget(),
+                  const SizedBox(height: 48),
+
+                  // ── Form ──
+                  Text(
+                    'SEND A MESSAGE',
+                    style: GoogleFonts.manrope(
+                      fontSize: 10, fontWeight: FontWeight.w400,
+                      color: Colors.white, height: 1.5, letterSpacing: 2,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const ContactUsFormWidget(),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -67,44 +116,40 @@ class ContactUsContentWidget extends StatelessWidget {
     return BlocBuilder<ContactUsCubit, ContactUsState>(
       builder: (context, state) {
         if (state is ContactUsStateLoaded) {
-          return _buildInfoGrid(context, state.contactUsModel);
+          return _buildInfoColumn(context, state.contactUsModel);
         } else if (state is ContactUsStateLoading) {
-          return const Center(child: CircularProgressIndicator(color: Colors.black));
+          return const Center(
+            child: CircularProgressIndicator(strokeWidth: 1.5, color: Color(0xFF444444)),
+          );
         }
         return const SizedBox();
       },
     );
   }
 
-  Widget _buildInfoGrid(BuildContext context, ContactUsModel data) {
+  Widget _buildInfoColumn(BuildContext context, ContactUsModel data) {
     return Column(
       children: [
-        _buildInfoCard(context, Icons.email_outlined, Language.emailAddress, data.email),
-        _buildInfoCard(context, Icons.phone_outlined, Language.phoneNumber, data.phone),
-        _buildInfoCard(context, Icons.location_on_outlined, Language.address, data.address),
+        _buildInfoRow(Icons.email_outlined, Language.emailAddress, data.email),
+        _buildInfoRow(Icons.phone_outlined, Language.phoneNumber, data.phone),
+        _buildInfoRow(Icons.location_on_outlined, Language.address, data.address),
       ],
     );
   }
 
-  Widget _buildInfoCard(BuildContext context, IconData icon, String title, String content) {
+  Widget _buildInfoRow(IconData icon, String title, String content) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade100, width: 1.5),
+        border: Border(
+          bottom: BorderSide(width: 1, color: const Color(0xFF434842).withOpacity(0.12)),
+        ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade50,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: Colors.black, size: 24),
-          ),
+          Icon(icon, color: const Color(0xFF777777), size: 20),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -112,20 +157,18 @@ class ContactUsContentWidget extends StatelessWidget {
               children: [
                 Text(
                   title.capitalizeByWord(),
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade500,
-                    letterSpacing: 0.5,
+                  style: GoogleFonts.manrope(
+                    fontSize: 10, fontWeight: FontWeight.w400,
+                    color: const Color(0xFF777777), height: 1.5,
+                    letterSpacing: 1.5,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   content,
-                  style: GoogleFonts.inter(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                  style: GoogleFonts.manrope(
+                    fontSize: 15, fontWeight: FontWeight.w400,
+                    color: const Color(0xFFE5E2E1), height: 1.5,
                   ),
                 ),
               ],

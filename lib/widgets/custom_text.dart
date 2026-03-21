@@ -9,7 +9,7 @@ class CustomText extends StatelessWidget {
     this.fontSize = 14.0,
     this.height = 1.4,
     this.maxLine = 6,
-    this.color = Colors.black,
+    this.color = const Color(0xFFE5E2E1),
     this.decoration = TextDecoration.none,
     this.overflow = TextOverflow.ellipsis,
     this.textAlign = TextAlign.start,
@@ -32,7 +32,7 @@ class CustomText extends StatelessWidget {
       textAlign: textAlign,
       overflow: overflow,
       maxLines: maxLine,
-      style: GoogleFonts.jost(
+      style: GoogleFonts.manrope(
         fontWeight: fontWeight,
         fontSize: fontSize,
         color: color,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '/widgets/capitalized_word.dart';
 import '../../utils/language_string.dart';
@@ -23,6 +25,10 @@ class ProductSearchScreenState extends State<ProductSearchScreen> {
   }
 
   void _init() {
+    searchBloc = context.read<SearchBloc>();
+    // Load all products initially
+    searchBloc.add(const SearchEventSearch(''));
+
     _controller.addListener(() {
       final maxExtent = _controller.position.maxScrollExtent - 200;
       if (maxExtent < _controller.position.pixels) {
@@ -45,28 +51,47 @@ class ProductSearchScreenState extends State<ProductSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    searchBloc = context.read<SearchBloc>();
-
     return Scaffold(
+      backgroundColor: const Color(0xFF131313),
       appBar: SearchAppBar(
         titleWidget: Container(
           margin: Utils.only(right: 20),
-          height: 40,
+          height: 52,
           child: TextFormField(
             controller: searchCtr,
             textInputAction: TextInputAction.done,
             autofocus: true,
+            style: GoogleFonts.manrope(fontSize: 16, color: const Color(0xFFE5E2E1)),
+            cursorColor: const Color(0xFFE5E2E1),
             onChanged: (v) {
-              if (v.isEmpty) return;
               context.read<SearchBloc>().add(SearchEventSearch(v.trim()));
             },
             onFieldSubmitted: (v) {
-              if (v.isEmpty) return;
               context.read<SearchBloc>().add(SearchEventSearch(v.trim()));
             },
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.all(8),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               hintText: Language.searchProduct.capitalizeByWord(),
+              hintStyle: GoogleFonts.manrope(fontSize: 16, color: const Color(0xFF5E5E5E)),
+              filled: true,
+              fillColor: const Color(0xFF1C1B1B),
+              prefixIcon: const Padding(
+                padding: EdgeInsets.only(left: 12, right: 8),
+                child: Icon(Icons.search, color: Color(0xFF5E5E5E), size: 22),
+              ),
+              prefixIconConstraints: const BoxConstraints(minWidth: 42, minHeight: 22),
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.zero,
+                borderSide: BorderSide(color: Color(0xFF2A2A2A)),
+              ),
+              enabledBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.zero,
+                borderSide: BorderSide(color: Color(0xFF2A2A2A)),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.zero,
+                borderSide: BorderSide(color: Color(0xFF444444)),
+              ),
             ),
           ),
         ),
@@ -81,47 +106,71 @@ class ProductSearchScreenState extends State<ProductSearchScreen> {
         },
         builder: (context, state) {
           final products = searchBloc.products;
-          if (searchBloc.products.isEmpty && state is SearchStateLoading) {
-            return const Center(child: CircularProgressIndicator());
+          if (products.isEmpty && state is SearchStateLoading) {
+            return _buildSearchSkeleton();
           } else if (state is SearchStateError) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Text(
-                    state.message,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ),
-              ],
+            return Center(
+              child: Text(
+                state.message,
+                style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF919191)),
+              ),
             );
-          }
-          return Column(
-            children: [
-              Expanded(
-                child: GridView.builder(
-                  controller: _controller,
-                  //keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                  padding: const EdgeInsets.all(15),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    mainAxisExtent: 304.0,
-                  ),
-                  itemCount: products.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ProductCard(productModel: products[index]);
-                  },
+          } else if (products.isEmpty && state is SearchStateLoaded) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Text(
+                  'No products found',
+                  style: GoogleFonts.manrope(fontSize: 15, color: const Color(0xFF5E5E5E)),
                 ),
               ),
-              // if (state is SearchStateLoadMore)
-              //   Container(
-              //       padding: const EdgeInsets.symmetric(vertical: 10),
-              //       child: const CircularProgressIndicator()),
-            ],
+            );
+          }
+          return GridView.builder(
+            controller: _controller,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.all(15),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              mainAxisExtent: 304.0,
+            ),
+            itemCount: products.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ProductCard(productModel: products[index]);
+            },
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildSearchSkeleton() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(15),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        mainAxisExtent: 304.0,
+      ),
+      itemCount: 6,
+      itemBuilder: (_, __) => Shimmer.fromColors(
+        baseColor: const Color(0xFF1B1B1B),
+        highlightColor: const Color(0xFF2A2A2A),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(height: 220, color: const Color(0xFF1B1B1B)),
+            const SizedBox(height: 10),
+            Container(height: 14, width: 120, color: const Color(0xFF1B1B1B)),
+            const SizedBox(height: 6),
+            Container(height: 12, width: 80, color: const Color(0xFF1B1B1B)),
+            const SizedBox(height: 8),
+            Container(height: 14, width: 60, color: const Color(0xFF1B1B1B)),
+          ],
+        ),
       ),
     );
   }

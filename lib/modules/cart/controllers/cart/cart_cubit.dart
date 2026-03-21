@@ -43,7 +43,15 @@ class CartCubit extends Cubit<CartState> {
 
     result.fold(
       (failure) {
-        emit(CartStateError(failure.message, failure.statusCode));
+        if (failure.statusCode == 500) {
+          cartResponseModel = const CartResponseModel(
+            cartProducts: [],
+          );
+          cartCount = 0;
+          emit(CartStateLoaded(cartResponseModel!));
+        } else {
+          emit(CartStateError(failure.message, failure.statusCode));
+        }
       },
       (successData) {
         cartResponseModel = successData;

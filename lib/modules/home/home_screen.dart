@@ -8,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../core/router_name.dart';
-import '../../utils/utils.dart';
 import '../../utils/notifications.dart';
 import '../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../cart/controllers/cart/add_to_cart/add_to_cart_cubit.dart';
@@ -45,16 +44,11 @@ class HomeScreen extends StatelessWidget {
     return BlocListener<AddToCartCubit, AddToCartState>(
       listenWhen: (previous, current) => true,
       listener: (context, state) {
-        if (state is AddToCartStateLoading) {
-          Utils.loadingDialog(context);
-        } else {
-          Utils.closeDialog(context);
-          if (state is AddToCartStateAdded) {
-            context.read<CartCubit>().getCartProducts();
-            showBottomPopup(context, message: state.message, success: true);
-          } else if (state is AddToCartStateError) {
-            showBottomPopup(context, message: state.message, success: false);
-          }
+        if (state is AddToCartStateAdded) {
+          context.read<CartCubit>().getCartProducts();
+          showBottomPopup(context, message: state.message, success: true);
+        } else if (state is AddToCartStateError) {
+          showBottomPopup(context, message: state.message, success: false);
         }
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(

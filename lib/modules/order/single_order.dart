@@ -195,7 +195,7 @@ class _OrderDetailsBody extends StatelessWidget {
 
   Widget _buildTrackingProgress() {
     final steps = ['CONFIRMED', 'SHIPPED', 'DELIVERED'];
-    // Map orderStatus to progress: 0=Pending→step0, 1=Approved→step0, 2=Shipped→step1, 3=Delivered→step2
+    // Map orderStatus to progress: 0=Pending→step0, 1=Approved→step1, 2=Shipped→step2, 3=Delivered→step3
     int completedSteps;
     switch (order.orderStatus) {
       case 0:
@@ -218,72 +218,78 @@ class _OrderDetailsBody extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(32),
       color: const Color(0xFF1A1A1A),
-      child: Column(
-        children: [
-          // Progress bar with dots
-          SizedBox(
-            height: 38,
-            child: Stack(
-              children: [
-                // Background line
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 5,
-                  child: Container(
-                    height: 1,
-                    color: const Color(0xFF444444),
-                  ),
-                ),
-                // Active line
-                if (completedSteps > 0)
-                  Positioned(
-                    left: 0,
-                    top: 5,
-                    child: Container(
-                      height: 1,
-                      width: completedSteps >= steps.length
-                          ? double.infinity
-                          : null,
-                      color: Colors.white,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final totalWidth = constraints.maxWidth;
+          final progressFraction = completedSteps >= steps.length
+              ? 1.0
+              : completedSteps / (steps.length - 1);
+
+          return Column(
+            children: [
+              SizedBox(
+                height: 38,
+                child: Stack(
+                  children: [
+                    // Background line
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 5,
+                      child: Container(
+                        height: 1,
+                        color: const Color(0xFF444444),
+                      ),
                     ),
-                  ),
-                // Step dots and labels
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(steps.length, (i) {
-                    final isActive = i < completedSteps;
-                    return Column(
-                      children: [
-                        Container(
-                          width: 12,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color:
-                                isActive ? Colors.white : const Color(0xFF444444),
-                          ),
+                    // Active line
+                    if (completedSteps > 0)
+                      Positioned(
+                        left: 0,
+                        top: 5,
+                        child: Container(
+                          height: 1,
+                          width: totalWidth * progressFraction,
+                          color: Colors.white,
                         ),
-                        const SizedBox(height: 12),
-                        Text(
-                          steps[i],
-                          style: GoogleFonts.inter(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w400,
-                            color: isActive
-                                ? const Color(0xFFE2E2E2)
-                                : const Color(0xFF555555),
-                            height: 1.5,
-                            letterSpacing: 0.9,
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
+                      ),
+                    // Step dots and labels
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(steps.length, (i) {
+                        final isActive = i < completedSteps;
+                        return Column(
+                          children: [
+                            Container(
+                              width: 12,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color:
+                                    isActive ? Colors.white : const Color(0xFF444444),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              steps[i],
+                              style: GoogleFonts.inter(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w400,
+                                color: isActive
+                                    ? const Color(0xFFE2E2E2)
+                                    : const Color(0xFF555555),
+                                height: 1.5,
+                                letterSpacing: 0.9,
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -626,27 +632,7 @@ class _OrderDetailsBody extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 12),
 
-          // ── Track Package Button ──
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFF777777), width: 1),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              'TRACK PACKAGE',
-              style: GoogleFonts.inter(
-                fontSize: 11,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
-                height: 1.5,
-                letterSpacing: 2.75,
-              ),
-            ),
-          ),
 
           const SizedBox(height: 40),
 

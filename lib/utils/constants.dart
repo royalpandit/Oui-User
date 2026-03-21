@@ -6,7 +6,7 @@ const Color primaryColor = Color(0xFF000000);
 const Color blackColor = Color(0xFF1A1A1A);
 const Color buttonTextColor = Color(0xff1D1D1D);
 const Color bottomPanelColor = Color(0xFF222222);
-const Color borderColor = Color(0xFFE0E0E0);
+const Color borderColor = Color(0xFF2A2A2A);
 const Color greenColor = Color(0xFF4A4A4A);
 const Color redColor = Color(0xFF333333);
 const Color deepGreenColor = Color(0xFF3A3A3A);
@@ -14,15 +14,15 @@ final Color grayColor = const Color(0xFF1A1A1A).withOpacity(.3);
 const Color lightningYellowColor = Color(0xFF000000);
 const Color iconGreyColor = Color(0xff85959E);
 const Color paragraphColor = Color(0xFF666666);
-const Color appBgColor = Color(0xFFFFFFFF);
-const Color scaffoldBGColor = Color(0xFFFFFFFF);
-const Color cardBgGreyColor = Color(0xFFEDEDED);
-const Color cardBgColor = Color(0xFFF6F6F6);
-const Color textGreyColor = Color(0xff797979);
-const Color inputFieldBgColor = Color(0xFFF8F8F8);
-const Color grayBorderColor = Color(0xffE8E8E8);
-const Color imageBgColor = Color(0xFFF5F5F5);
-const Color carouselColor = Color(0xFFD9D9D9);
+const Color appBgColor = Color(0xFF131313);
+const Color scaffoldBGColor = Color(0xFF131313);
+const Color cardBgGreyColor = Color(0xFF1B1B1B);
+const Color cardBgColor = Color(0xFF1B1B1B);
+const Color textGreyColor = Color(0xff919191);
+const Color inputFieldBgColor = Color(0xFF1C1B1B);
+const Color grayBorderColor = Color(0xff2A2A2A);
+const Color imageBgColor = Color(0xFF262626);
+const Color carouselColor = Color(0xFF2A2A2A);
 const Color transparent = Colors.transparent;
 const greenGradient = [lightningYellowColor, lightningYellowColor];
 
@@ -34,29 +34,29 @@ final _borderRadius = BorderRadius.circular(4);
 var inputDecorationTheme = InputDecoration(
   isDense: true,
   contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-  hintStyle: const TextStyle(fontSize: 18, height: 1.667),
+  hintStyle: const TextStyle(fontSize: 18, height: 1.667, color: Color(0xFF5E5E5E)),
   border: OutlineInputBorder(
     borderRadius: _borderRadius,
-    borderSide: const BorderSide(color: Colors.white),
+    borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: _borderRadius,
-    borderSide: const BorderSide(color: Colors.white),
+    borderSide: const BorderSide(color: Color(0xFF444444)),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: _borderRadius,
-    borderSide: const BorderSide(color: Colors.white),
+    borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
   ),
-  fillColor: white,
+  fillColor: const Color(0xFF1C1B1B),
   filled: true,
-  focusColor: white,
+  focusColor: const Color(0xFF1C1B1B),
 );
 
-TextStyle headlineTextStyle(double size) => GoogleFonts.jost(
-    fontWeight: FontWeight.w600, color: blackColor, fontSize: size);
+TextStyle headlineTextStyle(double size) => GoogleFonts.notoSerif(
+    fontWeight: FontWeight.w600, color: const Color(0xFFE5E2E1), fontSize: size);
 
-TextStyle paragraphTextStyle(double size) => GoogleFonts.inter(
-    fontWeight: FontWeight.w400, color: Colors.grey, fontSize: size);
+TextStyle paragraphTextStyle(double size) => GoogleFonts.manrope(
+    fontWeight: FontWeight.w400, color: const Color(0xFF919191), fontSize: size);
 
 final gredientColors = [
   [const Color(0xFF333333), const Color(0xFF1A1A1A)],

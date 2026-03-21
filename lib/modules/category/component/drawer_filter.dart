@@ -48,8 +48,9 @@ class _DrawerFilterState extends State<DrawerFilter> {
               context.read<CategoryCubit>().productCategoriesModel;
 
           return Drawer(
+            backgroundColor: const Color(0xFF131313),
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -64,23 +65,25 @@ class _DrawerFilterState extends State<DrawerFilter> {
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                              width: 2,
-                              color: Colors.black)),
-                      child: Icon(
+                              width: 1.5,
+                              color: const Color(0xFF5E5E5E))),
+                      child: const Icon(
                         Icons.clear,
-                        color: Colors.black,
-                        size: 15,
+                        color: Color(0xFFE5E2E1),
+                        size: 14,
                       ),
                     ),
                   ),
-                  Text(Language.price.capitalizeByWord()),
+                  const SizedBox(height: 8),
+                  Text(Language.price.capitalizeByWord(),
+                    style: GoogleFonts.manrope(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFFE5E2E1)),
+                  ),
                   RangeSlider(
                     values: _currentRangeValues,
                     min: 0,
                     max: 4000,
-                    // divisions: 5,
-                    activeColor: Colors.black,
-                    inactiveColor: Colors.grey,
+                    activeColor: const Color(0xFFE5E2E1),
+                    inactiveColor: const Color(0xFF2A2A2A),
                     labels: RangeLabels(
                       minValue.round().toString(),
                       maxValue.round().toString(),
@@ -97,14 +100,17 @@ class _DrawerFilterState extends State<DrawerFilter> {
                     },
                   ),
                   Text(
-                      "${Language.price.capitalizeByWord()} \$$minValue - \$$maxValue"),
-                  const SizedBox(height: 10),
+                      "${Language.price.capitalizeByWord()} \$$minValue - \$$maxValue",
+                      style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF919191)),
+                  ),
+                  const SizedBox(height: 16),
                   if (filterOptions.brands.isNotEmpty) ...[
                     Text(
                       Language.brand.capitalizeByWord(),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                      style: GoogleFonts.manrope(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFE5E2E1),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -122,24 +128,21 @@ class _DrawerFilterState extends State<DrawerFilter> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 5),
                               margin: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 5),
-                              decoration: BoxDecoration(
-                                //borderRadius: BorderRadius.circular(20),
-                                color: brands.contains(
-                                        filterOptions.brands[index].id)
-                                    ? Colors.black
-                                    : Colors.black
-                                        .withOpacity(0.2),
-                              ),
+                                  horizontal: 6, vertical: 5),
+                              color: brands.contains(
+                                      filterOptions.brands[index].id)
+                                  ? const Color(0xFFE5E2E1)
+                                  : const Color(0xFF262626),
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 4.0),
                                 child: Text(
                                   filterOptions.brands[index].name,
-                                  style: GoogleFonts.roboto(
+                                  style: GoogleFonts.manrope(
+                                      fontSize: 13,
                                       color: brands.contains(
                                               filterOptions.brands[index].id)
-                                          ? Colors.white
-                                          : Colors.black),
+                                          ? const Color(0xFF131313)
+                                          : const Color(0xFFE5E2E1)),
                                 ),
                               ),
                             ),
@@ -148,7 +151,7 @@ class _DrawerFilterState extends State<DrawerFilter> {
                       ],
                     )
                   ],
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 16),
                   if (filterOptions.activeVariants.isNotEmpty) ...[
                     ...List.generate(
                         filterOptions.activeVariants.length,
@@ -158,9 +161,10 @@ class _DrawerFilterState extends State<DrawerFilter> {
                                 Text(
                                   filterOptions.activeVariants[index].name
                                       .capitalizeByWord(),
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
+                                  style: GoogleFonts.manrope(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFFE5E2E1),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
@@ -184,19 +188,15 @@ class _DrawerFilterState extends State<DrawerFilter> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 5),
                                             margin: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 5),
-                                            decoration: BoxDecoration(
-                                              //borderRadius: BorderRadius.circular(20),
-                                              color: variantsItem.contains(
-                                                      filterOptions
-                                                          .activeVariants[index]
-                                                          .activeVariantsItems[
-                                                              i]
-                                                          .name)
-                                                  ? Colors.black
-                                                  : Colors.black
-                                                      .withOpacity(0.2),
-                                            ),
+                                                horizontal: 6, vertical: 5),
+                                            color: variantsItem.contains(
+                                                    filterOptions
+                                                        .activeVariants[index]
+                                                        .activeVariantsItems[
+                                                            i]
+                                                        .name)
+                                                ? const Color(0xFFE5E2E1)
+                                                : const Color(0xFF262626),
                                             child: Padding(
                                               padding: const EdgeInsets.only(
                                                   bottom: 4.0),
@@ -206,7 +206,8 @@ class _DrawerFilterState extends State<DrawerFilter> {
                                                     .activeVariantsItems[i]
                                                     .name
                                                     .capitalizeByWord(),
-                                                style: GoogleFonts.roboto(
+                                                style: GoogleFonts.manrope(
+                                                  fontSize: 13,
                                                   color: variantsItem.contains(
                                                           filterOptions
                                                               .activeVariants[
@@ -214,8 +215,8 @@ class _DrawerFilterState extends State<DrawerFilter> {
                                                               .activeVariantsItems[
                                                                   i]
                                                               .name)
-                                                      ? Colors.white
-                                                      : Colors.black,
+                                                      ? const Color(0xFF131313)
+                                                      : const Color(0xFFE5E2E1),
                                                 ),
                                               ),
                                             ),
@@ -225,13 +226,16 @@ class _DrawerFilterState extends State<DrawerFilter> {
                                     ],
                                   ),
                                 ],
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 16),
                               ],
                             ))
                   ],
                   const SizedBox(height: 20),
                   PrimaryButton(
                       text: Language.findProduct.capitalizeByWord(),
+                      bgColor: const Color(0xFFE5E2E1),
+                      textColor: const Color(0xFF131313),
+                      borderRadiusSize: 0,
                       onPressed: () {
                         final data = FilterModelDto(
                           brands: brands,

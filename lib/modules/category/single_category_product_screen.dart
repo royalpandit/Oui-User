@@ -44,13 +44,14 @@ class _SingleCategoryProductScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: const Color(0xFF131313),
         endDrawer: const DrawerFilter(),
         appBar: RoundedAppBar(
           actions: const [SizedBox()],
           titleText: _isInitialized ? _appBarName.capitalizeByWord() : '',
           onTap: () {
             Navigator.popAndPushNamed(
-                context, RouteNames.allCategoryListScreen);
+                context, RouteNames.allCategoryListScreen, arguments: {'app_bar': 'Categories'});
           },
         ),
         body: BlocBuilder<CategoryCubit, CategoryState>(
@@ -63,7 +64,9 @@ class _SingleCategoryProductScreenState
             if (state is CategoryLoadedState) {
               if (state.categoryProducts.isEmpty) {
                 return Center(
-                    child: Text(Language.noItemsFound.capitalizeByWord()));
+                    child: Text(Language.noItemsFound.capitalizeByWord(),
+                      style: GoogleFonts.manrope(color: const Color(0xFF919191)),
+                    ));
               }
               return const CategoryLoad();
             } else if (state is CategoryErrorState) {
@@ -103,16 +106,15 @@ class CategoryLoad extends StatelessWidget {
                   GestureDetector(
                     onTap: () => Scaffold.of(context).openEndDrawer(),
                     child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(2.0),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFE5E2E1),
                       ),
                       padding:
-                          const EdgeInsets.symmetric(horizontal: 6, vertical: 0)
-                              .copyWith(bottom: 4),
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 4)
+                              .copyWith(bottom: 6),
                       child: Text(
                         Language.filter.capitalizeByWord(),
-                        style: GoogleFonts.roboto(color: Colors.white),
+                        style: GoogleFonts.inter(color: const Color(0xFF131313), fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.5),
                       ),
                     ),
                   ),

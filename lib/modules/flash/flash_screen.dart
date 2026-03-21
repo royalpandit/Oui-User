@@ -102,24 +102,24 @@ class FlashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<FlashCubit>().getFalshSale();
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8F8),
+      backgroundColor: const Color(0xFF131313),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF131313),
         elevation: 0,
         scrolledUnderElevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              size: 18, color: Colors.black),
+              size: 18, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
         title: Text(
           'Flash Sale',
-          style: GoogleFonts.inter(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: Colors.black),
+          style: GoogleFonts.manrope(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFFE5E2E1)),
         ),
       ),
       body: BlocBuilder<FlashCubit, FlashState>(
@@ -138,10 +138,9 @@ class FlashScreen extends StatelessWidget {
             final products = state.flashModel.products;
             return CustomScrollView(
               slivers: [
-                // Banner image — centered, contained
                 SliverToBoxAdapter(
                   child: Container(
-                    color: Colors.white,
+                    color: const Color(0xFF1B1B1B),
                     width: double.infinity,
                     height: 220,
                     child: CustomImage(
@@ -153,7 +152,7 @@ class FlashScreen extends StatelessWidget {
                 // Info card: title, offer%, description, countdown
                 SliverToBoxAdapter(
                   child: Container(
-                    color: Colors.black,
+                    color: const Color(0xFF1B1B1B),
                     padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,8 +178,7 @@ class FlashScreen extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.circular(8),
+                                color: const Color(0xFFE5E2E1),
                               ),
                               child: Text(
                                 '${sale.offer}% OFF',
@@ -254,26 +252,26 @@ class FlashScreen extends StatelessWidget {
                         children: [
                           Container(
                             padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF1B1B1B),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(Icons.bolt_outlined,
-                                size: 40, color: Colors.black38),
+                                size: 40, color: Color(0xFF5E5E5E)),
                           ),
                           const SizedBox(height: 16),
                           Text(
                             'No products available',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.manrope(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black),
+                                color: const Color(0xFFE5E2E1)),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             'Check back soon for flash deals!',
                             style: GoogleFonts.inter(
-                                fontSize: 13, color: Colors.grey.shade500),
+                                fontSize: 13, color: const Color(0xFF919191)),
                           ),
                         ],
                       ),
@@ -311,11 +309,11 @@ class FlashScreen extends StatelessWidget {
       child: Column(
         children: [
           Shimmer.fromColors(
-            baseColor: const Color(0xFFE0E0E0),
-            highlightColor: const Color(0xFFF5F5F5),
+            baseColor: const Color(0xFF1B1B1B),
+            highlightColor: const Color(0xFF2A2A2A),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.28,
-              color: Colors.white,
+              color: const Color(0xFF1B1B1B),
             ),
           ),
           const SizedBox(height: 8),
@@ -333,13 +331,10 @@ class FlashScreen extends StatelessWidget {
               ),
               itemCount: 6,
               itemBuilder: (_, __) => Shimmer.fromColors(
-                baseColor: const Color(0xFFE0E0E0),
-                highlightColor: const Color(0xFFF5F5F5),
+                baseColor: const Color(0xFF1B1B1B),
+                highlightColor: const Color(0xFF2A2A2A),
                 child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  color: const Color(0xFF1B1B1B),
                 ),
               ),
             ),

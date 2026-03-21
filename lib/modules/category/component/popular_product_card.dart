@@ -31,9 +31,7 @@ class PopularProductCard extends StatelessWidget {
         height: height,
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: const BoxDecoration(
-          color: Colors.white,
-          //borderRadius: BorderRadius.circular(4),
-          //border: borderColor,
+          color: Color(0xFF1C1B1B),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,9 +49,8 @@ class PopularProductCard extends StatelessWidget {
     return Container(
       margin: Utils.all(value: 8.0),
       decoration: BoxDecoration(
-        color: const Color(0xFFF6F6F6),
+        color: const Color(0xFF262626),
         borderRadius: Utils.borderRadius(r: 6.0),
-        //border: Border(right: BorderSide(color: borderColor)),
       ),
       height: height,
       width: height,
@@ -156,7 +153,7 @@ class PopularProductCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                  fontWeight: FontWeight.w600, fontSize: 16, height: 1.5),
+                  fontWeight: FontWeight.w600, fontSize: 16, height: 1.5, color: Color(0xFFE5E2E1)),
             ),
             const SizedBox(height: 8),
             Row(

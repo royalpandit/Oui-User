@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shop_us/widgets/shimmer_loader.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-
-import '../../widgets/rounded_app_bar.dart';
 import '../home/controller/cubit/products_cubit.dart';
 import 'component/popular_product_card.dart';
 
@@ -18,22 +17,27 @@ class AllPopularProductScreen extends StatelessWidget {
     final keyword = receivedValue['keyword'] as String;
     context.read<ProductsCubit>().getHighlightedProduct(keyword);
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: RoundedAppBar(
-        titleText: appBarName,
-        bgColor: Colors.white,
-        onTap: () {
-          Navigator.pop(context);
-        },
+      backgroundColor: const Color(0xFF131313),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF131313),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: Text(
+          appBarName,
+          style: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFFE5E2E1)),
+        ),
       ),
       body: BlocBuilder<ProductsCubit, ProductsState>(
         builder: (context, state) {
           if (state is ProductsStateLoading) {
             return const Center(
-              child: SizedBox(
-                height: 28,
-                width: 120,
-                child: ShimmerLoader.rect(height: 12, width: 120)));
+              child: CircularProgressIndicator(color: Color(0xFFE5E2E1)));
           } else if (state is ProductsStateError) {
           } else if (state is ProductsStateLoaded) {
             return ListView.builder(

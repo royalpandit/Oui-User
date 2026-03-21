@@ -26,35 +26,37 @@ class _FaqListWidgetState extends State<FaqListWidget> {
         final tile = widget.faqList[index];
         final isExpanded = _expandedIndex == index;
         return Container(
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: 1),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: isExpanded ? Colors.black : Colors.grey.shade200,
-              width: isExpanded ? 1.5 : 1,
+            color: isExpanded ? const Color(0xFF1C1B1B) : const Color(0xFF131313),
+            border: Border(
+              bottom: BorderSide(
+                width: 1,
+                color: const Color(0xFF434842).withOpacity(0.12),
+              ),
             ),
           ),
           child: Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-              tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              tilePadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+              childrenPadding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
               onExpansionChanged: (val) {
                 setState(() => _expandedIndex = val ? index : -1);
               },
               initiallyExpanded: isExpanded,
               trailing: Icon(
                 isExpanded ? Icons.remove_rounded : Icons.add_rounded,
-                color: Colors.black,
+                color: const Color(0xFFE5E2E1),
                 size: 20,
               ),
               title: Text(
                 tile.question,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.manrope(
                   fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFFE5E2E1),
+                  height: 1.5,
                 ),
               ),
               children: [
@@ -65,9 +67,11 @@ class _FaqListWidgetState extends State<FaqListWidget> {
                       margin: Margins.zero,
                       padding: HtmlPaddings.zero,
                       fontSize: FontSize(14),
-                      color: Colors.grey.shade600,
-                      lineHeight: LineHeight.number(1.6),
+                      color: const Color(0xFFC4C8C0),
+                      lineHeight: LineHeight.number(1.7),
                     ),
+                    'a': Style(color: const Color(0xFFE9C349)),
+                    'strong': Style(color: const Color(0xFFE5E2E1)),
                   },
                 ),
               ],

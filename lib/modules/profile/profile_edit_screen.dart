@@ -19,29 +19,29 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF131313),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF131313),
         elevation: 0,
         scrolledUnderElevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
         title: Text(
           Language.editProfile.capitalizeByWord(),
-          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+          style: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFFE5E2E1)),
         ),
       ),
       body: BlocBuilder<UserProfileInfoCubit, UserProfilenfoState>(
         builder: (context, state) {
           if (state is UpdatedLoading) {
-            return const Center(child: CircularProgressIndicator(color: Colors.black));
+            return const Center(child: CircularProgressIndicator(color: Color(0xFFE5E2E1)));
           }
           if (state is UpdatedError) {
-            return Center(child: Text(state.message, style: GoogleFonts.inter(color: Colors.red.shade400)));
+            return Center(child: Text(state.message, style: GoogleFonts.manrope(color: Colors.red.shade400)));
           } else if (state is UpdatedLoaded) {
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),

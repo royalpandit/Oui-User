@@ -371,21 +371,25 @@ class Utils {
     showCustomDialog(
       context,
       child: Container(
-        height: 120,
+        height: 80,
         padding: const EdgeInsets.all(20),
-        child: Center(
-            child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
           children: [
-            const SizedBox(
-              height: 36,
-              width: 36,
-              child: ShimmerLoader.rect(height: 36, width: 36),
+            const ShimmerLoader.rect(height: 40, width: 40),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ShimmerLoader.rect(height: 12, width: 140),
+                  SizedBox(height: 8),
+                  ShimmerLoader.rect(height: 10, width: 90),
+                ],
+              ),
             ),
-            const SizedBox(height: 15),
-            Text(Language.pleaseWaitAMoment.capitalizeByWord())
           ],
-        )),
+        ),
       ),
       barrierDismissible: barrierDismissible,
     );
@@ -399,9 +403,9 @@ class Utils {
       barrierColor: Colors.black54,
       builder: (BuildContext context) {
         return Dialog(
-          //insetPadding: Utils.symmetric(h: padding),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          backgroundColor: const Color(0xFF1B1B1B),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
           ),
           child: child,
         );
@@ -447,9 +451,9 @@ class Utils {
   }
 
   static void serviceUnAvailable(BuildContext context, String msg,
-      [Color textColor = Colors.white]) {
+      [Color textColor = const Color(0xFFE5E2E1)]) {
     final snackBar = SnackBar(
-        backgroundColor: redColor,
+        backgroundColor: const Color(0xFF1B1B1B),
         duration: const Duration(milliseconds: 500),
         content: Text(msg, style: TextStyle(color: textColor)));
     ScaffoldMessenger.of(context)
@@ -531,15 +535,18 @@ class Utils {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(errorMsg, style: const TextStyle(color: redColor)),
+          backgroundColor: const Color(0xFF1B1B1B),
+          content: Text(errorMsg, style: const TextStyle(color: Color(0xFFE5E2E1))),
         ),
       );
   }
 
   static void showSnackBar(BuildContext context, String msg,
-      [Color textColor = white]) {
-    final snackBar =
-        SnackBar(content: Text(msg, style: TextStyle(color: textColor)));
+      [Color textColor = const Color(0xFFE5E2E1)]) {
+    final snackBar = SnackBar(
+      backgroundColor: const Color(0xFF1B1B1B),
+      content: Text(msg, style: TextStyle(color: textColor)),
+    );
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);

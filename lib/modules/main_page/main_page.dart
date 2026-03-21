@@ -59,25 +59,24 @@ class _MainPageState extends State<MainPage> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   decoration: const BoxDecoration(
-                      color: Colors.black,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(12))),
+                      color: Color(0xFFE5E2E1)),
                   child: Text(
                     "${Language.exitApp.capitalizeByWord()}?",
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF131313),
                         fontWeight: FontWeight.bold,
                         fontSize: 18),
                   )),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        side: const BorderSide(color: Colors.grey),
+                        foregroundColor: const Color(0xFFE5E2E1),
+                        side: const BorderSide(color: Color(0xFF5E5E5E)),
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                       ),
                       onPressed: () {
                         Navigator.pop(context);
@@ -89,8 +88,10 @@ class _MainPageState extends State<MainPage> {
                   const SizedBox(width: 10),
                   OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        side: const BorderSide(color: Colors.grey),
+                        foregroundColor: const Color(0xFF131313),
+                        backgroundColor: const Color(0xFFE5E2E1),
+                        side: const BorderSide(color: Color(0xFFE5E2E1)),
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                       ),
                       onPressed: () {
                         SystemNavigator.pop();
@@ -101,7 +102,7 @@ class _MainPageState extends State<MainPage> {
                       )),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
             ],
           ),
         ));
@@ -112,7 +113,7 @@ class _MainPageState extends State<MainPage> {
     return WillPopScope(
       onWillPop: () async {
         exitPopUP();
-        return true;
+        return false;
       },
       child: Scaffold(
         extendBody: true,

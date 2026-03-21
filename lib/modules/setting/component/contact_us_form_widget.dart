@@ -48,7 +48,7 @@ class _FormWidget extends StatelessWidget {
               ? (state.status as ContactUsFormValidateError).errors.name 
               : [],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         
         _buildFieldLabel("Email Address"),
         _buildTextField(
@@ -60,7 +60,7 @@ class _FormWidget extends StatelessWidget {
               ? (state.status as ContactUsFormValidateError).errors.email 
               : [],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
 
         _buildFieldLabel("Subject"),
         _buildTextField(
@@ -72,7 +72,7 @@ class _FormWidget extends StatelessWidget {
               ? (state.status as ContactUsFormValidateError).errors.subject 
               : [],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
 
         _buildFieldLabel("Message"),
         _buildTextField(
@@ -86,29 +86,32 @@ class _FormWidget extends StatelessWidget {
               : [],
         ),
         
-        const SizedBox(height: 32),
+        const SizedBox(height: 40),
         
         BlocBuilder<ContactUsFormBloc, ContactUsFormState>(
           builder: (context, state) {
             return state.status is ContactLoading
-                ? const Center(child: CircularProgressIndicator(color: Colors.black))
-                : SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Utils.closeKeyBoard(context);
-                        contactUsFormBloc.add(const ContactUsFormSubmit());
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        Language.sendNow.toUpperCase(),
-                        style: GoogleFonts.inter(fontWeight: FontWeight.bold, letterSpacing: 1),
+                ? const Center(
+                    child: CircularProgressIndicator(strokeWidth: 1.5, color: Color(0xFF444444)),
+                  )
+                : GestureDetector(
+                    onTap: () {
+                      Utils.closeKeyBoard(context);
+                      contactUsFormBloc.add(const ContactUsFormSubmit());
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      color: const Color(0xFFE5E2E1),
+                      child: Center(
+                        child: Text(
+                          Language.sendNow.toUpperCase(),
+                          style: GoogleFonts.manrope(
+                            fontSize: 12, fontWeight: FontWeight.w700,
+                            color: const Color(0xFF131313),
+                            letterSpacing: 1.2,
+                          ),
+                        ),
                       ),
                     ),
                   );
@@ -120,13 +123,14 @@ class _FormWidget extends StatelessWidget {
 
   Widget _buildFieldLabel(String label) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0, left: 4),
+      padding: const EdgeInsets.only(bottom: 10.0),
       child: Text(
-        label,
-        style: GoogleFonts.inter(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: Colors.black,
+        label.toUpperCase(),
+        style: GoogleFonts.manrope(
+          fontSize: 10,
+          fontWeight: FontWeight.w400,
+          color: const Color(0xFF777777),
+          letterSpacing: 1.5,
         ),
       ),
     );
@@ -150,24 +154,30 @@ class _FormWidget extends StatelessWidget {
               keyboardType: type,
               onChanged: onChanged,
               maxLines: maxLines,
-              style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w500),
+              style: GoogleFonts.manrope(
+                fontSize: 15, fontWeight: FontWeight.w400,
+                color: const Color(0xFFE5E2E1),
+              ),
+              cursorColor: const Color(0xFFE5E2E1),
               decoration: InputDecoration(
                 hintText: hint,
-                hintStyle: GoogleFonts.inter(color: Colors.grey.shade400, fontSize: 14),
-                fillColor: Colors.white,
+                hintStyle: GoogleFonts.manrope(
+                  color: const Color(0xFF5E5E5E), fontSize: 14,
+                ),
+                fillColor: const Color(0xFF1C1B1B),
                 filled: true,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade200, width: 1.5),
+                enabledBorder: const OutlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                  borderSide: BorderSide(color: Color(0x19434842), width: 1),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.black, width: 1.5),
+                focusedBorder: const OutlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                  borderSide: BorderSide(color: Color(0xFF444444), width: 1),
                 ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.redAccent, width: 1),
+                errorBorder: const OutlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                  borderSide: BorderSide(color: Colors.redAccent, width: 1),
                 ),
               ),
             ),

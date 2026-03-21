@@ -9,11 +9,11 @@ import '/utils/utils.dart';
 import '/widgets/capitalized_word.dart';
 import '../../core/remote_urls.dart';
 import '../../core/router_name.dart';
+import '../../widgets/custom_image.dart';
 import '../../widgets/please_sign_in_widget.dart';
-import '../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../authentication/controller/login/login_bloc.dart';
 import '../home/controller/cubit/home_controller_cubit.dart';
-import 'component/profile_app_bar.dart';
+import '../home/model/product_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -26,124 +26,570 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final userData = context.read<LoginBloc>().userInfo;
-    final settingModel = context.read<AppSettingCubit>().settingModel;
-    const double appBarHeight = 185; 
-    final routeName = ModalRoute.of(context)?.settings.name ?? '';
 
     if (userData == null) {
       return const PleaseSignInWidget();
     }
 
+    // Get recommended products
+    List<ProductModel> recommended = [];
+    try {
+      final homeState = context.read<HomeControllerCubit>().state;
+      if (homeState is HomeControllerLoaded) {
+        recommended = context.read<HomeControllerCubit>().homeModel.topRatedProducts;
+      }
+    } catch (_) {}
+
+
+
     return Scaffold(
-      backgroundColor: Colors.white, // Clean white background
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: appBarHeight,
-            pinned: true,
-            elevation: 0,
-            backgroundColor: Colors.black, // Sleek black header
-            automaticallyImplyLeading: routeName != RouteNames.mainPage,
-            systemOverlayStyle: SystemUiOverlayStyle.light,
-            flexibleSpace: FlexibleSpaceBar(
-              background: BlocBuilder<UserProfileInfoCubit, UserProfilenfoState>(
-                builder: (context, state) {
-                  if (state is UpdatedLoading) {
-                    return const Center(child: CircularProgressIndicator(color: Colors.white));
-                  }
-                  if (state is UpdatedLoaded) {
-                    return ProfileAppBar(
-                      height: appBarHeight,
-                      logo: RemoteUrls.imageUrl(settingModel?.setting!.logo ?? ''),
-                      userUpdateInfo: state.updatedInfo,
-                    );
-                  }
-                  return const SizedBox();
-                },
+      backgroundColor: const Color(0xFF131313),
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              // Top spacing for app bar
+              const SliverToBoxAdapter(child: SizedBox(height: 96)),
+
+              // ── Avatar + Name + Member badge ──
+              SliverToBoxAdapter(
+                child: BlocBuilder<UserProfileInfoCubit, UserProfilenfoState>(
+                  builder: (context, state) {
+                    String name = userData.user.name;
+                    String image = '';
+                    if (state is UpdatedLoaded) {
+                      name = state.updatedInfo.updateUserInfo?.name ?? name;
+                      image = state.updatedInfo.updateUserInfo?.image ?? '';
+                    }
+                    return _buildProfileHeader(name, image);
+                  },
+                ),
+              ),
+
+              // ── RECOMMENDED Section ──
+              if (recommended.isNotEmpty)
+                SliverToBoxAdapter(child: _buildRecommended(recommended)),
+
+              // ── ACTIVITY Section ──
+              SliverToBoxAdapter(child: _buildActivitySection(context)),
+
+              // ── MANAGEMENT Section (hidden) ──
+              // SliverToBoxAdapter(child: _buildManagementSection(context)),
+
+              // ── CONCIERGE & LEGAL Section ──
+              SliverToBoxAdapter(child: _buildLegalSection(context)),
+
+              // ── Sign out button ──
+              SliverToBoxAdapter(child: _buildSignOutButton(context)),
+
+              // ── Footer ──
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 32, bottom: 100),
+                  child: Center(
+                    child: Text(
+                      "L'ESSENCE DE OUI \u00a9 2024",
+                      style: GoogleFonts.inter(
+                        fontSize: 9, fontWeight: FontWeight.w400,
+                        color: const Color(0xFF5E5E5E),
+                        height: 1.5, letterSpacing: 4.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // ── App bar overlay ──
+          Positioned(
+            top: 0, left: 0, right: 0,
+            child: Container(
+              height: 64,
+              padding: const EdgeInsets.only(left: 24, right: 24),
+              decoration: const BoxDecoration(
+                color: Color(0xE5131313),
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  children: [
+                    const Spacer(),
+                    Text(
+                      'PROFILE',
+                      style: GoogleFonts.notoSerif(
+                        fontSize: 18, fontWeight: FontWeight.w400,
+                        color: Colors.white, height: 1.56,
+                        letterSpacing: 1.8,
+                      ),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, RouteNames.profileEditScreen),
+                      child: Text(
+                        'EDIT',
+                        style: GoogleFonts.notoSerif(
+                          fontSize: 14, fontWeight: FontWeight.w400,
+                          color: Colors.white, height: 1.43,
+                          letterSpacing: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          
-          _buildSectionHeader("Account Management"),
-          _buildProfileOptions(context),
-          
-          _buildSectionHeader("Support & Privacy"),
-          _buildSupportOptions(context),
-          
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
-          _buildLogoutButton(context),
-          const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 28, 24, 10),
-        child: Text(
-          title.toUpperCase(),
-          style: GoogleFonts.inter(
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.5,
-            color: Colors.grey.shade400,
+  Widget _buildProfileHeader(String name, String image) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        children: [
+          // Avatar
+          Container(
+            width: 96, height: 96,
+            clipBehavior: Clip.antiAlias,
+            decoration: const BoxDecoration(color: Color(0xFF262626)),
+            child: image.isNotEmpty
+                ? CustomImage(path: RemoteUrls.imageUrl(image), fit: BoxFit.cover)
+                : Container(color: const Color(0xFF1C1B1B)),
           ),
+          const SizedBox(height: 24),
+          // Name
+          Text(
+            name,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.notoSerif(
+              fontSize: 30, fontWeight: FontWeight.w400,
+              color: const Color(0xFFE5E2E1), height: 1.2,
+              letterSpacing: -0.75,
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecommended(List<ProductModel> products) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 64),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'RECOMMENDED',
+                  style: GoogleFonts.notoSerif(
+                    fontSize: 20, fontWeight: FontWeight.w400,
+                    color: const Color(0xFFE5E2E1), height: 1.4,
+                    letterSpacing: 2,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, RouteNames.allCategoryListScreen, arguments: {
+                      'app_bar': 'Categories',
+                    });
+                  },
+                  child: Text(
+                    'VIEW ALL',
+                    style: GoogleFonts.inter(
+                      fontSize: 10, fontWeight: FontWeight.w400,
+                      color: const Color(0xFF777777), height: 1.5,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            height: 392,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              itemCount: products.length > 10 ? 10 : products.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 24),
+              itemBuilder: (_, index) => _buildProductCard(products[index]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductCard(ProductModel product) {
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(
+        context, RouteNames.productDetailsScreen,
+        arguments: product.slug,
+      ),
+      child: SizedBox(
+        width: 240,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 240,
+              height: 320,
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(color: Color(0xFF1C1B1B)),
+              child: CustomImage(
+                path: RemoteUrls.imageUrl(product.thumbImage),
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              product.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.notoSerif(
+                fontSize: 14, fontWeight: FontWeight.w400,
+                color: const Color(0xFFE5E2E1), height: 1.43,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              Utils.formatPrice(
+                product.offerPrice > 0 ? product.offerPrice : product.price,
+                context,
+              ),
+              style: GoogleFonts.inter(
+                fontSize: 12, fontWeight: FontWeight.w400,
+                color: const Color(0xFF777777), height: 1.33,
+                letterSpacing: 0.6,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  SliverPadding _buildProfileOptions(BuildContext context) {
-    final homeModel = context.read<HomeControllerCubit>().homeModel;
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      sliver: SliverList(
-        delegate: SliverChildListDelegate([
-          _MenuRow(
+  Widget _buildActivitySection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 64, 24, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section label
+          Text(
+            'ACTIVITY',
+            style: GoogleFonts.inter(
+              fontSize: 10, fontWeight: FontWeight.w400,
+              color: const Color(0xFF777777), height: 1.5,
+              letterSpacing: 3,
+            ),
+          ),
+          const SizedBox(height: 24),
+          _buildActivityRow(
+            icon: Icons.shopping_bag_outlined,
+            title: 'My Orders',
+            onTap: () => Navigator.pushNamed(context, RouteNames.orderScreen),
+          ),
+          _buildActivityRow(
+            icon: Icons.shopping_cart_outlined,
+            title: 'Shopping Bag',
+            onTap: () => Navigator.pushNamed(context, RouteNames.cartScreen),
+          ),
+          _buildActivityRow(
+            icon: Icons.local_offer_outlined,
+            title: 'Offers',
+            onTap: () => Navigator.pushNamed(context, RouteNames.flashScreen),
+          ),
+          _buildActivityRow(
+            icon: Icons.favorite_border,
+            title: 'Wishlist',
+            onTap: () => Navigator.pushNamed(context, RouteNames.wishlistOfferScreen),
+          ),
+          _buildActivityRow(
             icon: Icons.location_on_outlined,
-            title: Language.yourAddress.capitalizeByWord(),
+            title: 'Address',
             onTap: () => Navigator.pushNamed(context, RouteNames.addressScreen),
           ),
-          _MenuRow(
-            icon: Icons.grid_view_rounded,
-            title: Language.allCategories.capitalizeByWord(),
-            onTap: () => Navigator.pushNamed(context, RouteNames.allCategoryListScreen, arguments: {
-              "app_bar": homeModel.sectionTitle[0].custom ?? homeModel.sectionTitle[0].defaultTitle
-            }),
+          _buildActivityRow(
+            icon: Icons.category_outlined,
+            title: 'Categories',
+            onTap: () => Navigator.pushNamed(context, RouteNames.allCategoryListScreen, arguments: {'app_bar': 'Categories'}),
           ),
-        ]),
+        ],
       ),
     );
   }
 
-  SliverPadding _buildSupportOptions(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      sliver: SliverList(
-        delegate: SliverChildListDelegate([
-          _MenuRow(icon: Icons.description_outlined, title: Language.termsCon.capitalizeByWord(), onTap: () => Navigator.pushNamed(context, RouteNames.termsConditionScreen)),
-          _MenuRow(icon: Icons.shield_outlined, title: Language.privacyPolicy.capitalizeByWord(), onTap: () => Navigator.pushNamed(context, RouteNames.privacyPolicyScreen)),
-          _MenuRow(icon: Icons.help_outline_rounded, title: Language.faq, onTap: () => Navigator.pushNamed(context, RouteNames.faqScreen)),
-          _MenuRow(icon: Icons.info_outline_rounded, title: Language.aboutUs.capitalizeByWord(), onTap: () => Navigator.pushNamed(context, RouteNames.aboutUsScreen)),
-          _MenuRow(icon: Icons.mail_outline_rounded, title: Language.contactUs.capitalizeByWord(), onTap: () => Navigator.pushNamed(context, RouteNames.contactUsScreen)),
-          _MenuRow(icon: Icons.smartphone_outlined, title: Language.appInfo.capitalizeByWord(), onTap: () => _showAppInfoSheet(context)),
-        ]),
+  Widget _buildActivityRow({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: 61,
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(width: 1, color: Color(0x19434842)),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: const Color(0xFFE5E2E1)),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: GoogleFonts.manrope(
+                  fontSize: 14, fontWeight: FontWeight.w400,
+                  color: const Color(0xFFE5E2E1), height: 1.43,
+                  letterSpacing: 0.35,
+                ),
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 20, color: Color(0xFF5E5E5E)),
+          ],
+        ),
       ),
     );
   }
 
+  Widget _buildManagementSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 64, 24, 0),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(32),
+        decoration: const BoxDecoration(color: Color(0xFFF3F3F3)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'MANAGEMENT',
+              style: GoogleFonts.inter(
+                fontSize: 10, fontWeight: FontWeight.w400,
+                color: const Color(0xFF777777), height: 1.5,
+                letterSpacing: 3,
+              ),
+            ),
+            const SizedBox(height: 32),
 
+            // Primary Location
+            GestureDetector(
+              onTap: () => Navigator.pushNamed(context, RouteNames.addressScreen),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'PRIMARY LOCATION',
+                    style: GoogleFonts.inter(
+                      fontSize: 10, fontWeight: FontWeight.w400,
+                      color: const Color(0xFF5E5E5E), height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Manage your addresses',
+                    style: GoogleFonts.manrope(
+                      fontSize: 14, fontWeight: FontWeight.w400,
+                      color: const Color(0xFF1B1B1B), height: 1.43,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(width: 1, color: Color(0x4CC6C6C6)),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'SAVED CATEGORIES',
+                    style: GoogleFonts.inter(
+                      fontSize: 10, fontWeight: FontWeight.w400,
+                      color: const Color(0xFF5E5E5E), height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      _buildCategoryTag('OUTERWEAR'),
+                      const SizedBox(width: 8),
+                      _buildCategoryTag('ACCESSORIES'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(width: 1, color: Color(0x4CC6C6C6)),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'PAYMENT',
+                    style: GoogleFonts.inter(
+                      fontSize: 10, fontWeight: FontWeight.w400,
+                      color: const Color(0xFF5E5E5E), height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'COD / Online Payment',
+                    style: GoogleFonts.manrope(
+                      fontSize: 14, fontWeight: FontWeight.w400,
+                      color: const Color(0xFF1B1B1B), height: 1.43,
+                      letterSpacing: -0.7,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryTag(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: const BoxDecoration(color: Color(0xFFF9F9F9)),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(
+          fontSize: 10, fontWeight: FontWeight.w400,
+          color: const Color(0xFF1B1B1B), height: 1.5,
+          letterSpacing: 1,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLegalSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 64, 24, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'CONCIERGE & LEGAL',
+            style: GoogleFonts.inter(
+              fontSize: 10, fontWeight: FontWeight.w400,
+              color: const Color(0xFF777777), height: 1.5,
+              letterSpacing: 3,
+            ),
+          ),
+          const SizedBox(height: 24),
+          _buildActivityRow(
+            icon: Icons.description_outlined,
+            title: 'Terms and Conditions',
+            onTap: () => Navigator.pushNamed(context, RouteNames.termsConditionScreen),
+          ),
+          _buildActivityRow(
+            icon: Icons.shield_outlined,
+            title: 'Privacy Policy',
+            onTap: () => Navigator.pushNamed(context, RouteNames.privacyPolicyScreen),
+          ),
+          _buildActivityRow(
+            icon: Icons.help_outline,
+            title: 'FAQ',
+            onTap: () => Navigator.pushNamed(context, RouteNames.faqScreen),
+          ),
+          _buildActivityRow(
+            icon: Icons.info_outline,
+            title: 'About OUI',
+            onTap: () => Navigator.pushNamed(context, RouteNames.aboutUsScreen),
+          ),
+          _buildActivityRow(
+            icon: Icons.mail_outline,
+            title: 'Contact Curator',
+            onTap: () => Navigator.pushNamed(context, RouteNames.contactUsScreen),
+          ),
+          _buildActivityRow(
+            icon: Icons.phone_android_outlined,
+            title: 'App Info',
+            onTap: () => _showAppInfoSheet(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSignOutButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 64, 24, 0),
+      child: BlocConsumer<LoginBloc, LoginModelState>(
+        listener: (context, state) {
+          final logout = state.state;
+          if (logout is LoginStateLogOutLoading) {
+            Utils.loadingDialog(context);
+          } else {
+            Utils.closeDialog(context);
+            if (logout is LoginStateSignOutError) {
+              Utils.errorSnackBar(context, logout.errorMsg);
+            } else if (logout is LoginStateLogOut) {
+              Navigator.pushNamedAndRemoveUntil(context, RouteNames.authenticationScreen, (route) => false);
+            }
+          }
+        },
+        builder: (context, state) {
+          return GestureDetector(
+            onTap: () => _showLogoutDialog(context),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              decoration: const BoxDecoration(color: const Color(0xFFE5E2E1)),
+              child: Center(
+                child: Text(
+                  'SIGN OUT',
+                  style: GoogleFonts.inter(
+                    fontSize: 12, fontWeight: FontWeight.w400,
+                    color: const Color(0xFF131313), height: 1.33,
+                    letterSpacing: 4.8,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   void _showAppInfoSheet(BuildContext context) {
-    context.read<AppSettingCubit>().settingModel;
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: const Color(0xFF1A1A1A),
+      shape: const RoundedRectangleBorder(),
       builder: (context) {
         return SafeArea(
           child: Padding(
@@ -152,18 +598,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 10),
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
+                Container(width: 40, height: 4, color: const Color(0xFF444444)),
                 const SizedBox(height: 24),
                 Text(
                   Language.appInfo.capitalizeByWord(),
-                  style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black),
+                  style: GoogleFonts.notoSerif(fontSize: 18, fontWeight: FontWeight.w400, color: Colors.white),
                 ),
                 const SizedBox(height: 20),
                 _infoRow(Language.name.capitalizeByWord(), "OUI"),
@@ -173,9 +612,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _infoRow(Language.developedBy.capitalizeByWord(), "Corescent"),
                 const SizedBox(height: 20),
                 Text(
-                  "OUI is a premium grocery shopping experience designed to bring the finest selection of products right to your doorstep.",
+                  "OUI is a premium shopping experience designed to bring the finest selection of products right to your doorstep.",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade500, height: 1.5),
+                  style: GoogleFonts.manrope(fontSize: 13, color: const Color(0xFF777777), height: 1.5),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -192,53 +631,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade500)),
-          Text(value, style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87)),
+          Text(label, style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF777777))),
+          Text(value, style: GoogleFonts.manrope(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFFE2E2E2))),
         ],
-      ),
-    );
-  }
-
-  Widget _buildLogoutButton(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: BlocConsumer<LoginBloc, LoginModelState>(
-          listener: (context, state) {
-            final logout = state.state;
-            if (logout is LoginStateLogOutLoading) {
-              Utils.loadingDialog(context);
-            } else {
-              Utils.closeDialog(context);
-              if (logout is LoginStateSignOutError) {
-                Utils.errorSnackBar(context, logout.errorMsg);
-              } else if (logout is LoginStateLogOut) {
-                Navigator.pushNamedAndRemoveUntil(context, RouteNames.authenticationScreen, (route) => false);
-              }
-            }
-          },
-          builder: (context, state) {
-            return OutlinedButton(
-              onPressed: () => _showLogoutDialog(context),
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.black12, width: 1.5),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.power_settings_new_rounded, color: Colors.black, size: 20),
-                  const SizedBox(width: 12),
-                  Text(
-                    Language.logout.capitalizeByWord(),
-                    style: GoogleFonts.inter(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
       ),
     );
   }
@@ -248,28 +643,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       barrierDismissible: true,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: const Color(0xFF1A1A1A),
+        surfaceTintColor: const Color(0xFF1A1A1A),
+        shape: const RoundedRectangleBorder(),
         contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+              decoration: const BoxDecoration(
+                color: Color(0xFF262626),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.logout_rounded, size: 32, color: Colors.black),
+              child: const Icon(Icons.logout_rounded, size: 32, color: Colors.white),
             ),
             const SizedBox(height: 20),
-            Text("Sign Out", style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black)),
+            Text("Sign Out", style: GoogleFonts.notoSerif(fontSize: 18, fontWeight: FontWeight.w400, color: Colors.white)),
             const SizedBox(height: 8),
             Text(
               "Are you sure you want to end your session?",
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
+              style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF777777)),
             ),
           ],
         ),
@@ -278,79 +673,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Row(
             children: [
               Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    side: BorderSide(color: Colors.grey.shade300),
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(ctx),
+                  child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFF444444)),
+                    ),
+                    child: Center(
+                      child: Text("Cancel", style: GoogleFonts.manrope(fontWeight: FontWeight.w600, color: Colors.white)),
+                    ),
                   ),
-                  child: Text("Cancel", style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
+                child: GestureDetector(
+                  onTap: () {
                     Navigator.pop(ctx);
                     context.read<LoginBloc>().add(const LoginEventLogout());
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
+                  child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    color: Colors.white,
+                    child: Center(
+                      child: Text("Logout", style: GoogleFonts.manrope(fontWeight: FontWeight.w600, color: Colors.black)),
+                    ),
                   ),
-                  child: Text("Logout", style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
                 ),
               ),
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _MenuRow extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-
-  const _MenuRow({required this.icon, required this.title, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.black12, width: 1.5),
-            ),
-            child: Row(
-              children: [
-                Icon(icon, size: 22, color: Colors.black54),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black87),
-                  ),
-                ),
-                Icon(Icons.chevron_right_rounded, size: 20, color: Colors.grey.shade400),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

@@ -158,21 +158,21 @@ class _TryOnScreenState extends State<TryOnScreen> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
+      value: SystemUiOverlayStyle.light,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF131313),
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color(0xFF131313),
           elevation: 0,
           scrolledUnderElevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
             'Virtual Try-On',
-            style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+            style: GoogleFonts.manrope(fontSize: 17, fontWeight: FontWeight.w600, color: const Color(0xFFE5E2E1)),
           ),
           centerTitle: true,
         ),
@@ -231,19 +231,18 @@ class _TryOnForm extends StatelessWidget {
           // Product badge
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(20),
+            decoration: const BoxDecoration(
+              color: Color(0xFF1B1B1B),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.checkroom_outlined, size: 14, color: Colors.black54),
+                const Icon(Icons.checkroom_outlined, size: 14, color: Color(0xFF919191)),
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(
                     productName,
-                    style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black87),
+                    style: GoogleFonts.manrope(fontSize: 12, fontWeight: FontWeight.w500, color: const Color(0xFFE5E2E1)),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -263,18 +262,15 @@ class _TryOnForm extends StatelessWidget {
           const SizedBox(height: 10),
 
           // Garment image — full width
-          ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
+          Container(
+            height: 220,
+            width: double.infinity,
+            color: const Color(0xFF1C1B1B),
+            child: CustomImage(
+              path: clothImageUrl,
+              fit: BoxFit.contain,
               height: 220,
               width: double.infinity,
-              color: const Color(0xFFF5F5F5),
-              child: CustomImage(
-                path: clothImageUrl,
-                fit: BoxFit.contain,
-                height: 220,
-                width: double.infinity,
-              ),
             ),
           ),
 
@@ -290,43 +286,40 @@ class _TryOnForm extends StatelessWidget {
           // Person preview card
           GestureDetector(
             onTap: loading ? null : onPickGallery,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Container(
-                height: 220,
-                width: double.infinity,
-                color: const Color(0xFFF5F5F5),
-                child: personImagePath != null
-                    ? Image.file(
-                        File(personImagePath!),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 56,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(Icons.person_outline_rounded, size: 30, color: Colors.black45),
+            child: Container(
+              height: 220,
+              width: double.infinity,
+              color: const Color(0xFF1C1B1B),
+              child: personImagePath != null
+                  ? Image.file(
+                      File(personImagePath!),
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF262626),
+                            shape: BoxShape.circle,
                           ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'Tap to add your photo',
-                            style: GoogleFonts.inter(fontSize: 14, color: Colors.black45, fontWeight: FontWeight.w500),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Full body, plain background preferred',
-                            style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade400),
-                          ),
-                        ],
-                      ),
-              ),
+                          child: const Icon(Icons.person_outline_rounded, size: 30, color: Color(0xFF919191)),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Tap to add your photo',
+                          style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFC7C6C6), fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Full body, plain background preferred',
+                          style: GoogleFonts.manrope(fontSize: 12, color: const Color(0xFF5E5E5E)),
+                        ),
+                      ],
+                    ),
             ),
           ),
 
@@ -358,19 +351,18 @@ class _TryOnForm extends StatelessWidget {
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey.shade300),
+              decoration: const BoxDecoration(
+                color: Color(0xFF1B1B1B),
+                border: Border.fromBorderSide(BorderSide(color: Color(0xFF2A2A2A))),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline_rounded, size: 18, color: Colors.black54),
+                  const Icon(Icons.info_outline_rounded, size: 18, color: Color(0xFF919191)),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       error!,
-                      style: GoogleFonts.inter(fontSize: 13, color: Colors.black87),
+                      style: GoogleFonts.manrope(fontSize: 13, color: const Color(0xFFE5E2E1)),
                     ),
                   ),
                 ],
@@ -390,17 +382,17 @@ class _TryOnForm extends StatelessWidget {
             child: ElevatedButton(
               onPressed: loading ? null : onTryOn,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: Colors.grey.shade300,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                backgroundColor: const Color(0xFFE5E2E1),
+                foregroundColor: const Color(0xFF131313),
+                disabledBackgroundColor: const Color(0xFF2A2A2A),
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                 elevation: 0,
               ),
               child: loading
                   ? const SizedBox(
                       height: 22,
                       width: 22,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                      child: CircularProgressIndicator(color: Color(0xFFE5E2E1), strokeWidth: 2.5),
                     )
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -422,7 +414,7 @@ class _TryOnForm extends StatelessWidget {
           Center(
             child: Text(
               'Processing may take up to 60 seconds',
-              style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade400),
+              style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF5E5E5E)),
             ),
           ),
           const SizedBox(height: 20),
@@ -449,16 +441,16 @@ class _ResultView extends StatelessWidget {
         children: [
           Text(
             'Your Look',
-            style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.black),
+            style: GoogleFonts.notoSerif(fontSize: 20, fontWeight: FontWeight.w700, fontStyle: FontStyle.italic, color: const Color(0xFFE5E2E1)),
           ),
           const SizedBox(height: 4),
           Text(
             'Here is how you\'ll look in this outfit.',
-            style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade500),
+            style: GoogleFonts.manrope(fontSize: 13, color: const Color(0xFF919191)),
           ),
           const SizedBox(height: 16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
+          Container(
+            color: const Color(0xFF1C1B1B),
             child: Image.memory(
               base64Decode(base64),
               fit: BoxFit.contain,
@@ -472,9 +464,9 @@ class _ResultView extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                backgroundColor: const Color(0xFFE5E2E1),
+                foregroundColor: const Color(0xFF131313),
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                 elevation: 0,
               ),
               child: Row(
@@ -497,12 +489,12 @@ class _ResultView extends StatelessWidget {
             child: OutlinedButton(
               onPressed: () => Navigator.pop(context),
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.black12, width: 1.5),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                side: const BorderSide(color: Color(0xFF5E5E5E), width: 1.5),
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               ),
               child: Text(
                 'Back to Product',
-                style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black87),
+                style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: const Color(0xFFE5E2E1)),
               ),
             ),
           ),
@@ -530,21 +522,21 @@ class _StepRow extends StatelessWidget {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: done ? Colors.black : Colors.grey.shade200,
+            color: done ? const Color(0xFFE5E2E1) : const Color(0xFF262626),
             shape: BoxShape.circle,
           ),
           alignment: Alignment.center,
           child: done
-              ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
+              ? const Icon(Icons.check_rounded, size: 14, color: Color(0xFF131313))
               : Text(
                   step,
-                  style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.black54),
+                  style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: const Color(0xFF919191)),
                 ),
         ),
         const SizedBox(width: 8),
         Text(
           label,
-          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
+          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFFE5E2E1)),
         ),
       ],
     );
@@ -565,21 +557,20 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade200),
+          color: const Color(0xFF1B1B1B),
+          border: Border.all(color: const Color(0xFF2A2A2A)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 18, color: onTap != null ? Colors.black : Colors.grey.shade400),
+            Icon(icon, size: 18, color: onTap != null ? const Color(0xFFE5E2E1) : const Color(0xFF5E5E5E)),
             const SizedBox(width: 6),
             Text(
               label,
               style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: onTap != null ? Colors.black : Colors.grey.shade400,
+                color: onTap != null ? const Color(0xFFE5E2E1) : const Color(0xFF5E5E5E),
               ),
             ),
           ],

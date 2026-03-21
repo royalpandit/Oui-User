@@ -77,21 +77,13 @@ class HomeHorizontalListProductCard extends StatelessWidget {
       height: height,
       width: width,
       margin: const EdgeInsets.only(right: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        // Subtle grey border for professional definition
-        border: Border.all(color: const Color(0xFFF0F0F0), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+      decoration: const BoxDecoration(
+        color: Color(0xFF1B1B1B),
+        border: Border.fromBorderSide(
+          BorderSide(color: Color(0xFF2A2A2A), width: 0.5),
+        ),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
         onTap: () => Navigator.pushNamed(context, RouteNames.productDetailsScreen,
             arguments: productModel.slug),
         child: Row(
@@ -118,7 +110,7 @@ class HomeHorizontalListProductCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black54),
+                              color: const Color(0xFF919191)),
                         ),
                       ],
                     ),
@@ -129,10 +121,10 @@ class HomeHorizontalListProductCard extends StatelessWidget {
                       maxLines: 2,
                       minFontSize: 13,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.manrope(
                         fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFE2E2E2),
                         height: 1.2,
                       ),
                     ),
@@ -158,14 +150,10 @@ class HomeHorizontalListProductCard extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          width: width * 0.38, // Refined proportion
+          width: width * 0.38,
           height: height,
           decoration: const BoxDecoration(
-            color: Color(0xFFF9F9F9), // Light grey background for product contrast
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              bottomLeft: Radius.circular(12),
-            ),
+            color: Color(0xFF262626),
           ),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
@@ -175,28 +163,10 @@ class HomeHorizontalListProductCard extends StatelessWidget {
             ),
           ),
         ),
-        // Heart Icon Circle
         Positioned(
           top: 8,
           left: 8,
-          child: Container(
-            height: 30,
-            width: 30,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                )
-              ],
-            ),
-            child: Center(
-              child: FavoriteButton(productId: productModel.id),
-            ),
-          ),
+          child: FavoriteButton(productId: productModel.id),
         ),
       ],
     );

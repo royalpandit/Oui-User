@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'constants.dart';
 
 class AppStyle {
   AppStyle._();
@@ -22,8 +21,8 @@ class AppStyle {
     )
   ];
 
-  static Color accentColor = primaryColor;
-  static Color surface = white;
-  static Color inputBg = inputFieldBgColor;
-  static Color icon = iconGreyColor;
+  static Color accentColor = const Color(0xFFE5E2E1);
+  static Color surface = const Color(0xFF1B1B1B);
+  static Color inputBg = const Color(0xFF1C1B1B);
+  static Color icon = const Color(0xFF919191);
 }

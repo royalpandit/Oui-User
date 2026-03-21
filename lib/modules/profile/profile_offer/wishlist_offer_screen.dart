@@ -92,7 +92,7 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
     try {
       final homeState = context.read<HomeControllerCubit>().state;
       if (homeState is HomeControllerLoaded) {
-        recommended = context.read<HomeControllerCubit>().homeModel.popularCategoryProducts;
+        recommended = context.read<HomeControllerCubit>().homeModel.topRatedProducts;
       }
     } catch (_) {}
 
@@ -172,7 +172,10 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
                         child: const Icon(Icons.arrow_back_ios_new, size: 18, color: Colors.white),
                       ),
                       const Spacer(),
-                      const SizedBox(width: 18),
+                      GestureDetector(
+                        onTap: () => Navigator.pushNamed(context, RouteNames.cartScreen),
+                        child: const Icon(Icons.shopping_bag_outlined, size: 22, color: Colors.white),
+                      ),
                     ],
                   ),
                 ),
@@ -513,7 +516,7 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
             // Image with favorite button
             Container(
               width: 200,
-              height: 240,
+              height: 220,
               clipBehavior: Clip.antiAlias,
               decoration: const BoxDecoration(color: Color(0xFF1C1B1B)),
               child: Stack(

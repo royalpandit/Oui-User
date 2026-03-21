@@ -31,20 +31,20 @@ class _BestSellerInformationState extends State<BestSellerInformation> {
     context.read<CategoryCubit>().getSellerProduct(keyword);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF131313),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF131313),
         elevation: 0,
         scrolledUnderElevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
         title: Text(
           name,
-          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+          style: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFFE5E2E1)),
         ),
       ),
       body: BlocBuilder<CategoryCubit, CategoryState>(
@@ -57,25 +57,26 @@ class _BestSellerInformationState extends State<BestSellerInformation> {
                 child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is SellerProductState) {
             if (state.sellerModel.products.isEmpty) {
-              return const Center(
+              return Center(
                 child: Text(
-                  // Language.noItemsFound.capitalizeByWord(),
                   'No Item Found',
+                  style: GoogleFonts.manrope(color: const Color(0xFF919191)),
                 ),
               );
             }
             return const SellerProduct();
           } else if (state is CategoryErrorState) {
             return Center(
-              child: Text(state.errorMessage),
+              child: Text(state.errorMessage,
+                style: GoogleFonts.manrope(color: const Color(0xFF919191)),
+              ),
             );
           }
           return Center(
             child: SizedBox(
               child: Text(
-                // Language.somethingWentWrong.capitalizeByWord(),
                 'Something Went Wrong',
-                  style: GoogleFonts.inter(color: Colors.red),
+                  style: GoogleFonts.inter(color: const Color(0xFF919191)),
               ),
             ),
           );
@@ -97,12 +98,9 @@ class SingleSellerInfo extends StatelessWidget {
             height: 130.0,
             width: double.infinity,
             margin: const EdgeInsets.symmetric(horizontal: 0.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
-              child: CustomImage(
+            child: CustomImage(
                   path: RemoteUrls.imageUrl(singleSellerModel.bannerImage),
-                  fit: BoxFit.cover),
-            )),
+                  fit: BoxFit.cover)),
         Positioned.fill(
           child: Padding(
             padding:
@@ -119,7 +117,7 @@ class SingleSellerInfo extends StatelessWidget {
                       width: 60.0,
                       alignment: Alignment.center,
                       decoration: const BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.white),
+                          shape: BoxShape.circle, color: Color(0xFF2A2A2A)),
                       child: Center(
                         child: CustomImage(
                           path: RemoteUrls.imageUrl(singleSellerModel.logo),
@@ -133,7 +131,7 @@ class SingleSellerInfo extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontWeight: FontWeight.w400,
                         fontSize: 12.0,
-                        color: Colors.black,
+                        color: const Color(0xFFE5E2E1),
                       ),
                     )
                   ],

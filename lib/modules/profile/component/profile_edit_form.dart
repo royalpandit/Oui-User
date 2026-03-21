@@ -150,25 +150,25 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400),
+      hintStyle: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF5E5E5E)),
       filled: true,
-      fillColor: Colors.grey.shade50,
+      fillColor: const Color(0xFF1C1B1B),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade200, width: 1.5),
+      enabledBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.zero,
+        borderSide: BorderSide(color: Color(0x19434842), width: 1.5),
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.black, width: 1.5),
+      focusedBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.zero,
+        borderSide: BorderSide(color: Color(0xFF444444), width: 1.5),
       ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      errorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.zero,
+        borderSide: BorderSide(color: Colors.redAccent, width: 1.5),
       ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      focusedErrorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.zero,
+        borderSide: BorderSide(color: Colors.redAccent, width: 1.5),
       ),
     );
   }
@@ -177,8 +177,8 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
-        label,
-        style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black87),
+        label.toUpperCase(),
+        style: GoogleFonts.manrope(fontSize: 10, fontWeight: FontWeight.w400, color: const Color(0xFF777777), letterSpacing: 1.5),
       ),
     );
   }
@@ -227,7 +227,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
               _buildImage(),
               Text(
                 widget.userData.updateUserInfo!.name,
-                style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
+                style: GoogleFonts.notoSerif(fontSize: 22, fontWeight: FontWeight.w400, color: const Color(0xFFE5E2E1)),
               ),
               const SizedBox(height: 24),
               BlocBuilder<ProfileEditCubit, ProfileEditStateModel>(
@@ -242,7 +242,8 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                         keyboardType: TextInputType.name,
                         initialValue: widget.userData.updateUserInfo!.name,
                         onChanged: profileEdBlc.changeName,
-                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
+                        cursorColor: const Color(0xFFE5E2E1),
                         decoration: _inputDecoration(Language.name.capitalizeByWord()),
                       ),
                       if (edit is ProfileEditFormValidState) ...[
@@ -267,7 +268,8 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                           profileEdBlc.changePhone(_stripPhonePrefix(value));
                         },
                         initialValue: _stripPhonePrefix(widget.userData.updateUserInfo!.phone),
-                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
+                        cursorColor: const Color(0xFFE5E2E1),
                         decoration: _inputDecoration(Language.phoneNumber.capitalizeByWord()).copyWith(
                           prefixIcon: CountryCodePicker(
                             padding: EdgeInsets.zero,
@@ -280,7 +282,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                             showCountryOnly: false,
                             showOnlyCountryWhenClosed: false,
                             alignLeft: false,
-                            textStyle: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                            textStyle: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
                           ),
                         ),
                       ),
@@ -346,7 +348,8 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                         keyboardType: TextInputType.streetAddress,
                         initialValue: widget.userData.updateUserInfo!.address,
                         onChanged: profileEdBlc.changeAddress,
-                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
+                        cursorColor: const Color(0xFFE5E2E1),
                         decoration: _inputDecoration(Language.yourAddress.capitalizeByWord()),
                       ),
                       if (edit is ProfileEditFormValidState) ...[
@@ -383,15 +386,15 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                       context.read<ProfileEditCubit>().submitForm();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFFE5E2E1),
+                      foregroundColor: const Color(0xFF131313),
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                     ),
                     child: Text(
                       Language.updateProfile.capitalizeByWord(),
-                      style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+                      style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 2.4),
                     ),
                   ),
                 ),
@@ -451,8 +454,8 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                       profileEditCubit.changeImage(imageSourcePath);
                     },
                     child: const CircleAvatar(
-                      backgroundColor: Colors.black,
-                      child: Icon(Icons.edit, color: Colors.white),
+                      backgroundColor: Color(0xFFE5E2E1),
+                      child: Icon(Icons.edit, color: Color(0xFF131313)),
                     ),
                   ),
                 )
@@ -468,10 +471,11 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CountryModel>(
       value: _currentCountry,
-      hint: Text(Language.country.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey)),
+      hint: Text(Language.country.capitalizeByWord(), style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF5E5E5E))),
       decoration: _inputDecoration(''),
-      dropdownColor: Colors.white,
-      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+      dropdownColor: const Color(0xFF1C1B1B),
+      iconEnabledColor: const Color(0xFF777777),
+      style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
       onTap: () async {
         Utils.closeKeyBoard(context);
       },
@@ -497,10 +501,11 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CountryStateModel>(
       value: _countryState,
-      hint: Text(Language.state.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey)),
+      hint: Text(Language.state.capitalizeByWord(), style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF5E5E5E))),
       decoration: _inputDecoration(''),
-      dropdownColor: Colors.white,
-      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+      dropdownColor: const Color(0xFF1C1B1B),
+      iconEnabledColor: const Color(0xFF777777),
+      style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
       onTap: () async {
         Utils.closeKeyBoard(context);
       },
@@ -527,10 +532,11 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CityModel>(
       value: _cityModel,
-      hint: Text(Language.city.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey)),
+      hint: Text(Language.city.capitalizeByWord(), style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF5E5E5E))),
       decoration: _inputDecoration(''),
-      dropdownColor: Colors.white,
-      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+      dropdownColor: const Color(0xFF1C1B1B),
+      iconEnabledColor: const Color(0xFF777777),
+      style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
       onTap: () {
         Utils.closeKeyBoard(context);
       },

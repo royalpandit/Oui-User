@@ -11,25 +11,25 @@ class SearchAppBar extends AppBar {
 
   SearchAppBar({
     this.titleWidget,
-    this.textColor = Colors.black,
-    this.bgColor = Colors.white,
+    this.textColor = const Color(0xFFE5E2E1),
+    this.bgColor = const Color(0xFF131313),
     this.onTap,
     super.key,
   }) : super(
           titleSpacing: 0,
-          backgroundColor: Colors.white,
+          backgroundColor: const Color(0xFF131313),
           elevation: 0,
           scrolledUnderElevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
           leading: Builder(
             builder: (context) => IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.white),
               onPressed: () => Navigator.pop(context),
             ),
           ),
-          iconTheme: const IconThemeData(color: Colors.black),
-          titleTextStyle: GoogleFonts.inter(
-              color: textColor, fontSize: 17, fontWeight: FontWeight.w600),
+          iconTheme: const IconThemeData(color: Colors.white),
+          titleTextStyle: GoogleFonts.manrope(
+              color: textColor, fontSize: 16, fontWeight: FontWeight.w600),
           title: titleWidget,
           automaticallyImplyLeading: false,
         );

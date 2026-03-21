@@ -49,12 +49,9 @@ class _CombineBannerSliderState extends State<CombineBannerSlider> {
             final banner = widget.banners[index];
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: HotDealBanner(
-                  banner: banner,
-                  alignRight: index % 2 != 0,
-                ),
+              child: HotDealBanner(
+                banner: banner,
+                alignRight: index % 2 != 0,
               ),
             );
           },

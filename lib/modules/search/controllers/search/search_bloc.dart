@@ -27,8 +27,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   void _search(SearchEventSearch event, Emitter<SearchState> emit) async {
     emit(const SearchStateLoading());
 
+    final queryParams = <String, String>{};
+    if (event.search.isNotEmpty) {
+      queryParams['search'] = event.search;
+    }
     final uri = Uri.parse(RemoteUrls.searchProduct).replace(
-      queryParameters: {'search': event.search},
+      queryParameters: queryParams.isNotEmpty ? queryParams : null,
     );
 
     final result = await _searchRepository.search(uri);

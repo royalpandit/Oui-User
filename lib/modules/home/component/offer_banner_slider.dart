@@ -33,18 +33,15 @@ class _OfferBannerSliderState extends State<OfferBannerSlider> {
               builder: (BuildContext context) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: SingleOfferBanner(
-                      slider: slider,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          RouteNames.productDetailsScreen,
-                          arguments: slider.productSlug,
-                        );
-                      },
-                    ),
+                  child: SingleOfferBanner(
+                    slider: slider,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        RouteNames.productDetailsScreen,
+                        arguments: slider.productSlug,
+                      );
+                    },
                   ),
                 );
               },

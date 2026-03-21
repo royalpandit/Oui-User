@@ -18,29 +18,29 @@ class AllCategoryListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<CategoryCubit>().getCategoryList();
     final receivedValue =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final appBarName = receivedValue['app_bar'] as String;
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    final appBarName = receivedValue?['app_bar'] as String? ?? 'Categories';
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF131313),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF131313),
         elevation: 0,
         scrolledUnderElevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
         title: Text(
           appBarName,
-          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+          style: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFFE5E2E1)),
         ),
       ),
       body: BlocBuilder<CategoryCubit, CategoryState>(
         builder: (context, state) {
           if (state is CategoryLoadingState) {
-            return const Center(child: CircularProgressIndicator(color: Colors.black));
+            return const Center(child: CircularProgressIndicator(color: Color(0xFFE5E2E1)));
           } else if (state is CategoryListLoadedState ||
               state is CategoryLoadedState) {
             final categories = context.read<CategoryCubit>().categoryList;
@@ -48,7 +48,7 @@ class AllCategoryListScreen extends StatelessWidget {
               return Center(
                   child: Text(
                 Language.noCategory.capitalizeByWord(),
-                style: GoogleFonts.inter(fontSize: 15, color: Colors.grey.shade500),
+                style: GoogleFonts.manrope(fontSize: 15, color: const Color(0xFF5E5E5E)),
               ));
             }
 
@@ -68,12 +68,12 @@ class AllCategoryListScreen extends StatelessWidget {
             );
           } else if (state is CategoryErrorState) {
             return Center(
-              child: Text(state.errorMessage, style: GoogleFonts.inter(color: Colors.red.shade400)),
+              child: Text(state.errorMessage, style: GoogleFonts.manrope(color: Colors.red.shade400)),
             );
           }
           return Center(
             child: Text(Language.somethingWentWrong.capitalizeByWord(),
-                style: GoogleFonts.inter(color: Colors.grey.shade500)),
+                style: GoogleFonts.manrope(color: const Color(0xFF5E5E5E))),
           );
         },
       ),
@@ -91,10 +91,11 @@ class AllCategoryListScreen extends StatelessWidget {
         },
       ),
       child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200, width: 1),
+        decoration: const BoxDecoration(
+          color: Color(0xFF1C1B1B),
+          border: Border.fromBorderSide(
+            BorderSide(color: Color(0xFF2A2A2A), width: 0.5),
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -102,9 +103,8 @@ class AllCategoryListScreen extends StatelessWidget {
             Expanded(
               child: Container(
                 margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(12),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF262626),
                 ),
                 child: Center(
                   child: CustomImage(
@@ -122,10 +122,10 @@ class AllCategoryListScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.manrope(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFFE5E2E1),
                 ),
               ),
             ),

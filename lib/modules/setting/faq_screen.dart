@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../utils/language_string.dart';
 import 'component/faq_list_widget.dart';
 import 'controllers/faq_cubit/faq_cubit.dart';
 
@@ -24,41 +23,75 @@ class _FaqScreenState extends State<FaqScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        centerTitle: true,
-        title: Text(
-          Language.faq,
-          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
-        ),
-      ),
-      body: BlocBuilder<FaqCubit, FaqCubitState>(
-        builder: (context, state) {
-          if (state is FaqCubitStateLoaded) {
-            return ListView(
-              physics: const BouncingScrollPhysics(),
+      backgroundColor: const Color(0xFF131313),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            // ── App Bar ──
+            Container(
+              width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              children: [
-                FaqListWidget(faqList: state.faqList),
-              ],
-            );
-          } else if (state is FaqCubitStateLoading) {
-            return const Center(child: CircularProgressIndicator(color: Colors.black));
-          } else if (state is FaqCubitStateError) {
-            return Center(
-              child: Text(state.errorMessage, style: GoogleFonts.inter(color: Colors.red.shade400)),
-            );
-          }
-          return const SizedBox();
-        },
+              decoration: const BoxDecoration(color: Color(0xE5131313)),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+            Opacity(
+              opacity: 0.10,
+              child: Container(width: double.infinity, height: 1, color: const Color(0xFF1C1B1B)),
+            ),
+
+            // ── Body ──
+            Expanded(
+              child: BlocBuilder<FaqCubit, FaqCubitState>(
+                builder: (context, state) {
+                  if (state is FaqCubitStateLoaded) {
+                    return ListView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 80),
+                      children: [
+                        const SizedBox(height: 48),
+                        Text(
+                          'SUPPORT',
+                          style: GoogleFonts.manrope(
+                            fontSize: 10, fontWeight: FontWeight.w400,
+                            color: Colors.white, height: 1.5, letterSpacing: 2,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Frequently\nAsked',
+                          style: GoogleFonts.notoSerif(
+                            fontSize: 36, fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFFE5E2E1), height: 1.25,
+                          ),
+                        ),
+                        const SizedBox(height: 48),
+                        FaqListWidget(faqList: state.faqList),
+                      ],
+                    );
+                  } else if (state is FaqCubitStateLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(strokeWidth: 1.5, color: Color(0xFF444444)),
+                    );
+                  } else if (state is FaqCubitStateError) {
+                    return Center(
+                      child: Text(state.errorMessage, style: GoogleFonts.manrope(color: Colors.red.shade300)),
+                    );
+                  }
+                  return const SizedBox();
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

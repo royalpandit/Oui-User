@@ -26,27 +26,24 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bgColor ??= Colors.black;
+    bgColor ??= const Color(0xFFE5E2E1);
 
-    final borderRadius = BorderRadius.circular(borderRadiusSize);
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
-        shape: WidgetStateProperty.all(RoundedRectangleBorder(
-          borderRadius: borderRadius,
-          side: BorderSide(color: Colors.black.withOpacity(0.08)),
+        shape: WidgetStateProperty.all(const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
         )),
         minimumSize: WidgetStateProperty.all(minimumSize),
         maximumSize: WidgetStateProperty.all(maximumSize),
         backgroundColor: WidgetStateProperty.all(bgColor),
-        overlayColor: WidgetStateProperty.all(bgColor?.withOpacity(0.85) ?? Colors.black.withOpacity(0.85)),
-        elevation: WidgetStateProperty.all(6.0),
-        shadowColor: WidgetStateProperty.all(Colors.black26),
+        overlayColor: WidgetStateProperty.all(bgColor?.withValues(alpha: 0.85)),
+        elevation: WidgetStateProperty.all(0),
       ),
       child: Text(
         text,
         style: GoogleFonts.inter(
-            color: textColor,
+            color: textColor ?? const Color(0xFF131313),
             fontSize: fontSize,
             height: 1.5,
             fontWeight: FontWeight.w700),

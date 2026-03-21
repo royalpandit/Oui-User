@@ -69,35 +69,38 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400),
+      hintStyle: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF5E5E5E)),
       filled: true,
-      fillColor: Colors.grey.shade50,
+      fillColor: const Color(0xFF1C1B1B),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade200, width: 1.5),
+      enabledBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.zero,
+        borderSide: BorderSide(color: Color(0x19434842), width: 1),
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.black, width: 1.5),
+      focusedBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.zero,
+        borderSide: BorderSide(color: Color(0xFF444444), width: 1),
       ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      errorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.zero,
+        borderSide: BorderSide(color: Colors.redAccent, width: 1),
       ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      focusedErrorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.zero,
+        borderSide: BorderSide(color: Colors.redAccent, width: 1),
       ),
     );
   }
 
   Widget _fieldLabel(String label) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Text(
-        label,
-        style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black87),
+        label.toUpperCase(),
+        style: GoogleFonts.manrope(
+          fontSize: 10, fontWeight: FontWeight.w400,
+          color: const Color(0xFF777777), letterSpacing: 1.5,
+        ),
       ),
     );
   }
@@ -105,14 +108,14 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF131313),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF131313),
         elevation: 0,
         scrolledUnderElevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.white),
           onPressed: () {
             context.read<AddressCubit>().getAddress();
             Navigator.pop(context);
@@ -121,7 +124,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         centerTitle: true,
         title: Text(
           Language.addNewAddress.capitalizeByWord(),
-          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+          style: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white, letterSpacing: 1),
         ),
       ),
       body: BlocConsumer<AddressCubit, AddressState>(
@@ -168,7 +171,8 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                       TextFormField(
                         controller: nameCtr,
                         keyboardType: TextInputType.name,
-                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
+                        cursorColor: const Color(0xFFE5E2E1),
                         decoration: _inputDecoration(Language.name.capitalizeByWord()),
                       ),
                       if (addressState is AddressStateInvalidDataError) ...[
@@ -180,7 +184,8 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                       TextFormField(
                         controller: emailCtr,
                         keyboardType: TextInputType.emailAddress,
-                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
+                        cursorColor: const Color(0xFFE5E2E1),
                         decoration: _inputDecoration(Language.emailAddress.capitalizeByWord()),
                       ),
                       if (addressState is AddressStateInvalidDataError) ...[
@@ -192,7 +197,8 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                       TextFormField(
                         controller: phoneCtr,
                         keyboardType: TextInputType.phone,
-                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
+                        cursorColor: const Color(0xFFE5E2E1),
                         decoration: _inputDecoration(Language.phoneNumber.capitalizeByWord()),
                       ),
                       if (addressState is AddressStateInvalidDataError) ...[
@@ -225,7 +231,8 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                       TextFormField(
                         controller: addressCtr,
                         keyboardType: TextInputType.streetAddress,
-                        style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
+                        style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
+                        cursorColor: const Color(0xFFE5E2E1),
                         decoration: _inputDecoration(Language.address.capitalizeByWord()),
                       ),
                       if (addressState is AddressStateInvalidDataError) ...[
@@ -256,15 +263,15 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                             context.read<AddressCubit>().addAddress(dataMap);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
+                            backgroundColor: const Color(0xFFE5E2E1),
+                            foregroundColor: const Color(0xFF131313),
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(vertical: 18),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: const RoundedRectangleBorder(),
                           ),
                           child: Text(
                             Language.addNewAddress.capitalizeByWord(),
-                            style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+                            style: GoogleFonts.manrope(fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),
@@ -284,10 +291,11 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CountryModel>(
       value: _countryModel,
-      hint: Text(Language.country.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400)),
+      hint: Text(Language.country.capitalizeByWord(), style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF5E5E5E))),
       decoration: _inputDecoration(''),
-      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
-      dropdownColor: Colors.white,
+      style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
+      dropdownColor: const Color(0xFF1C1B1B),
+      iconEnabledColor: const Color(0xFF777777),
       onTap: () async {
         Utils.closeKeyBoard(context);
       },
@@ -311,10 +319,11 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CountryStateModel>(
       value: _countryStateModel,
-      hint: Text(Language.state.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400)),
+      hint: Text(Language.state.capitalizeByWord(), style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF5E5E5E))),
       decoration: _inputDecoration(''),
-      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
-      dropdownColor: Colors.white,
+      style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
+      dropdownColor: const Color(0xFF1C1B1B),
+      iconEnabledColor: const Color(0xFF777777),
       onTap: () async {
         Utils.closeKeyBoard(context);
       },
@@ -340,10 +349,11 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     final addressBl = context.read<CountryStateByIdCubit>();
     return DropdownButtonFormField<CityModel>(
       value: _cityModel,
-      hint: Text(Language.city.capitalizeByWord(), style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade400)),
+      hint: Text(Language.city.capitalizeByWord(), style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF5E5E5E))),
       decoration: _inputDecoration(''),
-      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
-      dropdownColor: Colors.white,
+      style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
+      dropdownColor: const Color(0xFF1C1B1B),
+      iconEnabledColor: const Color(0xFF777777),
       onTap: () {
         Utils.closeKeyBoard(context);
       },

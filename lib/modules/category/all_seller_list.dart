@@ -16,6 +16,7 @@ class AllSellerList extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<CategoryCubit>().getCategoryList();
     return Scaffold(
+      backgroundColor: const Color(0xFF131313),
       appBar: RoundedAppBar(
         titleText: Language.allSeller.capitalizeByWord(),
         onTap: () {
