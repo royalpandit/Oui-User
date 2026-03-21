@@ -139,7 +139,9 @@ class CartCubit extends Cubit<CartState> {
       emit(const CartCouponStateError("Cart is empty", 400));
       return;
     }
-    final int sellerId = cartProducts.first.product.vendorId;
+    // Get seller_id from vendor_detail or first cart product
+    final int sellerId = cartResponseModel?.vendorUserId ??
+        (cartProducts.isNotEmpty ? cartProducts.first.product.vendorId : 0);
     
     emit(const CartCouponStateLoading());
 
@@ -190,7 +192,10 @@ class CartCubit extends Cubit<CartState> {
         date, time, billingAddressId, coupon, _loginBloc.userInfo!.accessToken);
     result.fold(
       (failure) => emit(CartStateError(failure.message, failure.statusCode)),
-      (success) => emit(CartStateOrderSuccess(success)),
+      (success) => emit(CartStateOrderSuccess(
+        success['message'] ?? '',
+        orderId: success['orderId'] ?? '',
+      )),
     );
   }
 }

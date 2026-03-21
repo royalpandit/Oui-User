@@ -91,9 +91,10 @@ class CartCouponStateLoading extends CartState {
 
 class CartStateOrderSuccess extends CartState {
   final String message;
+  final String orderId;
 
-  const CartStateOrderSuccess(this.message);
+  const CartStateOrderSuccess(this.message, {this.orderId = ''});
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [message, orderId];
 }

@@ -131,7 +131,7 @@ abstract class RemoteDataSource {
 
   Future<CouponResponseModel> applyCoupon(String coupon, int sellerId, String token);
 
-  Future<String> pickupAtStoreOrder(String date, String time, int billingAddressId, String? coupon, String token);
+  Future<Map<String, String>> pickupAtStoreOrder(String date, String time, int billingAddressId, String? coupon, String token);
 
   Future<ProductCategoriesModel> getCategoryProducts(String slug);
 
@@ -280,7 +280,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<String> pickupAtStoreOrder(
+  Future<Map<String, String>> pickupAtStoreOrder(
       String date, String time, int billingAddressId, String? coupon, String token) async {
     final uri = Uri.parse(RemoteUrls.pickupAtStore(token));
     final headers = {
@@ -303,7 +303,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     );
     final responseJsonBody =
         await NetworkParser.callClientWithCatchException(() => clientMethod);
-    return responseJsonBody['message'] as String;
+    final message = responseJsonBody['message'] as String? ?? '';
+    final orderId = responseJsonBody['order_id']?.toString() ?? '';
+    return {'message': message, 'orderId': orderId};
   }
 
   @override

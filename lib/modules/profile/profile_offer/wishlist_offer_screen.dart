@@ -1,15 +1,18 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '/utils/language_string.dart';
-import '/widgets/capitalized_word.dart';
+import '../../../core/remote_urls.dart';
+import '../../../core/router_name.dart';
 import '../../../utils/utils.dart';
-import '../../order/component/empty_order_component.dart';
-import '../component/wish_list_card.dart';
+import '../../../widgets/custom_image.dart';
+import '../../../widgets/favorite_button.dart';
+import '../../cart/controllers/cart/add_to_cart/add_to_cart_cubit.dart';
+import '../../cart/model/add_to_cart_model.dart';
+import '../../home/controller/cubit/home_controller_cubit.dart';
+import '../../home/model/home_quote_model.dart';
+import '../../home/model/product_model.dart';
+import '../../product_details/model/product_variant_model.dart';
 import 'controllers/wish_list/wish_list_cubit.dart';
 import 'model/wish_list_model.dart';
 
@@ -33,24 +36,10 @@ class _WishlistOfferScreenState extends State<WishlistOfferScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final wishCubit = context.read<WishListCubit>();
+    final topPadding = MediaQuery.of(context).padding.top;
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        centerTitle: true,
-        title: Text(
-          Language.wishlist.capitalizeByWord(),
-          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
-        ),
-      ),
+      backgroundColor: const Color(0xFF131313),
       body: BlocConsumer<WishListCubit, WishListState>(
         listener: (context, state) {
           if (state is WishListStateAddRemoveError) {
@@ -62,48 +51,26 @@ class _WishlistOfferScreenState extends State<WishlistOfferScreen> {
           }
         },
         builder: (context, state) {
-          log(state.toString(), name: 'wishlist offer screen');
           if (state is WishListStateLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2, color: Color(0xFF444444),
+              ),
+            );
           }
-          // else if (state is WishListStateError) {
-          //   return Center(
-          //     child: Text(
-          //       state.message,
-          //       style: const TextStyle(color: redColor),
-          //     ),
-          //   );
-          // }
-          else if (state is WishListStateInitial) {
+          if (state is WishListStateInitial) {
             return const SizedBox();
           }
-          return const _LoadedWidget();
+          return _LoadedWidget(topPadding: topPadding);
         },
-      ),
-      bottomNavigationBar: Container(
-        height: 60,
-        color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        alignment: Alignment.centerRight,
-        child: TextButton(
-          style: TextButton.styleFrom(foregroundColor: Colors.red),
-          onPressed: () {
-            context.read<WishListCubit>().clearWishList();
-          },
-          child: Text(
-            wishCubit.wishList.isNotEmpty
-                ? Language.clearWishlist.capitalizeByWord()
-                : '',
-            style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500),
-          ),
-        ),
       ),
     );
   }
 }
 
 class _LoadedWidget extends StatefulWidget {
-  const _LoadedWidget();
+  const _LoadedWidget({required this.topPadding});
+  final double topPadding;
 
   @override
   State<_LoadedWidget> createState() => __LoadedWidgetState();
@@ -120,98 +87,565 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    // Get recommended products from home model
+    List<ProductModel> recommended = [];
+    try {
+      final homeState = context.read<HomeControllerCubit>().state;
+      if (homeState is HomeControllerLoaded) {
+        recommended = context.read<HomeControllerCubit>().homeModel.popularCategoryProducts;
+      }
+    } catch (_) {}
+
+    // Get quotes
+    List<HomeQuoteModel> quotes = HomeQuoteModel.defaults;
+    try {
+      final homeState = context.read<HomeControllerCubit>().state;
+      if (homeState is HomeControllerLoaded) {
+        final apiQuotes = context.read<HomeControllerCubit>().homeModel.quotes;
+        if (apiQuotes.isNotEmpty) quotes = apiQuotes;
+      }
+    } catch (_) {}
+
+    return Stack(
       children: [
-        const SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              const Icon(Icons.favorite, color: Colors.red),
-              const SizedBox(width: 10),
-              Text(
-                _getText(productList.length),
-                style:
-                    GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+        CustomScrollView(
+          slivers: [
+            // Top spacing for app bar
+            SliverToBoxAdapter(
+              child: SizedBox(height: widget.topPadding + 60),
+            ),
+
+            // Header section
+            SliverToBoxAdapter(child: _buildHeader()),
+
+            // Wishlist items or empty state
+            if (productList.isNotEmpty)
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => _buildWishlistItem(productList[index], index),
+                  childCount: productList.length,
+                ),
+              )
+            else
+              SliverToBoxAdapter(child: _buildEmptyState()),
+
+            // Clear wishlist button
+            if (productList.isNotEmpty)
+              SliverToBoxAdapter(child: _buildClearButton()),
+
+            // Divider
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Container(height: 1, color: const Color(0xFF262626)),
               ),
-            ],
-          ),
+            ),
+
+            // "More products you may like" section
+            if (recommended.isNotEmpty)
+              SliverToBoxAdapter(child: _buildRecommendedSection(recommended)),
+
+            // Quote section
+            if (quotes.isNotEmpty)
+              SliverToBoxAdapter(child: _buildQuoteSection(quotes)),
+
+            // Bottom padding
+            const SliverToBoxAdapter(child: SizedBox(height: 40)),
+          ],
         ),
-        const SizedBox(height: 16),
-        if (productList.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(Language.swipeToDelete.capitalizeByWord(),
-                style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade600)),
-          ),
-        if (productList.isNotEmpty) ...[
-          Expanded(
-            child: ListView.separated(
-              separatorBuilder: (_, __) {
-                return const SizedBox(height: 16);
-              },
-              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-              itemBuilder: (context, index) {
-                return Dismissible(
-                  key: UniqueKey(),
-                  direction: DismissDirection.horizontal,
-                  onDismissed: (s) async {
-                    final item = productList.removeAt(index);
-                    setState(() {});
-                    final result = await context
-                        .read<WishListCubit>()
-                        .removeWishList(item);
-                    result.fold(
-                      (failure) {
-                        productList.add(item);
-                        setState(() {});
-                        Utils.errorSnackBar(context, failure.message);
-                      },
-                      (success) {
-                        Utils.showSnackBar(context, success);
-                      },
-                    );
-                  },
-                  background: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.only(right: 40),
-                    alignment: Alignment.centerRight,
-                    child: const Icon(
-                      Icons.delete,
-                      size: 30,
-                      color: Colors.white,
-                    ),
+
+        // App bar overlay
+        Positioned(
+          left: 0, right: 0, top: 0,
+          child: Container(
+            color: const Color(0xFF131313).withValues(alpha: 0.95),
+            child: SafeArea(
+              bottom: false,
+              child: SizedBox(
+                height: 60,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(Icons.arrow_back_ios_new, size: 18, color: Colors.white),
+                      ),
+                      const Spacer(),
+                      const SizedBox(width: 18),
+                    ],
                   ),
-                  child: WishListCard(product: productList[index]),
-                );
-              },
-              itemCount: productList.length,
+                ),
+              ),
             ),
           ),
-        ] else ...[
-          const Center(
-              child: EmptyOrderComponent(emptySubTitle: 'No wish item found')),
-        ],
+        ),
       ],
     );
   }
 
-  //
-  // Widget _buildBottomButtons() {
-  //   return Container(
-  //       alignment: Alignment.center,
-  //       child: TextButton(onPressed: (){}, child: const Text("Clear Wishlist")));
-  // }
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'YOUR CURATED SELECTION',
+            style: GoogleFonts.manrope(
+              fontSize: 10, fontWeight: FontWeight.w400,
+              color: Colors.white, height: 1.5, letterSpacing: 2,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'The Wishlist',
+            style: GoogleFonts.notoSerif(
+              fontSize: 36, fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w300,
+              color: const Color(0xFFE5E2E1), height: 1.11,
+              letterSpacing: -0.9,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'A personal gallery of silhouettes and textures\nchosen for the modern epicurean.',
+            style: GoogleFonts.manrope(
+              fontSize: 16, fontWeight: FontWeight.w300,
+              color: const Color(0xFFC4C8C0), height: 1.63,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-  String _getText(int length) {
-    if (length > 1) {
-      return '${productList.length} ${Language.itemsInYourCart.capitalizeByWord()}';
-    } else {
-      return '${productList.length} ${Language.itemInYourCart.capitalizeByWord()}';
-    }
+  Widget _buildWishlistItem(WishListModel item, int index) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Product image with favorite button
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(
+              context, RouteNames.productDetailsScreen,
+              arguments: item.slug,
+            ),
+            child: Container(
+              width: double.infinity,
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(color: Color(0xFF1C1B1B)),
+              child: Stack(
+                children: [
+                  // Product image
+                  AspectRatio(
+                    aspectRatio: 342 / 427.5,
+                    child: CustomImage(
+                      path: RemoteUrls.imageUrl(item.thumbImage),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  // Favorite button top-right
+                  Positioned(
+                    right: 16,
+                    top: 16,
+                    child: FavoriteButton(productId: item.id),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Product info row: name+category on left, price on right
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(
+              context, RouteNames.productDetailsScreen,
+              arguments: item.slug,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name and category
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.notoSerif(
+                          fontSize: 20, fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFFE5E2E1), height: 1.4,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        item.shortDescription.isNotEmpty
+                            ? item.shortDescription.toUpperCase()
+                            : (item.isFeatured == 1 ? 'FEATURED' : 'CURATED'),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.manrope(
+                          fontSize: 12, fontWeight: FontWeight.w400,
+                          color: const Color(0xFFC4C8C0), height: 1.33,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // Price
+                Text(
+                  Utils.formatPrice(
+                    item.offerPrice > 0 ? item.offerPrice : item.price,
+                    context,
+                  ),
+                  style: GoogleFonts.manrope(
+                    fontSize: 18, fontWeight: FontWeight.w300,
+                    color: const Color(0xFFE5E2E1), height: 1.56,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // ADD TO BAG button
+          BlocListener<AddToCartCubit, AddToCartState>(
+            listener: (context, state) {
+              if (state is AddToCartStateAdded) {
+                Utils.showSnackBar(context, state.message);
+              } else if (state is AddToCartStateError) {
+                Utils.errorSnackBar(context, state.message);
+              }
+            },
+            child: GestureDetector(
+              onTap: () {
+                final dataModel = AddToCartModel(
+                  quantity: 1,
+                  productId: item.id,
+                  image: item.thumbImage,
+                  slug: item.slug,
+                  token: '',
+                  variantItems: const <ActiveVariantModel>{},
+                );
+                context.read<AddToCartCubit>().addToCart(dataModel);
+              },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFF444444), width: 1),
+                ),
+                child: Center(
+                  child: Text(
+                    'ADD TO BAG',
+                    style: GoogleFonts.manrope(
+                      fontSize: 12, fontWeight: FontWeight.w400,
+                      color: Colors.white, height: 1.33,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Bottom spacing between items
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(48),
+        decoration: BoxDecoration(
+          color: const Color(0x4C0E0E0E),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0x0C434842), width: 1),
+        ),
+        child: Column(
+          children: [
+            // Empty icon
+            Container(
+              width: 64, height: 64,
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFF444444), width: 1),
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Icon(Icons.favorite_border, size: 28, color: Color(0xFF777777)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Curate more pieces to perfect\nyour seasonal edit.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.notoSerif(
+                fontSize: 16, fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w400,
+                color: const Color(0xFFC4C8C0), height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 24),
+            GestureDetector(
+              onTap: () => Navigator.pushNamedAndRemoveUntil(
+                context, RouteNames.mainPage, (route) => false,
+              ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0x33E9C349), width: 1),
+                ),
+                child: Text(
+                  'EXPLORE COLLECTION',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.manrope(
+                    fontSize: 12, fontWeight: FontWeight.w400,
+                    color: Colors.white, height: 1.33,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildClearButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: GestureDetector(
+        onTap: () {
+          context.read<WishListCubit>().clearWishList();
+          setState(() => productList.clear());
+        },
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          child: Center(
+            child: Text(
+              'CLEAR WISHLIST',
+              style: GoogleFonts.manrope(
+                fontSize: 11, fontWeight: FontWeight.w400,
+                color: const Color(0xFF777777), letterSpacing: 1.5,
+                decoration: TextDecoration.underline,
+                decorationColor: const Color(0xFF777777),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecommendedSection(List<ProductModel> products) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Text(
+              'MORE PIECES YOU MAY LIKE',
+              style: GoogleFonts.manrope(
+                fontSize: 10, fontWeight: FontWeight.w400,
+                color: const Color(0xFFA0A0A0), letterSpacing: 2, height: 1.5,
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Text(
+              'Explore More',
+              style: GoogleFonts.notoSerif(
+                fontSize: 28, fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w300,
+                color: const Color(0xFFE5E2E1), height: 1.29,
+                letterSpacing: -0.7,
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            height: 340,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              itemCount: products.length > 10 ? 10 : products.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 16),
+              itemBuilder: (_, index) => _buildRecommendedCard(products[index]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecommendedCard(ProductModel product) {
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(
+        context, RouteNames.productDetailsScreen,
+        arguments: product.slug,
+      ),
+      child: SizedBox(
+        width: 200,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image with favorite button
+            Container(
+              width: 200,
+              height: 240,
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(color: Color(0xFF1C1B1B)),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CustomImage(
+                      path: RemoteUrls.imageUrl(product.thumbImage),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: FavoriteButton(productId: product.id),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Product name
+            Text(
+              product.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.notoSerif(
+                fontSize: 16, fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w400,
+                color: const Color(0xFFE5E2E1), height: 1.5,
+                letterSpacing: -0.4,
+              ),
+            ),
+            const SizedBox(height: 4),
+            // Price
+            Text(
+              Utils.formatPrice(
+                product.offerPrice > 0 ? product.offerPrice : product.price,
+                context,
+              ),
+              style: GoogleFonts.manrope(
+                fontSize: 14, fontWeight: FontWeight.w300,
+                color: const Color(0xFFC4C8C0), height: 1.43,
+              ),
+            ),
+            const SizedBox(height: 10),
+            // ADD TO BAG
+            GestureDetector(
+              onTap: () {
+                final dataModel = AddToCartModel(
+                  quantity: 1,
+                  productId: product.id,
+                  image: product.thumbImage,
+                  slug: product.slug,
+                  token: '',
+                  variantItems: const <ActiveVariantModel>{},
+                );
+                context.read<AddToCartCubit>().addToCart(dataModel);
+              },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFF444444), width: 1),
+                ),
+                child: Center(
+                  child: Text(
+                    'ADD TO BAG',
+                    style: GoogleFonts.manrope(
+                      fontSize: 11, fontWeight: FontWeight.w400,
+                      color: Colors.white, height: 1.33,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuoteSection(List<HomeQuoteModel> quotes) {
+    final quote = quotes[0];
+    return Padding(
+      padding: const EdgeInsets.only(top: 48),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 32),
+        color: const Color(0xFF131313),
+        child: Column(
+          children: [
+            Text(
+              '— —',
+              style: GoogleFonts.notoSerif(
+                fontSize: 14,
+                color: const Color(0xFF474747),
+                letterSpacing: 6,
+              ),
+            ),
+            const SizedBox(height: 18),
+            Text(
+              quote.text,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.notoSerif(
+                fontSize: 18, fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w400,
+                color: const Color(0xFF919191), height: 1.6,
+              ),
+            ),
+            if (quote.author != null && quote.author!.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Text(
+                '— ${quote.author}',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 13, fontWeight: FontWeight.w400,
+                  color: const Color(0xFF474747),
+                ),
+              ),
+            ],
+            const SizedBox(height: 18),
+            Text(
+              '— —',
+              style: GoogleFonts.notoSerif(
+                fontSize: 14,
+                color: const Color(0xFF474747),
+                letterSpacing: 6,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

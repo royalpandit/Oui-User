@@ -31,7 +31,7 @@ abstract class CartRepository {
 
   Future<Either<Failure, String>> addToCart(AddToCartModel dataModel);
 
-  Future<Either<Failure, String>> pickupAtStoreOrder(
+  Future<Either<Failure, Map<String, String>>> pickupAtStoreOrder(
       String date, String time, int billingAddressId, String? coupon, String token);
 
   void saveCartCalculation(CartCalculation cartCalculation);
@@ -127,7 +127,7 @@ class CartRepositoryImp extends CartRepository {
   }
 
   @override
-  Future<Either<Failure, String>> pickupAtStoreOrder(
+  Future<Either<Failure, Map<String, String>>> pickupAtStoreOrder(
       String date, String time, int billingAddressId, String? coupon, String token) async {
     try {
       final result =

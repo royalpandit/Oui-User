@@ -1,3 +1,4 @@
+import '../modules/cart/order_confirmed_screen.dart';
 import '../modules/category/single_category_product_screen.dart';
 import 'router_package_names.dart';
 
@@ -36,6 +37,7 @@ class RouteNames {
   static const String cartScreen = '/cartScreen';
   static const String checkoutScreen = '/checkoutScreen';
   static const String selectDateTimeScreen = '/selectDateTimeScreen';
+  static const String orderConfirmedScreen = '/orderConfirmedScreen';
   static const String productDetailsScreen = '/productDetailsScreen';
   static const String submitFeedBackScreen = '/submitFeedBackScreen';
   static const String addressScreen = '/addressScreen';
@@ -219,6 +221,11 @@ class RouteNames {
       case RouteNames.selectDateTimeScreen:
         return MaterialPageRoute(
             settings: settings, builder: (_) => const SelectDateTimeScreen());
+      case RouteNames.orderConfirmedScreen:
+        final args = settings.arguments as OrderConfirmedArgs;
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (_) => OrderConfirmedScreen(args: args));
       case RouteNames.productDetailsScreen:
         final slug = settings.arguments as String;
         return MaterialPageRoute(
