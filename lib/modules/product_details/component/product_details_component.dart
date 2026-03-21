@@ -103,7 +103,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: const Color(0xFF262626),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
@@ -111,7 +111,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
                 style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade500,
+                  color: const Color(0xFF919191),
                   letterSpacing: 0.8,
                 ),
               ),
@@ -121,7 +121,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
             widget.product.name.capitalizeByWord(),
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
-            style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.black, height: 1.3),
+            style: GoogleFonts.notoSerif(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white, height: 1.3),
           ),
           const SizedBox(height: 12.0),
           if (isFlashSale) ...[
@@ -137,15 +137,20 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
               textSize: 24,
             ),
           ],
-          const SizedBox(height: 12.0),
+          const SizedBox(height: 4.0),
+          Text(
+            'INCL. ALL TAXES',
+            style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w500, color: const Color(0xFF737373), letterSpacing: 0.5),
+          ),
+          const SizedBox(height: 14.0),
           _builtRating(),
           const SizedBox(height: 12.0),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
             decoration: BoxDecoration(
               color: availability
-                  ? Colors.red.withOpacity(0.08)
-                  : Colors.green.withOpacity(0.08),
+                  ? Colors.red.withValues(alpha: 0.12)
+                  : Colors.green.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: Row(
@@ -154,7 +159,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
                 Icon(
                   availability ? Icons.remove_shopping_cart_outlined : Icons.check_circle_outline,
                   size: 16,
-                  color: availability ? Colors.red.shade600 : Colors.green.shade700,
+                  color: availability ? Colors.red.shade300 : Colors.green.shade400,
                 ),
                 const SizedBox(width: 6),
                 Text(
@@ -164,7 +169,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: availability ? Colors.red.shade600 : Colors.green.shade700,
+                    color: availability ? Colors.red.shade300 : Colors.green.shade400,
                   ),
                 ),
               ],
@@ -175,7 +180,7 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
             Text(
               widget.product.shortDescription,
               textAlign: TextAlign.start,
-              style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600, height: 1.5),
+              style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFC7C6C6), height: 1.5),
             ),
           ],
           const SizedBox(height: 16),
@@ -206,17 +211,17 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
         Container(
             width: 1,
             height: 16,
-            color: Colors.grey.shade300),
+            color: const Color(0xFF474747)),
         const SizedBox(width: 8),
         Text(
           Utils.getRating(widget.detailsModel.productReviews)
               .toStringAsFixed(1),
-          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black),
+          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFFE2E2E2)),
         ),
         const SizedBox(width: 4),
         Text(
           '(${widget.detailsModel.productReviews.length})',
-          style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade500),
+          style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF919191)),
         ),
       ],
     );

@@ -53,10 +53,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             width: 40,
             height: 4,
             margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(2),
-            ),
+            color: const Color(0xFF474747),
           ),
           BottomSheetProduct(
             product: ProductModel.fromMap(
@@ -64,7 +61,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             ),
             variantItem: variantItems,
           ),
-          Divider(color: Colors.grey.shade200, height: 24),
+          const Divider(color: Color(0xFF2A2A2A), height: 24),
           _VarientItemsWidget(
             productVariants: widget.product.activeVariantModel,
             variantItems: variantItems,
@@ -85,14 +82,11 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
               Text(
                 Language.quantity.capitalizeByWord(),
                 style: GoogleFonts.inter(
-                    fontSize: 15, color: Colors.black, fontWeight: FontWeight.w600),
+                    fontSize: 15, color: const Color(0xFFE2E2E2), fontWeight: FontWeight.w600),
               ),
               const Spacer(),
               Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                color: const Color(0xFF2A2A2A),
                 child: Row(
                   children: [
                     InkWell(
@@ -102,12 +96,11 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                           setState(() {});
                         }
                       },
-                      borderRadius: BorderRadius.circular(10),
                       child: Container(
                         width: 36,
                         height: 36,
                         alignment: Alignment.center,
-                        child: Icon(Icons.remove, color: Colors.black, size: 18),
+                        child: const Icon(Icons.remove, color: Color(0xFFE2E2E2), size: 18),
                       ),
                     ),
                     Container(
@@ -116,7 +109,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                       child: Text(
                         quantity.toString(),
                         style: GoogleFonts.inter(
-                            fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                            fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                       ),
                     ),
                     InkWell(
@@ -124,12 +117,11 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                         quantity++;
                         setState(() {});
                       },
-                      borderRadius: BorderRadius.circular(10),
                       child: Container(
                         width: 36,
                         height: 36,
                         alignment: Alignment.center,
-                        child: Icon(Icons.add, color: Colors.black, size: 18),
+                        child: const Icon(Icons.add, color: Color(0xFFE2E2E2), size: 18),
                       ),
                     ),
                   ],
@@ -143,11 +135,11 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             children: [
               Text(
                 Language.totalPrice.capitalizeByWord(),
-                style: GoogleFonts.inter(fontSize: 14, color: Colors.grey.shade600),
+                style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF919191)),
               ),
               Text(
                 totalPrice(),
-                style: GoogleFonts.inter(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w700),
+                style: GoogleFonts.inter(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -168,17 +160,15 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             child: Container(
               width: double.infinity,
               height: 52.0,
-              decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(14)),
+              color: Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 22.0),
+                  const Icon(Icons.shopping_bag_outlined, color: Colors.black, size: 22.0),
                   const SizedBox(width: 8),
                   Text(
                     Language.addToCart.capitalizeByWord(),
-                    style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
+                    style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.black),
                   )
                 ],
               ),
@@ -337,7 +327,7 @@ class _VarientItemsWidget extends StatelessWidget {
               child: Text(
                 "${singleVarient.name} : ",
                 style: const TextStyle(
-                    fontWeight: FontWeight.w600, fontSize: 16.0, color: Colors.black),
+                    fontWeight: FontWeight.w600, fontSize: 16.0, color: Color(0xFFE2E2E2)),
               ),
             ),
             Flexible(
@@ -362,20 +352,20 @@ class _VarientItemsWidget extends StatelessWidget {
     ActiveVariantItemModel itemModel,
   ) {
     final varient = singleVariant.copyWith(activeVariantsItems: [itemModel]);
+    final isSelected = variantItems.contains(varient);
     return InkWell(
       onTap: () => onChange(varient),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: variantItems.contains(varient) ? Colors.black : null,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: variantItems.contains(varient) ? Colors.black : Colors.grey.shade300),
+          color: isSelected ? Colors.white : Colors.transparent,
+          border: Border.all(color: isSelected ? Colors.white : const Color(0xFF474747)),
         ),
         child: Text(
           itemModel.name.capitalizeByWord(),
           style: TextStyle(
-            color: variantItems.contains(varient) ? Colors.white : Colors.black,
+            color: isSelected ? Colors.black : const Color(0xFFC7C6C6),
           ),
         ),
       ),

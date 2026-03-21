@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '/modules/product_details/component/loader_screen.dart';
 import '/utils/language_string.dart';
-import '/widgets/capitalized_word.dart';
 import '../../core/remote_urls.dart';
 import '../../core/router_name.dart';
 import '../try_on/try_on_constants.dart';
@@ -16,14 +16,12 @@ import '../cart/controllers/cart/cart_cubit.dart';
 import '../home/component/home_app_bar.dart';
 import 'component/bottom_sheet_widget.dart';
 import 'component/description_component.dart';
-import 'component/product_details_component.dart';
 import 'component/product_header_component.dart';
 import 'component/rating_list_component.dart';
 import 'component/related_products_list.dart';
 import 'component/seller_info_component.dart';
 import 'controller/cubit/product_details_cubit.dart';
 import 'model/product_details_model.dart';
-import 'model/product_details_product_model.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen({super.key, required this.slug});
@@ -49,19 +47,20 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        child: Builder(builder: (context) {
-        return BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+      backgroundColor: const Color(0xFF131313),
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
           builder: (context, state) {
             if (state is ProductDetailsStateLoading) {
-              return const Center(child: DetailsPageLoading());
+              return const DetailsPageLoading();
             }
             if (state is ProductDetailsStateError) {
               return Center(
                 child: Text(
                   state.errorMessage,
-                  style: GoogleFonts.inter(fontSize: 14, color: Colors.red),
+                  style: GoogleFonts.inter(
+                      fontSize: 14, color: Colors.red.shade300),
                 ),
               );
             }
@@ -71,92 +70,131 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             log(state.toString(), name: _className);
             return const SizedBox();
           },
-        );
-      }),
+        ),
       ),
     );
   }
 
   Widget _buildLoadedPage(ProductDetailsModel productDetailsModel) {
+    final topPadding = MediaQuery.of(context).padding.top;
     return Stack(
-      alignment: Alignment.bottomCenter,
       children: [
         CustomScrollView(
           slivers: [
-            SliverAppBar(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              floating: true,
-              pinned: false,
-              systemOverlayStyle: SystemUiOverlayStyle.dark,
-              leading: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: IconButton(
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.grey.shade100,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Colors.black),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-              centerTitle: true,
-              title: Text(
-                Language.productDetails.capitalizeByWord(),
-                style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
-              ),
-            ),
             SliverToBoxAdapter(
               child: ProductHeaderComponent(
-                  product: productDetailsModel.product,
-                  gallery: productDetailsModel.gallery),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
-            SliverToBoxAdapter(
-              child: ProductDetailsComponent(
-                detailsModel: productDetailsModel,
                 product: productDetailsModel.product,
+                gallery: productDetailsModel.gallery,
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 8)),
             SliverToBoxAdapter(
-              child: ToggleButtonComponent(
-                textList: [
-                  Language.description.capitalizeByWord(),
-                  '${Language.reviews.capitalizeByWord()} (${productDetailsModel.productReviews.length})',
-                  productDetailsModel.isSellerProduct == true
-                      ? Language.sellerInfo
-                      : '',
-                ],
-                initialLabelIndex: 0,
-                onChange: (int i) {
-                  setState(() {
-                    selectedIndex = i;
-                  });
-                },
+              child: Padding(
+                padding: const EdgeInsets.only(top: 48),
+                child: ToggleButtonComponent(
+                  textList: [
+                    Language.description,
+                    Language.reviews,
+                    'Seller Info',
+                  ],
+                  initialLabelIndex: 0,
+                  onChange: (int i) {
+                    setState(() {
+                      selectedIndex = i;
+                    });
+                  },
+                ),
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
-            SliverToBoxAdapter(child: getChild(productDetailsModel)),
+            const SliverToBoxAdapter(child: SizedBox(height: 40)),
+            SliverToBoxAdapter(child: _getChild(productDetailsModel)),
             SliverToBoxAdapter(
-              child: RelatedProductsList(productDetailsModel.relatedProducts),
+              child:
+                  RelatedProductsList(productDetailsModel.relatedProducts),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
-        _buildBottomButtons(productDetailsModel.product),
+        _buildAppBar(productDetailsModel, topPadding),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: _buildBottomButtons(productDetailsModel),
+        ),
       ],
     );
   }
 
-  Widget getChild(ProductDetailsModel productDetailsModel) {
-    debugPrint(
-        'product-details ${productDetailsModel.product.longDescription}');
+  Widget _buildAppBar(
+      ProductDetailsModel productDetailsModel, double topPadding) {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(24, topPadding + 12, 24, 12),
+        decoration: const BoxDecoration(color: Color(0xFF0A0A0A)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: const Icon(Icons.arrow_back_ios_new_rounded,
+                  size: 20, color: Colors.white),
+            ),
+            Text(
+              'COLLECTION',
+              style: GoogleFonts.notoSerif(
+                fontSize: 18,
+                fontWeight: FontWeight.w400,
+                color: const Color(0xFFA3A3A3),
+                letterSpacing: 3.6,
+                height: 1.56,
+              ),
+            ),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    final url =
+                        'https://oui.corescent.in/product/${productDetailsModel.product.slug}';
+                    SharePlus.instance.share(ShareParams(
+                        text:
+                            '${productDetailsModel.product.name}\n$url'));
+                  },
+                  child: const Icon(Icons.share_outlined,
+                      size: 20, color: Colors.white),
+                ),
+                const SizedBox(width: 16),
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(
+                      context, RouteNames.cartScreen),
+                  child: BlocBuilder<CartCubit, CartState>(
+                    builder: (context, state) {
+                      return CartBadge(
+                        count: context
+                            .read<CartCubit>()
+                            .cartCount
+                            .toString(),
+                        badgeColor: Colors.white,
+                        iconColor: Colors.white,
+                        countColor: Colors.black,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _getChild(ProductDetailsModel productDetailsModel) {
     if (selectedIndex == 0) {
-      return DescriptionComponent(productDetailsModel.product.longDescription);
+      return DescriptionComponent(
+          productDetailsModel.product.longDescription);
     } else if (selectedIndex == 1) {
       return ReviewListComponent(productDetailsModel.productReviews);
     } else if (selectedIndex == 2) {
@@ -165,116 +203,97 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     return const SizedBox();
   }
 
-  Widget _buildBottomButtons(ProductDetailsProductModel product) {
-    final cartProducts = context.read<CartCubit>();
+  Widget _buildBottomButtons(ProductDetailsModel productDetailsModel) {
+    final product = productDetailsModel.product;
     final showTryOn = isClothingCategory(product.category?.slug);
     final clothImageUrl = RemoteUrls.imageUrl(product.thumbImage);
     final clothType = clothTypeFromCategorySlug(product.category?.slug);
-
     final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Container(
-      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomPadding > 0 ? bottomPadding : 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, -4),
-          ),
-        ],
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24.0),
-          topRight: Radius.circular(24.0),
+      height: 80 + bottomPadding,
+      padding: EdgeInsets.only(bottom: bottomPadding),
+      decoration: const BoxDecoration(
+        color: Color(0xFF0A0A0A),
+        border: Border(
+          top: BorderSide(color: Color(0x33262626), width: 1),
         ),
       ),
       child: Row(
         children: [
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, RouteNames.cartScreen);
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(top: 14, right: 12, left: 4, bottom: 4),
-              child: BlocBuilder<CartCubit, CartState>(
-                builder: (context, state) {
-                  return CartBadge(
-                    count: cartProducts.cartCount.toString(),
-                    badgeColor: Colors.black,
-                    iconColor: Colors.black,
-                    countColor: Colors.white,
-                  );
-                },
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          if (showTryOn) ...[
-            Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    RouteNames.tryOnScreen,
-                    arguments: {
-                      'productName': product.name,
-                      'clothImageUrl': clothImageUrl,
-                      'clothType': clothType,
-                    },
-                  );
-                },
-                child: Container(
-                  height: 50.0,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, width: 1.5),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.checkroom, color: Colors.black, size: 22),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Try on',
-                        style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-          ],
-          Flexible(
+          Expanded(
             child: GestureDetector(
               onTap: () {
                 showModalBottomSheet(
-                    context: context,
-                    backgroundColor: Colors.white,
-                    isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        topLeft: Radius.circular(20),
-                      ),
-                    ),
-                    builder: (_) => BottomSheetWidget(product: product));
+                  context: context,
+                  backgroundColor: const Color(0xFF1B1B1B),
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(),
+                  builder: (_) => BottomSheetWidget(product: product),
+                );
               },
               child: Container(
-                width: double.infinity,
-                height: 50.0,
-                decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(12)),
-                child: Row(
+                height: double.infinity,
+                color: const Color(0xFF171717),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.add, color: Colors.white, size: 24.0),
-                    const SizedBox(width: 6),
+                    const Icon(Icons.shopping_bag_outlined,
+                        color: Colors.white, size: 20),
+                    const SizedBox(height: 4),
                     Text(
-                      Language.addToCart.capitalizeByWord(),
-                      style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
-                    )
+                      'ADD TO CART',
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: 1.5,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: showTryOn
+                  ? () {
+                      Navigator.pushNamed(
+                        context,
+                        RouteNames.tryOnScreen,
+                        arguments: {
+                          'productName': product.name,
+                          'clothImageUrl': clothImageUrl,
+                          'clothType': clothType,
+                        },
+                      );
+                    }
+                  : null,
+              child: Container(
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                      color: const Color(0xFF262626), width: 1),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.checkroom,
+                        color: Colors.black, size: 20),
+                    const SizedBox(height: 4),
+                    Text(
+                      'TRY ON (AR)',
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                        letterSpacing: 1.5,
+                        height: 1.5,
+                      ),
+                    ),
                   ],
                 ),
               ),

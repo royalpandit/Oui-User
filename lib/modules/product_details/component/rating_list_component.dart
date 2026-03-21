@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../utils/utils.dart';
 import '../model/details_product_reviews_model.dart';
@@ -16,26 +16,44 @@ class ReviewListComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         children: [
           _buildRatingHeader(),
-          const SizedBox(height: 30),
-          ...productReviews.take(3).map((e) => SingleReviewCardComponent(e)),
+          const SizedBox(height: 64),
+          ...productReviews
+              .take(3)
+              .map((e) => SingleReviewCardComponent(e)),
           if (productReviews.length > 3)
-            Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              child: InkWell(
-                onTap: () {
-                  // Navigator.pushNamed(context, RouteNames.reviewListScreen,
-                  //     arguments: productReviews);
-                },
-                child: const Text(
-                  "See all reviews",
-                  style: TextStyle(color: Colors.black),
+            Padding(
+              padding: const EdgeInsets.only(top: 32),
+              child: Center(
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 48, vertical: 16),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                            color: Color(0xFF777777), width: 1),
+                      ),
+                    ),
+                    child: Text(
+                      'LOAD MORE REVIEWS',
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFFE2E2E2),
+                        letterSpacing: 3,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            )
+            ),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -43,45 +61,79 @@ class ReviewListComponent extends StatelessWidget {
 
   Widget _buildRatingHeader() {
     return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(16.0),
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Color(0x33C6C6C6), width: 1),
+        ),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            Utils.getRating(productReviews).toStringAsFixed(1),
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(width: 14),
-          Column(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              RatingBar.builder(
-                initialRating: Utils.getRating(productReviews),
-                minRating: 1,
-                direction: Axis.horizontal,
-                allowHalfRating: true,
-                ignoreGestures: true,
-                itemCount: 5,
-                itemSize: 18,
-                itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
-                itemBuilder: (context, _) => const Icon(
-                  Icons.star_rounded,
-                  color: Colors.amber,
-                ),
-                onRatingUpdate: (rating) {},
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    Utils.getRating(productReviews).toStringAsFixed(1),
+                    style: GoogleFonts.notoSerif(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                      height: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: List.generate(
+                      5,
+                      (index) => Padding(
+                        padding: const EdgeInsets.only(right: 2),
+                        child: Icon(
+                          Icons.star_rounded,
+                          size: 16,
+                          color: index <
+                                  Utils.getRating(productReviews).round()
+                              ? Colors.amber
+                              : const Color(0xFF474747),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'BASED ON ${productReviews.length} VERIFIED ACQUISITIONS',
+                    style: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xFF919191),
+                      letterSpacing: 1,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 4),
-              Text(
-                '${productReviews.length} Review${productReviews.length != 1 ? 's' : ''}',
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
-              )
+              GestureDetector(
+                onTap: () {},
+                child: Text(
+                  'WRITE A REVIEW',
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    decoration: TextDecoration.underline,
+                    decorationColor: Colors.white,
+                    letterSpacing: 1,
+                    height: 1.5,
+                  ),
+                ),
+              ),
             ],
           ),
+          const SizedBox(height: 16),
         ],
       ),
     );

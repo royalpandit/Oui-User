@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../utils/utils.dart';
-
 class ToggleButtonComponent extends StatefulWidget {
   const ToggleButtonComponent({
     super.key,
@@ -30,67 +28,56 @@ class _ToggleButtonComponentState extends State<ToggleButtonComponent> {
     textList = widget.textList;
   }
 
-  List<Widget> getBtns() {
-    final childList = <Widget>[];
-
-    textList.asMap().forEach(
-      (key, value) {
-        childList.add(_buildSingleBtn(key, value));
-      },
-    );
-    return childList;
-  }
-
-  Widget _buildSingleBtn(int key, String value) {
-    if (value.isEmpty) return const SizedBox.shrink();
-    final isSelected = initialLabelIndex == key;
-    return Flexible(
-      flex: 2,
-      child: GestureDetector(
-        onTap: () => setState(() {
-          initialLabelIndex = key;
-          widget.onChange(initialLabelIndex);
-        }),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: isSelected ? Colors.black : Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              value,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(
-                fontSize: 13.0,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected ? Colors.white : const Color(0xFF6E6D79),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 44,
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Color(0xFF262626), width: 1),
+        ),
       ),
-      padding: const EdgeInsets.all(3),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: getBtns(),
+        children: textList.asMap().entries.map((entry) {
+          if (entry.value.isEmpty) return const SizedBox.shrink();
+          final isSelected = initialLabelIndex == entry.key;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() {
+                initialLabelIndex = entry.key;
+                widget.onChange(initialLabelIndex);
+              }),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color:
+                          isSelected ? Colors.white : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                child: Text(
+                  entry.value.toUpperCase(),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    fontWeight:
+                        isSelected ? FontWeight.w700 : FontWeight.w400,
+                    color: isSelected
+                        ? Colors.white
+                        : const Color(0xFF737373),
+                    letterSpacing: 2,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

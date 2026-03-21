@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shop_us/widgets/capitalized_word.dart';
 
 import '/modules/category/component/price_card_widget.dart';
 import '/widgets/favorite_button.dart';
@@ -31,80 +30,57 @@ class RelatedSingleProductCard extends StatelessWidget {
 
     return Container(
       width: width,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+      decoration: const BoxDecoration(
+        color: Color(0xFF1B1B1B),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. Image Section: Proportional and Contained
           AspectRatio(
-            aspectRatio: 1.0, // Ensures a perfect square container
+            aspectRatio: 1.0,
             child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFF9F9F9),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFEEEEEE), width: 1),
-              ),
               clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(
+                color: Color(0xFF171717),
+              ),
               child: Stack(
                 children: [
-                  // Product Image
                   GestureDetector(
                     onTap: () => Navigator.pushNamed(
                         context, RouteNames.productDetailsScreen,
                         arguments: productModel.slug),
                     child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(12.0), // Padding to keep image from edges
+                        padding: const EdgeInsets.all(12.0),
                         child: CustomImage(
                           path: RemoteUrls.imageUrl(productModel.thumbImage),
-                          fit: BoxFit.contain, // ✅ Image will never be cut
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
                   ),
-                  
-                  // Favorite Button
                   Positioned(
                     left: 8.0,
                     top: 8.0,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: FavoriteButton(productId: productModel.id),
-                    ),
-                  ),
-
-                  // Add to Cart Button
-                  Positioned(
-                    bottom: 8.0,
-                    right: 8.0,
-                    child: _buildAddToCartButton(context),
+                    child: FavoriteButton(productId: productModel.id),
                   ),
                 ],
               ),
             ),
           ),
-          
-          // 2. Content Section
-          _buildContent(appSetting),
+          _buildContent(context, appSetting),
         ],
       ),
     );
   }
 
-  Widget _buildContent(AppSettingCubit appSetting) {
+  Widget _buildContent(BuildContext context, AppSettingCubit appSetting) {
     double flashPrice = 0.0;
     double offerPrice = 0.0;
     double mainPrice = 0.0;
     final isFlashSale = appSetting.settingModel!.flashSaleProducts
         .contains(FlashSaleProductsModel(productId: productModel.id));
 
-    // Price logic 
     if (productModel.offerPrice.toString().isNotEmpty) {
       if (productModel.activeVariantModel.isNotEmpty) {
         double p = 0.0;
@@ -131,57 +107,67 @@ class RelatedSingleProductCard extends StatelessWidget {
     }
 
     if (isFlashSale) {
-      final discount = appSetting.settingModel!.flashSale.offer / 100 * (productModel.offerPrice.toString().isNotEmpty ? offerPrice : mainPrice);
-      flashPrice = (productModel.offerPrice.toString().isNotEmpty ? offerPrice : mainPrice) - discount;
+      final discount = appSetting.settingModel!.flashSale.offer /
+          100 *
+          (productModel.offerPrice.toString().isNotEmpty
+              ? offerPrice
+              : mainPrice);
+      flashPrice =
+          (productModel.offerPrice.toString().isNotEmpty
+                  ? offerPrice
+                  : mainPrice) -
+              discount;
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoSizeText(
-            productModel.name.capitalizeByWord(),
+            productModel.name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Colors.black,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFFE2E2E2),
+              letterSpacing: 0.6,
+              height: 1.33,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           PriceCardWidget(
             price: mainPrice.toString(),
-            offerPrice: isFlashSale ? flashPrice.toString() : offerPrice.toString(),
+            offerPrice: isFlashSale
+                ? flashPrice.toString()
+                : offerPrice.toString(),
             textSize: 14,
           ),
+          const SizedBox(height: 8),
+          GestureDetector(
+            onTap: () {
+              final addToCart = AddToCartModel(
+                quantity: 1,
+                productId: productModel.id,
+                image: productModel.thumbImage,
+                slug: productModel.slug,
+                token: "",
+                variantItems: variantItems,
+              );
+              context.read<AddToCartCubit>().addToCart(addToCart);
+            },
+            child: Text(
+              'ADD TO CART',
+              style: GoogleFonts.inter(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF919191),
+                letterSpacing: 1.5,
+              ),
+            ),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildAddToCartButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        final AddToCartModel addToCart = AddToCartModel(
-          quantity: 1,
-          productId: productModel.id,
-          image: productModel.thumbImage,
-          slug: productModel.slug,
-          token: "",
-          variantItems: variantItems,
-        );
-        context.read<AddToCartCubit>().addToCart(addToCart);
-      },
-      child: Container(
-        height: 32,
-        width: 32,
-        decoration: const BoxDecoration(
-          color: Colors.black,
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(Icons.add_rounded, color: Colors.white, size: 20),
       ),
     );
   }

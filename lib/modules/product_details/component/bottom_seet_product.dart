@@ -21,7 +21,6 @@ class BottomSheetProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double height = 120;
     final appSetting = context.read<AppSettingCubit>();
     double flashPrice = 0.0;
     double offerPrice = 0.0;
@@ -86,18 +85,12 @@ class BottomSheetProduct extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: CustomImage(
+            color: const Color(0xFF2A2A2A),
+            child: CustomImage(
                 path: RemoteUrls.imageUrl(product.thumbImage),
                 fit: BoxFit.cover,
                 height: 80.0,
                 width: 80.0,
-              ),
             ),
           ),
           const SizedBox(width: 14),
@@ -114,7 +107,7 @@ class BottomSheetProduct extends StatelessWidget {
                       height: 1.3,
                       fontSize: 16.0,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black),
+                      color: const Color(0xFFE2E2E2)),
                 ),
                 const SizedBox(height: 6),
                 if (isFlashSale) ...[

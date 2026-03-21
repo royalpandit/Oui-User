@@ -86,7 +86,6 @@ class WishListCubit extends Cubit<WishListState> {
     if (_loginBloc.userInfo == null) {
       return left(const ServerFailure("Please login first", 1000));
     }
-    emit(const WishListStateLoading());
     final result = await _profileRepository.addWishList(
         id, _loginBloc.userInfo!.accessToken);
 

@@ -41,6 +41,8 @@ class _MainPageState extends State<MainPage> {
     context.read<CountryStateByIdCubit>().countryListLoaded();
     context.read<UserProfileInfoCubit>().getUserProfileInfo();
     context.read<FlashCubit>().getFalshSale();
+    context.read<CartCubit>().getCartProducts();
+    context.read<WishListCubit>().getWishList();
   }
 
   exitPopUP() {
@@ -107,8 +109,6 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    context.read<CartCubit>().getCartProducts();
-    context.read<WishListCubit>().getWishList();
     return WillPopScope(
       onWillPop: () async {
         exitPopUP();

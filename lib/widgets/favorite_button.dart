@@ -20,84 +20,73 @@ class FavoriteButton extends StatefulWidget {
 }
 
 class _FavoriteButtonState extends State<FavoriteButton> {
-  final double height = 30;
-
-  late Set<WishListModel> wishItem;
+  Set<WishListModel> wishItem = {};
+  bool isFav = false;
 
   @override
   void initState() {
     super.initState();
-    wishItem = <WishListModel>{};
-    loadWishItems();
+    _syncFavState();
   }
 
-  bool isFav = false;
-
-  loadWishItems() {
-    final wishListItems = context.read<WishListCubit>().wishList;
-    final i = wishListItems
-        .where((element) => element.id == widget.productId)
-        .toSet();
-    debugPrint("Wishlist item: $i");
-    if (i.isNotEmpty) {
-      setState(() {
-        isFav = true;
-        wishItem = i;
-        debugPrint('Ittttt $i');
-      });
-    }
+  void _syncFavState() {
+    final list = context.read<WishListCubit>().wishList;
+    final match = list.where((e) => e.id == widget.productId).toSet();
+    isFav = match.isNotEmpty;
+    wishItem = match;
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<WishListCubit, WishListState>(
-        listener: (context, state) {
-      if (state is WishListStateLoading) {
-        // loading
-      } else {
+      listener: (context, state) {
         if (state is WishListStateError) {
           Utils.errorSnackBar(context, state.message);
         } else if (state is WishListStateSuccess) {
           Utils.showSnackBar(context, state.message);
         } else if (state is WishListStateLoaded) {
-          wishItem = state.productList
-              .where((element) => element.id == widget.productId)
+          final match = state.productList
+              .where((e) => e.id == widget.productId)
               .toSet();
+          setState(() {
+            wishItem = match;
+            isFav = match.isNotEmpty;
+          });
         }
-      }
-    }, child: StatefulBuilder(
-      builder: (context, StateSetter setState) {
-        return GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () async {
-            if (isFav) {
-              if (wishItem.isNotEmpty) {
-                await context.read<WishListCubit>().removeWishList(wishItem.first);
-              } else {
-                Utils.showSnackBar(context, Language.somethingWentWrong);
-              }
-            } else {
-              await context.read<WishListCubit>().addWishList(widget.productId);
-            }
-            setState(() => isFav = !isFav);
-          },
-          child: Container(
-            height: 36,
-            width: 36,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: const Color(0xFF1B1B1B).withValues(alpha: 0.7),
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFF474747), width: 0.5),
-            ),
-            child: Icon(
-              isFav ? Icons.favorite : Icons.favorite_border,
-              color: isFav ? Colors.redAccent : const Color(0xFFE2E2E2),
-              size: 18,
-            ),
-          ),
-        );
       },
-    ));
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () async {
+          if (isFav) {
+            if (wishItem.isNotEmpty) {
+              await context
+                  .read<WishListCubit>()
+                  .removeWishList(wishItem.first);
+            } else {
+              Utils.showSnackBar(context, Language.somethingWentWrong);
+            }
+          } else {
+            await context
+                .read<WishListCubit>()
+                .addWishList(widget.productId);
+          }
+        },
+        child: Container(
+          height: 36,
+          width: 36,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color(0xFF1B1B1B).withValues(alpha: 0.7),
+            shape: BoxShape.circle,
+            border: Border.all(color: const Color(0xFF474747), width: 0.5),
+          ),
+          child: Icon(
+            isFav ? Icons.favorite : Icons.favorite_border,
+            color: isFav ? Colors.redAccent : const Color(0xFFE2E2E2),
+            size: 18,
+          ),
+        ),
+      ),
+    );
   }
 }
