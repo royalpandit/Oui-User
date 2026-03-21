@@ -56,47 +56,57 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Widget _buildBodyComponent() {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/icons/splashs.png'),
-          fit: BoxFit.cover,
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Background image with reduced opacity
+        Opacity(
+          opacity: 0.45,
+          child: Image.asset(
+            'assets/icons/splashs.jpg',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
         ),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'OUI',
-              style: GoogleFonts.notoSerif(
-                fontSize: 48.0,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 8.0,
-                color: Colors.white,
+        // Dark overlay
+        Container(
+          color: Colors.black.withValues(alpha: 0.35),
+        ),
+        // Content
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'OUI',
+                style: GoogleFonts.notoSerif(
+                  fontSize: 72.0,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 12.0,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              width: 40,
-              height: 1,
-              color: Colors.grey,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'THE PREMIUM STORE',
-              style: GoogleFonts.inter(
-                fontSize: 12.0,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 3.0,
+              const SizedBox(height: 20),
+              Container(
+                width: 48,
+                height: 1,
                 color: Colors.grey,
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Text(
+                'THE PREMIUM STORE',
+                style: GoogleFonts.inter(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 3.0,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
