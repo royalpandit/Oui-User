@@ -181,7 +181,11 @@ class _LoadedHomePage extends StatelessWidget {
             onTap: () => Navigator.pushNamed(
               context,
               RouteNames.allPopulerProductScreen,
-              arguments: {'keyword': 'popular_category', 'app_bar': st(3)},
+              arguments: {
+                'keyword': 'top_product',
+                'app_bar': st(2),
+                'products': h.topRatedProducts,
+              },
             ),
           ),
 
@@ -198,14 +202,14 @@ class _LoadedHomePage extends StatelessWidget {
           ),
 
         // Best products
-        if (_isVisible(h.newArrivalProductVisibility))
+        if (_isVisible(h.bestProductVisibility))
           HorizontalProductComponent(
             productList: h.bestProducts,
             category: st(4),
             onTap: () => Navigator.pushNamed(
               context,
               RouteNames.allPopulerProductScreen,
-              arguments: {'keyword': 'best_product', 'app_bar': st(6)},
+              arguments: {'keyword': 'best_product', 'app_bar': st(4)},
             ),
           ),
 
@@ -223,6 +227,15 @@ class _LoadedHomePage extends StatelessWidget {
               child: AutoScrollProductStrip(
                 products: h.trendingProducts,
                 title: h.trendingSectionTitle,
+                onViewAll: () => Navigator.pushNamed(
+                  context,
+                  RouteNames.allPopulerProductScreen,
+                  arguments: {
+                    'keyword': 'top_product',
+                    'app_bar': h.trendingSectionTitle,
+                    'products': h.trendingProducts,
+                  },
+                ),
               ),
             ),
           ),
@@ -240,10 +253,19 @@ class _LoadedHomePage extends StatelessWidget {
           ),
 
         // New arrivals grid
-        if (_isVisible(h.bestProductVisibility))
+        if (_isVisible(h.newArrivalProductVisibility))
           NewArrivalComponent(
-            productList: h.newArrivalProducts,
+            productList: _dedup(h.newArrivalProducts),
             sectionTitle: st(5),
+            onViewAll: () => Navigator.pushNamed(
+              context,
+              RouteNames.allPopulerProductScreen,
+              arguments: {
+                'keyword': 'new_arrival',
+                'app_bar': st(5),
+                'products': _dedup(h.newArrivalProducts),
+              },
+            ),
           ),
 
         // Quote section 3
@@ -260,7 +282,10 @@ class _LoadedHomePage extends StatelessWidget {
             onTap: () => Navigator.pushNamed(
               context,
               RouteNames.allPopulerProductScreen,
-              arguments: {'keyword': 'popular_category', 'app_bar': 'Just For You'},
+              arguments: {
+                'app_bar': 'Just For You',
+                'products': _buildJustForYou(h),
+              },
             ),
           ),
 
@@ -278,7 +303,10 @@ class _LoadedHomePage extends StatelessWidget {
             onTap: () => Navigator.pushNamed(
               context,
               RouteNames.allPopulerProductScreen,
-              arguments: {'keyword': 'best_product', 'app_bar': 'Editor\'s Picks'},
+              arguments: {
+                'app_bar': 'Editor\'s Picks',
+                'products': _buildEditorsPicks(h),
+              },
             ),
           ),
 
@@ -291,6 +319,12 @@ class _LoadedHomePage extends StatelessWidget {
         const SliverToBoxAdapter(child: SizedBox(height: 80)),
       ],
     );
+  }
+
+  /// Remove duplicate products by id, keeping first occurrence.
+  static List<ProductModel> _dedup(List<ProductModel> list) {
+    final seen = <int>{};
+    return [for (final p in list) if (seen.add(p.id)) p];
   }
 
   /// Shuffled mix of featured + top-rated products

@@ -10,10 +10,12 @@ class NewArrivalComponent extends StatelessWidget {
     super.key,
     required this.productList,
     required this.sectionTitle,
+    this.onViewAll,
   });
 
   final List<ProductModel> productList;
   final String sectionTitle;
+  final VoidCallback? onViewAll;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class NewArrivalComponent extends StatelessWidget {
               padding: const EdgeInsets.only(top: 24, bottom: 16),
               child: SectionHeader(
                 headerText: formattedTitle,
+                onTap: onViewAll,
               ),
             ),
           ),
@@ -45,7 +48,7 @@ class NewArrivalComponent extends StatelessWidget {
               (BuildContext context, int index) {
                 return ProductCard(productModel: productList[index]);
               },
-              childCount: productList.length > 8 ? 8 : productList.length,
+              childCount: productList.length > 6 ? 6 : productList.length,
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 32)),

@@ -1,9 +1,14 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 /// Instagram/Snapchat-style gallery picker with device photos.
+/// On Android < 14, falls back to system image picker.
 /// Full-width vertical layout. Returns selected photo path.
 class TryOnGalleryScreen extends StatefulWidget {
   const TryOnGalleryScreen({super.key});
@@ -27,11 +32,36 @@ class _TryOnGalleryScreenState extends State<TryOnGalleryScreen> {
     _loadPhotos();
   }
 
+  /// Opens the system image picker via image_picker package.
+  /// Used as fallback for Android < 14.
+  Future<void> _openSystemGallery() async {
+    try {
+      final picker = ImagePicker();
+      final image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null && mounted) {
+        Navigator.pop(context, image.path);
+      } else if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) Navigator.pop(context);
+    }
+  }
+
   Future<void> _loadPhotos() async {
     setState(() {
       _isLoading = true;
       _error = null;
     });
+
+    // Android < 14 (SDK < 34): use system gallery picker directly
+    if (Platform.isAndroid) {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.version.sdkInt < 34) {
+        await _openSystemGallery();
+        return;
+      }
+    }
 
     final permission = await PhotoManager.requestPermissionExtend();
     // Accept both full and limited (Android 14+) access

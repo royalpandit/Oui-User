@@ -16,10 +16,12 @@ class AutoScrollProductStrip extends StatefulWidget {
     super.key,
     required this.products,
     this.title = '',
+    this.onViewAll,
   });
 
   final List<ProductModel> products;
   final String title;
+  final VoidCallback? onViewAll;
 
   @override
   State<AutoScrollProductStrip> createState() =>
@@ -77,14 +79,34 @@ class _AutoScrollProductStripState extends State<AutoScrollProductStrip>
         if (widget.title.isNotEmpty)
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 14),
-            child: Text(
-              widget.title,
-              style: GoogleFonts.notoSerif(
-                fontSize: 28,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.title,
+                    style: GoogleFonts.notoSerif(
+                      fontSize: 28,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                if (widget.onViewAll != null)
+                  GestureDetector(
+                    onTap: widget.onViewAll,
+                    child: Text(
+                      'View All',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF919191),
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         SizedBox(

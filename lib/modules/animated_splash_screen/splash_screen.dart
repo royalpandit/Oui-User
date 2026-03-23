@@ -1,8 +1,11 @@
 import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '/core/router_name.dart';
 import '../authentication/controller/login/login_bloc.dart';
@@ -17,6 +20,18 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  /// Pre-request camera and gallery permissions so try-on screens
+  /// don't need to show permission dialogs mid-experience.
+  Future<void> _requestPermissions() async {
+    final perms = <Permission>[Permission.camera];
+    if (Platform.isAndroid) {
+      perms.add(Permission.photos);
+    } else if (Platform.isIOS) {
+      perms.add(Permission.photos);
+    }
+    await perms.request();
+  }
+
   @override
   Widget build(BuildContext context) {
     final appSettingCubit = context.read<AppSettingCubit>();
@@ -32,9 +47,13 @@ class _SplashScreenState extends State<SplashScreen> {
             }
             return _buildBodyComponent();
           },
-          listener: (context, state) {
+          listener: (context, state) async {
             log("listener $state", name: 'Splash Screen');
             if (state is AppSettingStateLoaded) {
+              // Request permissions before navigating away
+              await _requestPermissions();
+              if (!mounted) return;
+
               if (state.settingModel.maintainTextModel!.status == 0) {
                 if (loginBloc.isLogedIn) {
                   Navigator.pushReplacementNamed(context, RouteNames.mainPage);

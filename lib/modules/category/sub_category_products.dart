@@ -1,27 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../widgets/shimmer_loader.dart';
-import '../../widgets/rounded_app_bar.dart';
+import '../../modules/home/model/product_model.dart';
 import 'component/product_card.dart';
 import 'controller/cubit/cubit/sub_category_cubit.dart';
 
-class SubCategoryProductScreen extends StatelessWidget {
-  const SubCategoryProductScreen({
-    super.key,
-    required this.slug,
-  });
+class SubCategoryProductScreen extends StatefulWidget {
+  const SubCategoryProductScreen({super.key, required this.slug});
   final String? slug;
 
   @override
+  State<SubCategoryProductScreen> createState() =>
+      _SubCategoryProductScreenState();
+}
+
+class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<SubCategoryCubit>().getSubCategoryProduct(widget.slug!);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<ProductModel> _filter(List<ProductModel> products) {
+    if (_searchQuery.isEmpty) return products;
+    final q = _searchQuery.toLowerCase();
+    return products.where((p) => p.name.toLowerCase().contains(q)).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    context.read<SubCategoryCubit>().getSubCategoryProduct(slug!);
     return Scaffold(
-      appBar: RoundedAppBar(
-        titleText: "Sub-Category",
-        onTap: () {
-          Navigator.pop(context);
-        },
+      backgroundColor: const Color(0xFF131313),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF131313),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              size: 18, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: Text(
+          'Sub-Category',
+          style: GoogleFonts.manrope(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFFE5E2E1)),
+        ),
       ),
       body: BlocBuilder<SubCategoryCubit, SubCategoryState>(
         builder: (context, state) {
@@ -33,33 +72,93 @@ class SubCategoryProductScreen extends StatelessWidget {
                     child: ShimmerLoader.rect(height: 12, width: 120)));
           } else if (state is SubCategoryProductsLoadedState) {
             if (state.subCategoryProducts.isEmpty) {
-              return const Center(child: Text("No Items"));
+              return Center(
+                  child: Text('No Items',
+                      style: GoogleFonts.manrope(
+                          fontSize: 14, color: const Color(0xFF919191))));
             }
             final products =
                 context.read<SubCategoryCubit>().subCategoryProductsList;
-            return GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                mainAxisExtent: 290,
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 25),
-              itemCount: products.length,
-              itemBuilder: (context, index) =>
-                  ProductCard(productModel: products[index]),
+            final filtered = _filter(products);
+            return Column(
+              children: [
+                _buildSearchBar(),
+                Expanded(
+                  child: filtered.isEmpty
+                      ? Center(
+                          child: Text('No matching products',
+                              style: GoogleFonts.manrope(
+                                  fontSize: 14,
+                                  color: const Color(0xFF919191))))
+                      : GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            mainAxisExtent: 304,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 8),
+                          itemCount: filtered.length,
+                          itemBuilder: (context, index) =>
+                              ProductCard(productModel: filtered[index]),
+                        ),
+                ),
+              ],
             );
           } else if (state is SubCategoryErrorState) {
             return Center(
-              child: Text(state.errorMessage),
-            );
+                child: Text(state.errorMessage,
+                    style: GoogleFonts.manrope(
+                        color: const Color(0xFF919191))));
           }
-          return const Center(
-            child: SizedBox(
-              child: Text("Something is wrong"),
-            ),
-          );
+          return const SizedBox();
         },
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (v) => setState(() => _searchQuery = v),
+        style:
+            GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFE5E2E1)),
+        decoration: InputDecoration(
+          hintText: 'Search products...',
+          hintStyle:
+              GoogleFonts.manrope(fontSize: 14, color: const Color(0xFF919191)),
+          prefixIcon: const Icon(Icons.search_rounded,
+              color: Color(0xFF919191), size: 20),
+          suffixIcon: _searchQuery.isNotEmpty
+              ? GestureDetector(
+                  onTap: () => setState(() {
+                    _searchController.clear();
+                    _searchQuery = '';
+                  }),
+                  child: const Icon(Icons.close_rounded,
+                      color: Color(0xFF919191), size: 18),
+                )
+              : null,
+          filled: true,
+          fillColor: const Color(0xFF1B1B1B),
+          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF5E5E5E)),
+          ),
+        ),
       ),
     );
   }
