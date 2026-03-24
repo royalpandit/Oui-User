@@ -11,6 +11,8 @@ class CartProductModel extends Equatable {
   final int productId;
   final int qty;
   final ProductModel product;
+  final List<String> selectedSizes;
+  final List<String> selectedColors;
 
   final List<VariantModel> variants;
 
@@ -19,6 +21,8 @@ class CartProductModel extends Equatable {
     required this.productId,
     required this.qty,
     required this.product,
+    this.selectedSizes = const [],
+    this.selectedColors = const [],
     required this.variants,
   });
 
@@ -27,6 +31,8 @@ class CartProductModel extends Equatable {
     int? productId,
     int? qty,
     ProductModel? product,
+    List<String>? selectedSizes,
+    List<String>? selectedColors,
     List<VariantModel>? variants,
   }) {
     return CartProductModel(
@@ -34,8 +40,24 @@ class CartProductModel extends Equatable {
       productId: productId ?? this.productId,
       qty: qty ?? this.qty,
       product: product ?? this.product,
+      selectedSizes: selectedSizes ?? this.selectedSizes,
+      selectedColors: selectedColors ?? this.selectedColors,
       variants: variants ?? this.variants,
     );
+  }
+
+  static List<String> _parseStringList(dynamic value) {
+    if (value == null) return [];
+    if (value is List) return value.map((e) => e.toString()).toList();
+    if (value is String && value.isNotEmpty) {
+      try {
+        final decoded = json.decode(value);
+        if (decoded is List) return decoded.map((e) => e.toString()).toList();
+      } catch (_) {
+        return [value];
+      }
+    }
+    return [];
   }
 
   Map<String, dynamic> toMap() {
@@ -44,6 +66,8 @@ class CartProductModel extends Equatable {
       'product_id': productId,
       'qty': qty,
       'product': product.toMap(),
+      'size': selectedSizes,
+      'color': selectedColors,
       'variants': variants.map((x) => x.toMap()).toList(),
     };
   }
@@ -56,6 +80,8 @@ class CartProductModel extends Equatable {
           : 0,
       qty: map['qty'] != null ? int.parse(map['qty'].toString()) : 0,
       product: ProductModel.fromMap(map['product'] as Map<String, dynamic>),
+      selectedSizes: _parseStringList(map['size']),
+      selectedColors: _parseStringList(map['color']),
       variants: List<VariantModel>.from(
         (map['variants'] as List<dynamic>).map<VariantModel>(
           (x) => VariantModel.fromMap(x as Map<String, dynamic>),
@@ -79,6 +105,8 @@ class CartProductModel extends Equatable {
       productId,
       qty,
       product,
+      selectedSizes,
+      selectedColors,
       variants,
     ];
   }

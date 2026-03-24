@@ -32,85 +32,94 @@ class SingleCircularSeller extends StatelessWidget {
         margin: const EdgeInsets.only(right: 12),
         decoration: BoxDecoration(
           color: const Color(0xFF1B1B1B),
-          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: const Color(0xFF2A2A2A), width: 0.5),
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Banner area
+            // Banner + overlapping logo via Stack
             SizedBox(
-              height: 70,
-              width: double.infinity,
-              child: seller.bannerImage.isNotEmpty
-                  ? CustomImage(
-                      path: RemoteUrls.imageUrl(seller.bannerImage),
-                      fit: BoxFit.cover,
-                    )
-                  : Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Color(0xFF2A2A2A),
-                            Color(0xFF1B1B1B),
-                          ],
+              height: 90,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  // Banner
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 70,
+                    child: seller.bannerImage.isNotEmpty
+                        ? CustomImage(
+                            path: RemoteUrls.imageUrl(seller.bannerImage),
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color(0xFF2A2A2A),
+                                  Color(0xFF1B1B1B),
+                                ],
+                              ),
+                            ),
+                          ),
+                  ),
+                  // Logo overlapping banner bottom
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2A2A2A),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: const Color(0xFF1B1B1B), width: 2),
+                        ),
+                        child: ClipOval(
+                          child: CustomImage(
+                            height: 26,
+                            width: 26,
+                            path: RemoteUrls.imageUrl(seller.logo),
+                          ),
                         ),
                       ),
                     ),
-            ),
-            // Logo overlapping banner bottom
-            Transform.translate(
-              offset: const Offset(0, -22),
-              child: Container(
-                height: 44,
-                width: 44,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2A2A2A),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFF1B1B1B), width: 2),
-                ),
-                child: ClipOval(
-                  child: CustomImage(
-                    height: 28,
-                    width: 28,
-                    path: RemoteUrls.imageUrl(seller.logo),
                   ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 4),
+            // Name
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Text(
+                seller.shopName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.manrope(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFFE2E2E2),
                 ),
               ),
             ),
-            // Name + visit label
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 12),
-              child: Transform.translate(
-                offset: const Offset(0, -12),
-                child: Column(
-                  children: [
-                    Text(
-                      seller.shopName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.manrope(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFFE2E2E2),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'VISIT STORE',
-                      style: GoogleFonts.inter(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF919191),
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                  ],
-                ),
+            const SizedBox(height: 2),
+            Text(
+              'VISIT STORE',
+              style: GoogleFonts.inter(
+                fontSize: 9,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF919191),
+                letterSpacing: 1.2,
               ),
             ),
           ],

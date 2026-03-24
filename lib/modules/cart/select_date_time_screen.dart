@@ -430,6 +430,50 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
                       letterSpacing: 1, height: 1.5,
                     ),
                   ),
+                // Selected sizes and colors
+                if (item.selectedSizes.isNotEmpty ||
+                    item.selectedColors.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        ...item.selectedSizes.map((s) => Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: const Color(0xFF444444), width: 1),
+                              ),
+                              child: Text(
+                                'SIZE: ${s.toUpperCase()}',
+                                style: GoogleFonts.inter(
+                                  fontSize: 9, fontWeight: FontWeight.w400,
+                                  color: const Color(0xFF777777),
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            )),
+                        ...item.selectedColors.map((c) => Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: const Color(0xFF444444), width: 1),
+                              ),
+                              child: Text(
+                                'COLOR: ${c.toUpperCase()}',
+                                style: GoogleFonts.inter(
+                                  fontSize: 9, fontWeight: FontWeight.w400,
+                                  color: const Color(0xFF777777),
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
                 const SizedBox(height: 16),
                 Text(
                   Utils.formatPrice(

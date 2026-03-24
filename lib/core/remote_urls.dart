@@ -207,7 +207,12 @@ class RemoteUrls {
   static String payWithStripe(String token) =>
       '${baseUrl}user/checkout/pay-with-stripe?token=$token';
 
-  static imageUrl(String imageUrl) => rootUrl + imageUrl;
+  static String imageUrl(String path) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    return rootUrl + path;
+  }
    static const String secretKey = "";
    static const String publishableKey = "";
    }

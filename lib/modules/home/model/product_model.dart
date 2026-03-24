@@ -32,6 +32,8 @@ class ProductModel extends Equatable {
   final List<GalleryModel> gallery;
   final CategoriesModel? category;
   final List<ActiveVariantModel> productVariants;
+  final List<String> sizes;
+  final List<String> colors;
 
   const ProductModel({
     required this.id,
@@ -59,6 +61,8 @@ class ProductModel extends Equatable {
     required this.category,
     required this.productVariants,
     required this.rating,
+    this.sizes = const [],
+    this.colors = const [],
   });
 
   ProductModel copyWith({
@@ -87,6 +91,8 @@ class ProductModel extends Equatable {
     List<GalleryModel>? gallery,
     CategoriesModel? category,
     List<ActiveVariantModel>? productVariants,
+    List<String>? sizes,
+    List<String>? colors,
   }) {
     return ProductModel(
       id: id ?? this.id,
@@ -114,6 +120,8 @@ class ProductModel extends Equatable {
       category: category ?? this.category,
       productVariants: productVariants ?? this.productVariants,
       rating: rating ?? this.rating,
+      sizes: sizes ?? this.sizes,
+      colors: colors ?? this.colors,
     );
   }
 
@@ -202,7 +210,21 @@ class ProductModel extends Equatable {
               ),
             )
           : [],
+      sizes: _parseStringList(map['sizes']),
+      colors: _parseStringList(map['colors']),
     );
+  }
+
+  static List<String> _parseStringList(dynamic value) {
+    if (value == null) return [];
+    if (value is List) return List<String>.from(value);
+    if (value is String && value.isNotEmpty) {
+      try {
+        final decoded = json.decode(value);
+        if (decoded is List) return List<String>.from(decoded);
+      } catch (_) {}
+    }
+    return [];
   }
 
   String toJson() => json.encode(toMap());
@@ -241,6 +263,8 @@ class ProductModel extends Equatable {
       status,
       gallery,
       productVariants,
+      sizes,
+      colors,
     ];
   }
 }

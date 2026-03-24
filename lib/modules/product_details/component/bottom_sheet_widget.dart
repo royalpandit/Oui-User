@@ -16,9 +16,16 @@ import '../model/variant_items_model.dart';
 import 'bottom_seet_product.dart';
 
 class BottomSheetWidget extends StatefulWidget {
-  const BottomSheetWidget({super.key, required this.product});
+  const BottomSheetWidget({
+    super.key,
+    required this.product,
+    this.initialSize,
+    this.initialColor,
+  });
 
   final ProductDetailsProductModel product;
+  final String? initialSize;
+  final String? initialColor;
 
   @override
   State<BottomSheetWidget> createState() => _BottomSheetWidgetState();
@@ -28,11 +35,15 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   Set<ActiveVariantModel> variantItems = {};
 
   int quantity = 1;
+  String? _selectedSize;
+  String? _selectedColor;
 
   @override
   void initState() {
     super.initState();
     _variantsInit();
+    _selectedSize = widget.initialSize;
+    _selectedColor = widget.initialColor;
   }
 
   void _variantsInit() {
@@ -76,6 +87,119 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
               });
             },
           ),
+          // Size selection
+          if (widget.product.sizes.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 60,
+                  child: Text(
+                    'Size :',
+                    style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        color: const Color(0xFFE2E2E2)),
+                  ),
+                ),
+                Expanded(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: widget.product.sizes.map((size) {
+                      final isSelected = _selectedSize == size;
+                      return GestureDetector(
+                        onTap: () => setState(() => _selectedSize = size),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? Colors.white
+                                : Colors.transparent,
+                            border: isSelected
+                                ? null
+                                : Border.all(
+                                    color: const Color(0xFF474747),
+                                    width: 1),
+                          ),
+                          child: Text(
+                            size.toUpperCase(),
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: isSelected
+                                  ? Colors.black
+                                  : const Color(0xFFE2E2E2),
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          // Color selection
+          if (widget.product.colors.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 60,
+                  child: Text(
+                    'Color :',
+                    style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        color: const Color(0xFFE2E2E2)),
+                  ),
+                ),
+                Expanded(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: widget.product.colors.map((color) {
+                      final isSelected = _selectedColor == color;
+                      return GestureDetector(
+                        onTap: () =>
+                            setState(() => _selectedColor = color),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? Colors.white
+                                : Colors.transparent,
+                            border: isSelected
+                                ? null
+                                : Border.all(
+                                    color: const Color(0xFF474747),
+                                    width: 1),
+                          ),
+                          child: Text(
+                            color.toUpperCase(),
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: isSelected
+                                  ? Colors.black
+                                  : const Color(0xFFE2E2E2),
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ],
           const SizedBox(height: 12),
           Row(
             children: [
@@ -153,6 +277,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                 slug: widget.product.slug,
                 quantity: quantity,
                 token: '',
+                color: _selectedColor ?? '',
+                size: _selectedSize ?? '',
                 variantItems: variantItems,
               );
               context.read<AddToCartCubit>().addToCart(dataModel);

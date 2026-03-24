@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,15 +19,15 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  /// Pre-request camera and gallery permissions so try-on screens
+  /// Pre-request camera and microphone permissions so try-on screens
   /// don't need to show permission dialogs mid-experience.
+  /// Note: Photo/gallery permissions are requested only when actually needed
+  /// (in try-on gallery screen) to avoid triggering the photo picker UI.
   Future<void> _requestPermissions() async {
-    final perms = <Permission>[Permission.camera];
-    if (Platform.isAndroid) {
-      perms.add(Permission.photos);
-    } else if (Platform.isIOS) {
-      perms.add(Permission.photos);
-    }
+    final perms = <Permission>[
+      Permission.camera,
+      Permission.microphone,
+    ];
     await perms.request();
   }
 

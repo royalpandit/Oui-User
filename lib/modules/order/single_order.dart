@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/remote_urls.dart';
 import '../../core/router_name.dart';
 import '../../utils/utils.dart';
+import '../../widgets/custom_image.dart';
 import '../../widgets/please_sign_in_widget.dart';
 import 'controllers/order/order_cubit.dart';
 import 'model/order_model.dart';
@@ -337,15 +339,20 @@ class _OrderDetailsBody extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Product image placeholder
+        // Product image
         Container(
           width: 128,
           height: 176,
           clipBehavior: Clip.antiAlias,
           decoration: const BoxDecoration(color: Color(0xFF1A1A1A)),
           alignment: Alignment.center,
-          child: Icon(Icons.shopping_bag_outlined,
-              size: 32, color: Colors.white.withValues(alpha: 0.15)),
+          child: product.thumbImage.isNotEmpty
+              ? CustomImage(
+                  path: RemoteUrls.imageUrl(product.thumbImage),
+                  fit: BoxFit.cover,
+                )
+              : Icon(Icons.shopping_bag_outlined,
+                  size: 32, color: Colors.white.withValues(alpha: 0.15)),
         ),
         const SizedBox(width: 32),
         // Product info
@@ -366,7 +373,56 @@ class _OrderDetailsBody extends StatelessWidget {
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 4),
+                if (product.color.isNotEmpty ||
+                    product.size.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      if (product.size.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 6),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: const Color(0xFF444444),
+                                width: 1),
+                          ),
+                          child: Text(
+                            'SIZE: ${product.size.toUpperCase()}',
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                              color: const Color(0xFFE2E2E2),
+                              letterSpacing: 1.2,
+                              height: 1.33,
+                            ),
+                          ),
+                        ),
+                      if (product.color.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 6),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: const Color(0xFF444444),
+                                width: 1),
+                          ),
+                          child: Text(
+                            'COLOR: ${product.color.toUpperCase()}',
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                              color: const Color(0xFFE2E2E2),
+                              letterSpacing: 1.2,
+                              height: 1.33,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
                 Text(
                   'Qty: ${product.qty}',
                   style: GoogleFonts.inter(

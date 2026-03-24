@@ -34,6 +34,8 @@ class ProductDetailsProductModel extends Equatable {
   final CategoriesModel? category;
   final BrandModel? brand;
   final List<AvgReviewModel> avgReview;
+  final List<String> sizes;
+  final List<String> colors;
 
   const ProductDetailsProductModel({
     required this.id,
@@ -62,6 +64,8 @@ class ProductDetailsProductModel extends Equatable {
     required this.category,
     required this.brand,
     required this.avgReview,
+    this.sizes = const [],
+    this.colors = const [],
   });
 
   ProductDetailsProductModel copyWith({
@@ -91,6 +95,8 @@ class ProductDetailsProductModel extends Equatable {
     CategoriesModel? category,
     BrandModel? brand,
     List<AvgReviewModel>? avgReview,
+    List<String>? sizes,
+    List<String>? colors,
   }) {
     return ProductDetailsProductModel(
       id: id ?? this.id,
@@ -119,6 +125,8 @@ class ProductDetailsProductModel extends Equatable {
       category: category ?? this.category,
       brand: brand ?? this.brand,
       avgReview: avgReview ?? this.avgReview,
+      sizes: sizes ?? this.sizes,
+      colors: colors ?? this.colors,
     );
   }
 
@@ -191,11 +199,14 @@ class ProductDetailsProductModel extends Equatable {
       averageRating: map['averageRating'] != null
           ? double.parse(map['averageRating'].toString())
           : 0,
-      activeVariantModel: List<ActiveVariantModel>.from(
-        (map['active_variants'] as List<dynamic>).map<ActiveVariantModel>(
-          (x) => ActiveVariantModel.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      activeVariantModel: map['active_variants'] != null
+          ? List<ActiveVariantModel>.from(
+              (map['active_variants'] as List<dynamic>)
+                  .map<ActiveVariantModel>(
+                (x) => ActiveVariantModel.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : [],
       category: map['category'] != null && map['category'] is Map
           ? CategoriesModel.fromMap(map['category'] as Map<String, dynamic>)
           : null,
@@ -209,7 +220,21 @@ class ProductDetailsProductModel extends Equatable {
               ),
             )
           : [],
+      sizes: _parseStringList(map['sizes']),
+      colors: _parseStringList(map['colors']),
     );
+  }
+
+  static List<String> _parseStringList(dynamic value) {
+    if (value == null) return [];
+    if (value is List) return List<String>.from(value);
+    if (value is String && value.isNotEmpty) {
+      try {
+        final decoded = json.decode(value);
+        if (decoded is List) return List<String>.from(decoded);
+      } catch (_) {}
+    }
+    return [];
   }
 
   String toJson() => json.encode(toMap());
@@ -250,6 +275,8 @@ class ProductDetailsProductModel extends Equatable {
       category!,
       brand!,
       avgReview,
+      sizes,
+      colors,
     ];
   }
 }

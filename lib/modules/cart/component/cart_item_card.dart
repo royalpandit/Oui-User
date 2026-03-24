@@ -126,6 +126,57 @@ class CartItemCard extends StatelessWidget {
                       ),
                 ],
 
+                // Selected sizes and colors
+                if (product.selectedSizes.isNotEmpty ||
+                    product.selectedColors.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, bottom: 4),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        if (product.selectedSizes.isNotEmpty)
+                          ...product.selectedSizes.map((s) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: const Color(0xFF444444),
+                                      width: 1),
+                                ),
+                                child: Text(
+                                  'SIZE: ${s.toUpperCase()}',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w400,
+                                    color: const Color(0xFFA0A0A0),
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              )),
+                        if (product.selectedColors.isNotEmpty)
+                          ...product.selectedColors.map((c) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: const Color(0xFF444444),
+                                      width: 1),
+                                ),
+                                child: Text(
+                                  'COLOR: ${c.toUpperCase()}',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w400,
+                                    color: const Color(0xFFA0A0A0),
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              )),
+                      ],
+                    ),
+                  ),
+
                 // Quantity +/- controls
                 Padding(
                   padding: const EdgeInsets.only(top: 12),

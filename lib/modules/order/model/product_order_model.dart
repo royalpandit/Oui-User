@@ -3,6 +3,20 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
 class OrderedProductModel extends Equatable {
+  static String _parseDisplayString(dynamic value) {
+    if (value == null) return '';
+    if (value is String && value.isNotEmpty) {
+      try {
+        final decoded = json.decode(value);
+        if (decoded is List) {
+          return decoded.map((e) => e.toString()).join(', ');
+        }
+      } catch (_) {}
+      return value;
+    }
+    return value.toString();
+  }
+
   final int id;
   final int orderId;
   final int productId;
@@ -14,6 +28,8 @@ class OrderedProductModel extends Equatable {
 
   final String thumbImage;
   final String slug;
+  final String color;
+  final String size;
   final String createdAt;
   final String updatedAt;
 
@@ -27,6 +43,8 @@ class OrderedProductModel extends Equatable {
     required this.vat,
     required this.thumbImage,
     required this.slug,
+    this.color = '',
+    this.size = '',
     required this.qty,
     required this.createdAt,
     required this.updatedAt,
@@ -45,6 +63,8 @@ class OrderedProductModel extends Equatable {
     String? createdAt,
     String? updatedAt,
     String? slug,
+    String? color,
+    String? size,
   }) {
     return OrderedProductModel(
       id: id ?? this.id,
@@ -57,6 +77,8 @@ class OrderedProductModel extends Equatable {
       qty: qty ?? this.qty,
       thumbImage: thumbImage ?? this.thumbImage,
       slug: slug ?? this.slug,
+      color: color ?? this.color,
+      size: size ?? this.size,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -97,8 +119,14 @@ class OrderedProductModel extends Equatable {
           : 0,
       vat: map['vat'] != null ? double.parse(map['vat'].toString()) : 0,
       qty: map['qty'] != null ? int.parse(map['qty'].toString()) : 0,
-      thumbImage: map['product'] != null ? (map['product']['thumb_image'] ?? '') : '',
-      slug: map['product'] != null ? (map['product']['slug'] ?? '') : '',
+      thumbImage: map['product'] != null
+          ? (map['product']['thumb_image_url'] ?? map['product']['thumb_image'] ?? '')
+          : (map['thumb_image_url'] ?? map['thumb_image'] ?? ''),
+      slug: map['product'] != null
+          ? (map['product']['slug'] ?? '')
+          : (map['slug'] ?? ''),
+      color: _parseDisplayString(map['color']),
+      size: _parseDisplayString(map['size']),
       createdAt: map['created_at'] ?? '',
       updatedAt: map['updated_at'] ?? '',
     );
@@ -126,6 +154,8 @@ class OrderedProductModel extends Equatable {
         qty,
         thumbImage,
         slug,
+        color,
+        size,
         createdAt,
         updatedAt
       ];

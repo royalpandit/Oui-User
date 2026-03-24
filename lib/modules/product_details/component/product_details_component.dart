@@ -183,6 +183,72 @@ class _ProductDetailsComponentState extends State<ProductDetailsComponent> {
               style: GoogleFonts.manrope(fontSize: 14, color: const Color(0xFFC7C6C6), height: 1.5),
             ),
           ],
+          // Sizes display
+          if (widget.product.sizes.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text(
+              'AVAILABLE SIZES',
+              style: GoogleFonts.inter(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF919191),
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: widget.product.sizes.map((s) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFF444444), width: 1),
+                ),
+                child: Text(
+                  s.toUpperCase(),
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFFE2E2E2),
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              )).toList(),
+            ),
+          ],
+          // Colors display
+          if (widget.product.colors.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text(
+              'AVAILABLE COLORS',
+              style: GoogleFonts.inter(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF919191),
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: widget.product.colors.map((c) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFF444444), width: 1),
+                ),
+                child: Text(
+                  c.toUpperCase(),
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFFE2E2E2),
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              )).toList(),
+            ),
+          ],
           const SizedBox(height: 16),
         ],
       ),

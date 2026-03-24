@@ -8,7 +8,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '/utils/language_string.dart';
 import '/widgets/capitalized_word.dart';
+import '/widgets/custom_image.dart';
 import '/widgets/field_error_text.dart';
+import '../../core/remote_urls.dart';
 import '../../utils/utils.dart';
 import '../order/model/product_order_model.dart';
 import 'controller/review/review_cubit.dart';
@@ -31,7 +33,7 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
   }
 
   final _className = 'SubmitFeedBackScreen';
-  double ratingValue = 0.0;
+  double ratingValue = 3.0;
 
   @override
   Widget build(BuildContext context) {
@@ -44,30 +46,28 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
           if (state is SubmitReviewStateError) {
             Utils.errorSnackBar(context, state.errorMessage);
           } else if (state is SubmitReviewStateLoaded) {
-            if (state.submitReviewResponseModel.status == 0) {
-              Utils.showSnackBar(
-                  context, state.submitReviewResponseModel.message);
-              Navigator.of(context).pop();
-            }
-            // else {
-            //   Utils.showCustomDialog(context, child: const FeedbackSuccess());
-            // }
+            Utils.showSnackBar(
+                context, state.submitReviewResponseModel.message.isNotEmpty
+                    ? state.submitReviewResponseModel.message
+                    : 'Review submitted successfully');
+            Navigator.of(context).pop();
           }
         }
       },
       child: Scaffold(
+        backgroundColor: const Color(0xFF131313),
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color(0xFF131313),
           elevation: 0,
           scrolledUnderElevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
           centerTitle: true,
           title: Text(Language.backToShop,
-              style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black)),
+              style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.white)),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -77,18 +77,19 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
               Container(
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  // color: bgGreyColor,
+                  color: const Color(0xFF1A1A1A),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // CustomImage(
-                    //   path: RemoteUrls.imageUrl(widget.orderItem.thumbImage),
-                    //   height: 85,
-                    //   width: 90,
-                    //   fit: BoxFit.cover,
-                    // ),
+                    if (widget.orderItem.thumbImage.isNotEmpty)
+                      CustomImage(
+                        path: RemoteUrls.imageUrl(widget.orderItem.thumbImage),
+                        height: 85,
+                        width: 90,
+                        fit: BoxFit.cover,
+                      ),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Column(
@@ -101,12 +102,13 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
                             style: const TextStyle(
                               height: 1.3,
                               fontSize: 24,
+                              color: Colors.white,
                             ),
                           ),
                           Text(
                             'X ${widget.orderItem.qty}',
                             style: GoogleFonts.inter(
-                                color: Colors.grey.shade500),
+                                color: const Color(0xFF777777)),
                           ),
                         ],
                       ),
@@ -120,11 +122,12 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 10),
               Text('${Language.whatIsYourRate} ?',
-                  style: GoogleFonts.inter(fontSize: 18)),
+                  style: GoogleFonts.inter(fontSize: 18, color: const Color(0xFFE2E2E2))),
               const SizedBox(height: 13),
               RatingBar.builder(
                 initialRating: 3,
@@ -147,7 +150,7 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
                 alignment: Alignment.topLeft,
                 child: Text(Language.writeYourReviews,
                     style: GoogleFonts.inter(
-                        fontSize: 18, fontWeight: FontWeight.w500)),
+                        fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white)),
               ),
               const SizedBox(height: 7),
               BlocBuilder<SubmitReviewCubit, ReviewSubmitState>(
@@ -160,23 +163,25 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
                         maxLines: null,
                         minLines: 5,
                         controller: _reviewTextController,
+                        style: GoogleFonts.inter(color: Colors.white),
                         decoration: InputDecoration(
                           hintText:
                               Language.pleaseWriteSomething.capitalizeByWord(),
+                          hintStyle: GoogleFonts.inter(color: const Color(0xFF777777)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(4),
-                            borderSide: BorderSide(
-                                color: Colors.grey.shade300),
+                            borderSide: const BorderSide(
+                                color: Color(0xFF444444)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(4),
-                            borderSide: BorderSide(
-                                color: Colors.grey.shade300),
+                            borderSide: const BorderSide(
+                                color: Color(0xFF777777)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(4),
-                            borderSide: BorderSide(
-                                color: Colors.grey.shade300),
+                            borderSide: const BorderSide(
+                                color: Color(0xFF444444)),
                           ),
                         ),
                       ),
@@ -200,10 +205,10 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
                     child: ElevatedButton(
                       onPressed: submit,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF131313),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(0),
                         ),
                       ),
                       child: Text(Language.submitReview,
@@ -218,7 +223,7 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
                 child: Text(
                   Language.notNow.capitalizeByWord(),
                   style: GoogleFonts.inter(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                      fontSize: 16, fontWeight: FontWeight.bold, color: const Color(0xFF777777)),
                 ),
               ),
             ],
@@ -229,12 +234,13 @@ class _SubmitFeedBackScreenState extends State<SubmitFeedBackScreen> {
   }
 
   void submit() async {
-    late Map<String, dynamic> map = {};
-    // if (_reviewTextController.text.isEmpty) {
-    //   Utils.errorSnackBar(
-    //       context, Language.pleaseWriteSomething.capitalizeByWord());
-    // }
+    if (_reviewTextController.text.trim().isEmpty) {
+      Utils.errorSnackBar(
+          context, Language.pleaseWriteSomething.capitalizeByWord());
+      return;
+    }
 
+    late Map<String, dynamic> map = {};
     Utils.closeKeyBoard(context);
     map['rating'] = ratingValue.toString();
     map['review'] = _reviewTextController.text;

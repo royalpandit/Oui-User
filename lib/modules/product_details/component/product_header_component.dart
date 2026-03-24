@@ -72,12 +72,18 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(24, 64, 24, 24),
+              padding: const EdgeInsets.fromLTRB(24, 100, 24, 24),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment(0.5, 1.0),
                   end: Alignment(0.5, 0.0),
-                  colors: [Color(0xFF0A0A0A), Color(0x000A0A0A)],
+                  colors: [
+                    Color(0xFF0A0A0A),
+                    Color(0xE60A0A0A),
+                    Color(0xB30A0A0A),
+                    Color(0x000A0A0A),
+                  ],
+                  stops: [0.0, 0.35, 0.65, 1.0],
                 ),
               ),
               child: Column(
@@ -100,6 +106,12 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
                                   color: const Color(0xFFA3A3A3),
                                   letterSpacing: 3,
                                   height: 1.5,
+                                  shadows: const [
+                                    Shadow(
+                                      color: Color(0xCC000000),
+                                      blurRadius: 6,
+                                    ),
+                                  ],
                                 ),
                               ),
                             const SizedBox(height: 8),
@@ -112,6 +124,12 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 height: 1.0,
+                                shadows: const [
+                                  Shadow(
+                                    color: Color(0xCC000000),
+                                    blurRadius: 8,
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -129,6 +147,12 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
                               fontWeight: FontWeight.w400,
                               color: Colors.white,
                               height: 1.33,
+                              shadows: const [
+                                Shadow(
+                                  color: Color(0xCC000000),
+                                  blurRadius: 6,
+                                ),
+                              ],
                             ),
                           ),
                           Text(

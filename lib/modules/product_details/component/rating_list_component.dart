@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/router_name.dart';
 import '../../../utils/utils.dart';
+import '../../order/model/product_order_model.dart';
 import '../model/details_product_reviews_model.dart';
 import 'signle_review_card_component.dart';
 
@@ -9,9 +11,17 @@ class ReviewListComponent extends StatelessWidget {
   const ReviewListComponent(
     this.productReviews, {
     super.key,
+    required this.productId,
+    required this.productName,
+    required this.sellerId,
+    required this.thumbImage,
   });
 
   final List<DetailsProductReviewModel> productReviews;
+  final int productId;
+  final String productName;
+  final int sellerId;
+  final String thumbImage;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +29,7 @@ class ReviewListComponent extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         children: [
-          _buildRatingHeader(),
+          _buildRatingHeader(context),
           const SizedBox(height: 64),
           ...productReviews
               .take(3)
@@ -59,7 +69,7 @@ class ReviewListComponent extends StatelessWidget {
     );
   }
 
-  Widget _buildRatingHeader() {
+  Widget _buildRatingHeader(BuildContext context) {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -117,7 +127,27 @@ class ReviewListComponent extends StatelessWidget {
                 ],
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  final orderItem = OrderedProductModel(
+                    id: 0,
+                    orderId: 0,
+                    productId: productId,
+                    sellerId: sellerId,
+                    productName: productName,
+                    unitPrice: 0,
+                    vat: 0,
+                    thumbImage: thumbImage,
+                    slug: '',
+                    qty: 1,
+                    createdAt: '',
+                    updatedAt: '',
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    RouteNames.submitFeedBackScreen,
+                    arguments: orderItem,
+                  );
+                },
                 child: Text(
                   'WRITE A REVIEW',
                   style: GoogleFonts.inter(
