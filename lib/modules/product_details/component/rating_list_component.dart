@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../core/router_name.dart';
 import '../../../utils/utils.dart';
-import '../../order/model/product_order_model.dart';
 import '../model/details_product_reviews_model.dart';
 import 'signle_review_card_component.dart';
 
@@ -126,41 +124,7 @@ class ReviewListComponent extends StatelessWidget {
                   ),
                 ],
               ),
-              GestureDetector(
-                onTap: () {
-                  final orderItem = OrderedProductModel(
-                    id: 0,
-                    orderId: 0,
-                    productId: productId,
-                    sellerId: sellerId,
-                    productName: productName,
-                    unitPrice: 0,
-                    vat: 0,
-                    thumbImage: thumbImage,
-                    slug: '',
-                    qty: 1,
-                    createdAt: '',
-                    updatedAt: '',
-                  );
-                  Navigator.pushNamed(
-                    context,
-                    RouteNames.submitFeedBackScreen,
-                    arguments: orderItem,
-                  );
-                },
-                child: Text(
-                  'WRITE A REVIEW',
-                  style: GoogleFonts.inter(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    decoration: TextDecoration.underline,
-                    decorationColor: Colors.white,
-                    letterSpacing: 1,
-                    height: 1.5,
-                  ),
-                ),
-              ),
+
             ],
           ),
           const SizedBox(height: 16),

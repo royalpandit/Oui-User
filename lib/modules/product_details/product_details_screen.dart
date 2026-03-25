@@ -90,12 +90,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 gallery: productDetailsModel.gallery,
               ),
             ),
-            // Size & Color selection
-            if (productDetailsModel.product.sizes.isNotEmpty ||
-                productDetailsModel.product.colors.isNotEmpty)
-              SliverToBoxAdapter(
-                child: _buildSizeColorSection(productDetailsModel.product),
-              ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.only(top: 48),
@@ -203,7 +197,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Widget _getChild(ProductDetailsModel productDetailsModel) {
     if (selectedIndex == 0) {
       return DescriptionComponent(
-          productDetailsModel.product.longDescription);
+          productDetailsModel.product.longDescription,
+          sizes: productDetailsModel.product.sizes,
+          colors: productDetailsModel.product.colors,
+      );
     } else if (selectedIndex == 1) {
       return ReviewListComponent(
         productDetailsModel.productReviews,
@@ -318,124 +315,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSizeColorSection(ProductDetailsProductModel product) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (product.sizes.isNotEmpty) ...[
-            Text(
-              'Select Size',
-              style: GoogleFonts.notoSerif(
-                fontSize: 18,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
-                height: 1.33,
-                letterSpacing: -0.6,
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 42,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: product.sizes.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (_, index) {
-                  final size = product.sizes[index];
-                  final isSelected = _selectedSize == size;
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedSize = size),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 12),
-                      decoration: BoxDecoration(
-                        color:
-                            isSelected ? Colors.white : Colors.transparent,
-                        border: isSelected
-                            ? null
-                            : Border.all(
-                                color: const Color(0xFF444444), width: 1),
-                      ),
-                      child: Text(
-                        size.toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: isSelected
-                              ? const Color(0xFF131313)
-                              : const Color(0xFFE2E2E2),
-                          letterSpacing: 1.2,
-                          height: 1.33,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-          if (product.colors.isNotEmpty) ...[
-            SizedBox(height: product.sizes.isNotEmpty ? 28 : 0),
-            Text(
-              'Select Color',
-              style: GoogleFonts.notoSerif(
-                fontSize: 18,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
-                height: 1.33,
-                letterSpacing: -0.6,
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 42,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: product.colors.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (_, index) {
-                  final color = product.colors[index];
-                  final isSelected = _selectedColor == color;
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedColor = color),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 12),
-                      decoration: BoxDecoration(
-                        color:
-                            isSelected ? Colors.white : Colors.transparent,
-                        border: isSelected
-                            ? null
-                            : Border.all(
-                                color: const Color(0xFF444444), width: 1),
-                      ),
-                      child: Text(
-                        color.toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: isSelected
-                              ? const Color(0xFF131313)
-                              : const Color(0xFFE2E2E2),
-                          letterSpacing: 1.2,
-                          height: 1.33,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
         ],
       ),
     );

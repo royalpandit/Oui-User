@@ -373,56 +373,58 @@ class _OrderDetailsBody extends StatelessWidget {
                     height: 1.4,
                   ),
                 ),
-                if (product.color.isNotEmpty ||
-                    product.size.isNotEmpty) ...[
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      if (product.size.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 6),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: const Color(0xFF444444),
-                                width: 1),
-                          ),
-                          child: Text(
-                            'SIZE: ${product.size.toUpperCase()}',
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xFFE2E2E2),
-                              letterSpacing: 1.2,
-                              height: 1.33,
-                            ),
-                          ),
-                        ),
-                      if (product.color.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 6),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: const Color(0xFF444444),
-                                width: 1),
-                          ),
-                          child: Text(
-                            'COLOR: ${product.color.toUpperCase()}',
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xFFE2E2E2),
-                              letterSpacing: 1.2,
-                              height: 1.33,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
+                // Color & Size chips - hidden
+                // if (product.color.isNotEmpty ||
+                //     product.size.isNotEmpty) ...[
+                //   const SizedBox(height: 12),
+                //   Wrap(
+                //     spacing: 8,
+                //     runSpacing: 8,
+                //     children: [
+                //       if (product.size.isNotEmpty)
+                //         Container(
+                //           padding: const EdgeInsets.symmetric(
+                //               horizontal: 14, vertical: 6),
+                //           decoration: BoxDecoration(
+                //             border: Border.all(
+                //                 color: const Color(0xFF444444),
+                //                 width: 1),
+                //           ),
+                //           child: Text(
+                //             'SIZE: ${product.size.toUpperCase()}',
+                //             style: GoogleFonts.inter(
+                //               fontSize: 10,
+                //               fontWeight: FontWeight.w400,
+                //               color: const Color(0xFFE2E2E2),
+                //               letterSpacing: 1.2,
+                //               height: 1.33,
+                //             ),
+                //           ),
+                //         ),
+                //       if (product.color.isNotEmpty)
+                //         Container(
+                //           padding: const EdgeInsets.symmetric(
+                //               horizontal: 14, vertical: 6),
+                //           decoration: BoxDecoration(
+                //             border: Border.all(
+                //                 color: const Color(0xFF444444),
+                //                 width: 1),
+                //           ),
+                //           child: Text(
+                //             'COLOR: ${product.color.toUpperCase()}',
+                //             style: GoogleFonts.inter(
+                //               fontSize: 10,
+                //               fontWeight: FontWeight.w400,
+                //               color: const Color(0xFFE2E2E2),
+                //               letterSpacing: 1.2,
+                //               height: 1.33,
+                //             ),
+                //           ),
+                //         ),
+                //     ],
+                //   ),
+                // ],
+                const SizedBox(height: 8),
                 Text(
                   'Qty: ${product.qty}',
                   style: GoogleFonts.inter(
@@ -495,7 +497,7 @@ class _OrderDetailsBody extends StatelessWidget {
         children: [
           // ── Shipping Address ──
           Text(
-            'SHIPPING ADDRESS',
+            'ADDRESS',
             style: GoogleFonts.inter(
               fontSize: 10,
               fontWeight: FontWeight.w400,

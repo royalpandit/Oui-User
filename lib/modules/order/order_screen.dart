@@ -409,8 +409,8 @@ class _OrderLoadedWidgetState extends State<_OrderLoadedWidget> {
                           fit: BoxFit.cover,
                         )
                       : Icon(Icons.shopping_bag_outlined,
-                          size: 24,
-                          color: Colors.white.withValues(alpha: 0.20)),
+                          size: 16,
+                          color: Colors.white.withValues(alpha: 0.15)),
                 ),
                 const SizedBox(width: 16),
                 // Info column
@@ -436,29 +436,29 @@ class _OrderLoadedWidgetState extends State<_OrderLoadedWidget> {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            // Color and Size info
-                            if (order.orderProducts.isNotEmpty &&
-                                order.orderProducts.first.color.isNotEmpty)
-                              Text(
-                                'Color: ${order.orderProducts.first.color}',
-                                style: GoogleFonts.inter(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFFA3A3A3),
-                                  letterSpacing: 0.45,
-                                ),
-                              ),
-                            if (order.orderProducts.isNotEmpty &&
-                                order.orderProducts.first.size.isNotEmpty)
-                              Text(
-                                'Size: ${order.orderProducts.first.size}',
-                                style: GoogleFonts.inter(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFFA3A3A3),
-                                  letterSpacing: 0.45,
-                                ),
-                              ),
+                            // Color and Size info - hidden
+                            // if (order.orderProducts.isNotEmpty &&
+                            //     order.orderProducts.first.color.isNotEmpty)
+                            //   Text(
+                            //     'Color: ${order.orderProducts.first.color}',
+                            //     style: GoogleFonts.inter(
+                            //       fontSize: 9,
+                            //       fontWeight: FontWeight.w400,
+                            //       color: const Color(0xFFA3A3A3),
+                            //       letterSpacing: 0.45,
+                            //     ),
+                            //   ),
+                            // if (order.orderProducts.isNotEmpty &&
+                            //     order.orderProducts.first.size.isNotEmpty)
+                            //   Text(
+                            //     'Size: ${order.orderProducts.first.size}',
+                            //     style: GoogleFonts.inter(
+                            //       fontSize: 9,
+                            //       fontWeight: FontWeight.w400,
+                            //       color: const Color(0xFFA3A3A3),
+                            //       letterSpacing: 0.45,
+                            //     ),
+                            //   ),
                             const SizedBox(height: 2),
                             Opacity(
                               opacity: 0.60,

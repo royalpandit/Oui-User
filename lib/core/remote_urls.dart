@@ -191,12 +191,22 @@ class RemoteUrls {
 
   static String sellerDetailsUrl(String slug) => '${baseUrl}sellers/$slug';
 
-  // CatVTON virtual try-on API (change this URL to point to your CatVTON backend, same as VirtualTryOn app.json extra.API_URL)
-  static const String tryOnBaseUrl =
-      'https://e547-2405-201-3016-9117-7c34-66a3-25bf-cdf6.ngrok-free.app';
-  static String get tryOnApiUrl => '$tryOnBaseUrl/api/try-on';
-  static String get tryOnHealthUrl => '$tryOnBaseUrl/health';
-  static String get tryOnPreprocessUrl => '$tryOnBaseUrl/api/preprocess-person';
+  // ML URL endpoint — returns try-on base URL from backend
+  static const String mlUrlEndpoint = '${baseUrl}admin/ml-url';
+
+  // CatVTON virtual try-on API — URL is fetched dynamically from /api/admin/ml-url
+  static String _tryOnBaseUrl = '';
+
+  static void setTryOnBaseUrl(String url) {
+    if (url.isNotEmpty) {
+      _tryOnBaseUrl = url.endsWith('/') ? url.substring(0, url.length - 1) : url;
+    }
+  }
+
+  static String get tryOnBaseUrl => _tryOnBaseUrl;
+  static String get tryOnApiUrl => '$_tryOnBaseUrl/api/try-on';
+  static String get tryOnHealthUrl => '$_tryOnBaseUrl/health';
+  static String get tryOnPreprocessUrl => '$_tryOnBaseUrl/api/preprocess-person';
 
   static String subCategoryProducts(String slug) =>
       '${baseUrl}product?sub_category=$slug';

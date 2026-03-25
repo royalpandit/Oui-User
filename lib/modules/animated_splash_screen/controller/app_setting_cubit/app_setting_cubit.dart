@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:http/http.dart' as http;
+import '../../../../core/remote_urls.dart';
 import '../../../home/model/setting_model.dart';
 import '../../../setting/model/website_setup_model.dart';
 import '../repository/app_setting_repository.dart';
@@ -58,5 +61,31 @@ class AppSettingCubit extends Cubit<AppSettingState> {
         emit(stateData);
       },
     );
+    // Fetch ML base URL for try-on
+    _fetchMlUrl();
+  }
+
+  Future<void> _fetchMlUrl() async {
+    try {
+      final response = await http.get(
+        Uri.parse(RemoteUrls.mlUrlEndpoint),
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      );
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body) as Map<String, dynamic>;
+        if (body['status'] == true && body['data'] != null) {
+          final baseUrl = body['data']['base_url'] as String? ?? '';
+          if (baseUrl.isNotEmpty) {
+            RemoteUrls.setTryOnBaseUrl(baseUrl);
+            log('ML URL set: $baseUrl', name: _className);
+          }
+        }
+      }
+    } catch (e) {
+      log('Failed to fetch ML URL: $e', name: _className);
+    }
   }
 }

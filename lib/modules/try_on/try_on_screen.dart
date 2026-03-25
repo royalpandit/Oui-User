@@ -83,6 +83,15 @@ class _TryOnScreenState extends State<TryOnScreen> {
       _error = null;
       _resultImageBase64 = null;
     });
+
+    if (RemoteUrls.tryOnBaseUrl.isEmpty) {
+      setState(() {
+        _loading = false;
+        _error = 'Try-on service is not configured.';
+      });
+      return;
+    }
+
     try {
       try {
         await http

@@ -155,6 +155,8 @@ class ProductModel extends Equatable {
     }
     result.addAll(
         {'active_variants': productVariants.map((x) => x.toMap()).toList()});
+    result.addAll({'sizes': json.encode(sizes)});
+    result.addAll({'colors': json.encode(colors)});
 
     return result;
   }

@@ -58,9 +58,61 @@ class _BestSellerInformationState extends State<BestSellerInformation> {
           } else if (state is SellerProductState) {
             if (state.sellerModel.products.isEmpty) {
               return Center(
-                child: Text(
-                  'No Item Found',
-                  style: GoogleFonts.manrope(color: const Color(0xFF919191)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.storefront_outlined,
+                        size: 64,
+                        color: Colors.white.withValues(alpha: 0.12),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'No Products Yet',
+                        style: GoogleFonts.notoSerif(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFFE2E2E2),
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'This seller hasn\'t added any products yet. Check back later for new arrivals.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.manrope(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFF777777),
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 14),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: const Color(0xFF444444), width: 1),
+                          ),
+                          child: Text(
+                            'GO BACK',
+                            style: GoogleFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                              color: const Color(0xFFE2E2E2),
+                              letterSpacing: 2,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }

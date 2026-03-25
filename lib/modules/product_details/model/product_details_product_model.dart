@@ -158,6 +158,8 @@ class ProductDetailsProductModel extends Equatable {
       'category': category!.toMap(),
       // 'brand': brand!.toMap(),
       'avg_review': avgReview.map((x) => x.toMap()).toList(),
+      'sizes': json.encode(sizes),
+      'colors': json.encode(colors),
     };
   }
 

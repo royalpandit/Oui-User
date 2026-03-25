@@ -3,9 +3,16 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DescriptionComponent extends StatelessWidget {
-  const DescriptionComponent(this.description, {super.key});
+  const DescriptionComponent(
+    this.description, {
+    super.key,
+    this.sizes = const [],
+    this.colors = const [],
+  });
 
   final String description;
+  final List<String> sizes;
+  final List<String> colors;
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +21,81 @@ class DescriptionComponent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Sizes
+          if (sizes.isNotEmpty) ...[
+            Text(
+              'AVAILABLE SIZES',
+              style: GoogleFonts.inter(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF919191),
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: sizes
+                  .map((s) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 6),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: const Color(0xFF444444), width: 1),
+                        ),
+                        child: Text(
+                          s.toUpperCase(),
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFFE2E2E2),
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(height: 24),
+          ],
+          // Colors
+          if (colors.isNotEmpty) ...[
+            Text(
+              'AVAILABLE COLORS',
+              style: GoogleFonts.inter(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF919191),
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: colors
+                  .map((c) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 6),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: const Color(0xFF444444), width: 1),
+                        ),
+                        child: Text(
+                          c.toUpperCase(),
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFFE2E2E2),
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(height: 24),
+          ],
+          // Description HTML
           Html(
             data: description,
             style: {
