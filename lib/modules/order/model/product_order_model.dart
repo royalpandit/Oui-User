@@ -125,8 +125,8 @@ class OrderedProductModel extends Equatable {
       slug: map['product'] != null
           ? (map['product']['slug'] ?? '')
           : (map['slug'] ?? ''),
-      color: _parseDisplayString(map['color'] ?? (map['product'] != null ? map['product']['colors'] : null)),
-      size: _parseDisplayString(map['size'] ?? (map['product'] != null ? map['product']['sizes'] : null)),
+      color: _parseDisplayString(map['cart'] != null ? map['cart']['color'] : map['color']),
+      size: _parseDisplayString(map['cart'] != null ? map['cart']['size'] : map['size']),
       createdAt: map['created_at'] ?? '',
       updatedAt: map['updated_at'] ?? '',
     );
