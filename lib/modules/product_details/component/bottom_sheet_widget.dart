@@ -48,6 +48,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
 
   void _variantsInit() {
     for (var element in widget.product.activeVariantModel) {
+      if (element.activeVariantsItems.isEmpty) continue;
       final item = element.activeVariantsItems.first;
       variantItems.add(element.copyWith(activeVariantsItems: [item]));
     }
@@ -270,7 +271,6 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
           const SizedBox(height: 16),
           GestureDetector(
             onTap: () {
-              Navigator.pop(context);
               final dataModel = AddToCartModel(
                 image: widget.product.thumbImage,
                 productId: widget.product.id,
@@ -282,6 +282,10 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                 variantItems: variantItems,
               );
               context.read<AddToCartCubit>().addToCart(dataModel);
+              Navigator.pop<Map<String, String?>>(context, {
+                'size': _selectedSize,
+                'color': _selectedColor,
+              });
             },
             child: Container(
               width: double.infinity,

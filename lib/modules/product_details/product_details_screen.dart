@@ -47,6 +47,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   final _className = 'ProductDetailsScreen';
 
+  int? _getColorImageIndex(
+      ProductDetailsProductModel product, int galleryCount) {
+    if (_selectedColor == null) return null;
+    final colorIndex = product.colors.indexOf(_selectedColor!);
+    if (colorIndex < 0) return null;
+    final imageIndex = colorIndex + 1; // +1 to skip thumbImage at index 0
+    if (imageIndex < 1 + galleryCount) return imageIndex;
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,6 +89,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Widget _buildLoadedPage(ProductDetailsModel productDetailsModel) {
+    final galleryCount = productDetailsModel.gallery
+        .where((g) => g != null && g.image.isNotEmpty)
+        .length;
+    final selectedImageIndex = _getColorImageIndex(
+        productDetailsModel.product, galleryCount);
     final topPadding = MediaQuery.of(context).padding.top;
     return Stack(
       children: [
@@ -88,6 +103,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               child: ProductHeaderComponent(
                 product: productDetailsModel.product,
                 gallery: productDetailsModel.gallery,
+                selectedImageIndex: selectedImageIndex,
               ),
             ),
             SliverToBoxAdapter(
@@ -200,6 +216,18 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           productDetailsModel.product.longDescription,
           sizes: productDetailsModel.product.sizes,
           colors: productDetailsModel.product.colors,
+          selectedSize: _selectedSize,
+          selectedColor: _selectedColor,
+          onSizeSelected: (size) {
+            setState(() {
+              _selectedSize = _selectedSize == size ? null : size;
+            });
+          },
+          onColorSelected: (color) {
+            setState(() {
+              _selectedColor = _selectedColor == color ? null : color;
+            });
+          },
       );
     } else if (selectedIndex == 1) {
       return ReviewListComponent(
@@ -235,8 +263,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: () {
-                showModalBottomSheet(
+              onTap: () async {
+                final result =
+                    await showModalBottomSheet<Map<String, String?>>(
                   context: context,
                   backgroundColor: const Color(0xFF1B1B1B),
                   isScrollControlled: true,
@@ -247,6 +276,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     initialColor: _selectedColor,
                   ),
                 );
+                if (result != null && mounted) {
+                  setState(() {
+                    _selectedSize = result['size'];
+                    _selectedColor = result['color'];
+                  });
+                }
               },
               child: Container(
                 height: double.infinity,

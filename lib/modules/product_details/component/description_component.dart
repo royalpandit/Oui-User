@@ -8,11 +8,19 @@ class DescriptionComponent extends StatelessWidget {
     super.key,
     this.sizes = const [],
     this.colors = const [],
+    this.selectedSize,
+    this.selectedColor,
+    this.onSizeSelected,
+    this.onColorSelected,
   });
 
   final String description;
   final List<String> sizes;
   final List<String> colors;
+  final String? selectedSize;
+  final String? selectedColor;
+  final ValueChanged<String>? onSizeSelected;
+  final ValueChanged<String>? onColorSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -37,23 +45,36 @@ class DescriptionComponent extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: sizes
-                  .map((s) => Container(
+                  .map((s) {
+                    final isSelected = selectedSize == s;
+                    return GestureDetector(
+                      onTap: () => onSizeSelected?.call(s),
+                      child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 6),
                         decoration: BoxDecoration(
+                          color:
+                              isSelected ? Colors.white : Colors.transparent,
                           border: Border.all(
-                              color: const Color(0xFF444444), width: 1),
+                              color: isSelected
+                                  ? Colors.white
+                                  : const Color(0xFF444444),
+                              width: 1),
                         ),
                         child: Text(
                           s.toUpperCase(),
                           style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w400,
-                            color: const Color(0xFFE2E2E2),
+                            color: isSelected
+                                ? Colors.black
+                                : const Color(0xFFE2E2E2),
                             letterSpacing: 1.2,
                           ),
                         ),
-                      ))
+                      ),
+                    );
+                  })
                   .toList(),
             ),
             const SizedBox(height: 24),
@@ -74,23 +95,36 @@ class DescriptionComponent extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: colors
-                  .map((c) => Container(
+                  .map((c) {
+                    final isSelected = selectedColor == c;
+                    return GestureDetector(
+                      onTap: () => onColorSelected?.call(c),
+                      child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 6),
                         decoration: BoxDecoration(
+                          color:
+                              isSelected ? Colors.white : Colors.transparent,
                           border: Border.all(
-                              color: const Color(0xFF444444), width: 1),
+                              color: isSelected
+                                  ? Colors.white
+                                  : const Color(0xFF444444),
+                              width: 1),
                         ),
                         child: Text(
                           c.toUpperCase(),
                           style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w400,
-                            color: const Color(0xFFE2E2E2),
+                            color: isSelected
+                                ? Colors.black
+                                : const Color(0xFFE2E2E2),
                             letterSpacing: 1.2,
                           ),
                         ),
-                      ))
+                      ),
+                    );
+                  })
                   .toList(),
             ),
             const SizedBox(height: 24),

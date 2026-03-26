@@ -7,12 +7,14 @@ class ActiveVariantItemModel extends Equatable {
   final int id;
   final String name;
   final double price;
+  final String image;
 
   const ActiveVariantItemModel({
     required this.productVariantId,
     required this.id,
     required this.name,
     required this.price,
+    this.image = '',
   });
 
   ActiveVariantItemModel copyWith({
@@ -20,12 +22,14 @@ class ActiveVariantItemModel extends Equatable {
     int? id,
     String? name,
     double? price,
+    String? image,
   }) {
     return ActiveVariantItemModel(
       productVariantId: productVariantId ?? this.productVariantId,
       id: id ?? this.id,
       name: name ?? this.name,
       price: price ?? this.price,
+      image: image ?? this.image,
     );
   }
 
@@ -36,6 +40,7 @@ class ActiveVariantItemModel extends Equatable {
     result.addAll({'id': id});
     result.addAll({'name': name});
     result.addAll({'price': price});
+    if (image.isNotEmpty) result.addAll({'image': image});
 
     return result;
   }
@@ -48,6 +53,7 @@ class ActiveVariantItemModel extends Equatable {
       id: map['id'] ?? 0,
       name: map['name'] ?? '',
       price: map['price'] != null ? double.parse(map['price'].toString()) : 0.0,
+      image: map['image'] ?? '',
     );
   }
 
@@ -68,6 +74,7 @@ class ActiveVariantItemModel extends Equatable {
       id,
       name,
       price,
+      image,
     ];
   }
 }

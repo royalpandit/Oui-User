@@ -13,29 +13,82 @@ class ProductHeaderComponent extends StatefulWidget {
     super.key,
     required this.product,
     required this.gallery,
+    this.variantImage,
+    this.selectedImageIndex,
   });
 
   final ProductDetailsProductModel product;
   final List<GalleryModel?> gallery;
+  final String? variantImage;
+  final int? selectedImageIndex;
 
   @override
   State<ProductHeaderComponent> createState() => _ProductHeaderComponentState();
 }
 
 class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
-  late List<String> allImages = [];
+  List<String> allImages = [];
   int _currentIndex = 0;
+  late PageController _pageController;
 
   @override
   void initState() {
-    _buildSliderImages();
     super.initState();
+    _pageController = PageController();
+    _buildSliderImages();
+  }
+
+  @override
+  void didUpdateWidget(covariant ProductHeaderComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.variantImage != oldWidget.variantImage &&
+        widget.variantImage != null &&
+        widget.variantImage!.isNotEmpty) {
+      _buildSliderImages();
+      _currentIndex = 0;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_pageController.hasClients) {
+          _pageController.jumpToPage(0);
+        }
+      });
+      setState(() {});
+    } else if (widget.selectedImageIndex != oldWidget.selectedImageIndex &&
+        widget.selectedImageIndex != null) {
+      final idx = widget.selectedImageIndex!.clamp(0, allImages.length - 1);
+      if (idx != _currentIndex) {
+        _currentIndex = idx;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_pageController.hasClients) {
+            _pageController.animateToPage(
+              idx,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
+        setState(() {});
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   void _buildSliderImages() {
-    allImages.add(widget.product.thumbImage);
+    allImages = [];
+    if (widget.variantImage != null && widget.variantImage!.isNotEmpty) {
+      allImages.add(widget.variantImage!);
+    }
+    if (!allImages.contains(widget.product.thumbImage)) {
+      allImages.add(widget.product.thumbImage);
+    }
     for (final img in widget.gallery) {
-      if (img != null && img.image.isNotEmpty) {
+      if (img != null &&
+          img.image.isNotEmpty &&
+          !allImages.contains(img.image)) {
         allImages.add(img.image);
       }
     }
@@ -56,6 +109,7 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
       child: Stack(
         children: [
           PageView.builder(
+            controller: _pageController,
             itemCount: allImages.length,
             onPageChanged: (int index) =>
                 setState(() => _currentIndex = index),
