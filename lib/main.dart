@@ -1,3 +1,8 @@
+import 'dart:async';
+import 'dart:ui';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,16 +13,53 @@ import 'state_injector.dart';
 import 'utils/k_strings.dart';
 import 'utils/my_theme.dart';
 
+bool _crashlyticsReady = false;
+
+Future<void> _initializeFirebaseCrashlytics() async {
+  try {
+    await Firebase.initializeApp();
+
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+    };
+
+    PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+
+    _crashlyticsReady = true;
+  } catch (error, stack) {
+    _crashlyticsReady = false;
+    debugPrint('Firebase Crashlytics not initialized: $error');
+    debugPrintStack(stackTrace: stack);
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
 
-  await StateInjector.init();
+  await runZonedGuarded<Future<void>>(() async {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
 
-  runApp(const MyApp());
+    await _initializeFirebaseCrashlytics();
+    await StateInjector.init();
+
+    runApp(const MyApp());
+  }, (error, stack) async {
+    if (_crashlyticsReady) {
+      await FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return;
+    }
+    debugPrint('Uncaught zone error: $error');
+    debugPrintStack(stackTrace: stack);
+  });
 }
 
 class MyApp extends StatelessWidget {

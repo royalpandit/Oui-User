@@ -3,6 +3,67 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
 class OrderedProductModel extends Equatable {
+  static double _parseDouble(dynamic value) {
+    if (value == null) return 0;
+    return double.tryParse(value.toString()) ?? 0;
+  }
+
+  static double _resolveUnitPrice(Map<String, dynamic> map) {
+    final variantDetails = _parseVariantDetails(map['variant_details']);
+    if (variantDetails != null) {
+      final variantPrice = _parseDouble(variantDetails['price']);
+      if (variantPrice > 0) return variantPrice;
+    }
+
+    final variantPrice =
+        _parseDouble(map['varient_price'] ?? map['variant_price']);
+    if (variantPrice > 0) return variantPrice;
+
+    final unit = _parseDouble(map['unit_price']);
+    if (unit > 0) return unit;
+
+    final offer = _parseDouble(map['product_offerprice'] ?? map['offer_price']);
+    if (offer > 0) return offer;
+
+    final base = _parseDouble(map['product_price'] ?? map['price']);
+    return base;
+  }
+
+  static Map<String, dynamic>? _parseVariantDetails(dynamic value) {
+    if (value is Map<String, dynamic>) return value;
+    if (value is String && value.isNotEmpty) {
+      try {
+        final decoded = json.decode(value);
+        if (decoded is Map<String, dynamic>) return decoded;
+      } catch (_) {}
+    }
+    return null;
+  }
+
+  static String _resolveThumbImage(Map<String, dynamic> map) {
+    final variantDetails = _parseVariantDetails(map['variant_details']);
+    final variantImageFromDetails = variantDetails?['image']?.toString() ?? '';
+    if (variantImageFromDetails.isNotEmpty) return variantImageFromDetails;
+
+    final variantImage =
+        (map['variant_image'] ?? map['variantImage'] ?? '').toString();
+    if (variantImage.isNotEmpty) return variantImage;
+
+    if (map['cart'] is Map<String, dynamic>) {
+      final cartMap = map['cart'] as Map<String, dynamic>;
+      final cartVariantImage = (cartMap['variant_image'] ?? '').toString();
+      if (cartVariantImage.isNotEmpty) return cartVariantImage;
+    }
+
+    if (map['product'] is Map<String, dynamic>) {
+      final product = map['product'] as Map<String, dynamic>;
+      return (product['thumb_image_url'] ?? product['thumb_image'] ?? '')
+          .toString();
+    }
+
+    return (map['thumb_image_url'] ?? map['thumb_image'] ?? '').toString();
+  }
+
   static String _parseDisplayString(dynamic value) {
     if (value == null) return '';
     if (value is String && value.isNotEmpty) {
@@ -114,19 +175,17 @@ class OrderedProductModel extends Equatable {
       sellerId:
           map['seller_id'] != null ? int.parse(map['seller_id'].toString()) : 0,
       productName: map['product_name'] ?? '',
-      unitPrice: map['unit_price'] != null
-          ? double.parse(map['unit_price'].toString())
-          : 0,
+      unitPrice: _resolveUnitPrice(map),
       vat: map['vat'] != null ? double.parse(map['vat'].toString()) : 0,
       qty: map['qty'] != null ? int.parse(map['qty'].toString()) : 0,
-      thumbImage: map['product'] != null
-          ? (map['product']['thumb_image_url'] ?? map['product']['thumb_image'] ?? '')
-          : (map['thumb_image_url'] ?? map['thumb_image'] ?? ''),
+      thumbImage: _resolveThumbImage(map),
       slug: map['product'] != null
           ? (map['product']['slug'] ?? '')
           : (map['slug'] ?? ''),
-      color: _parseDisplayString(map['cart'] != null ? map['cart']['color'] : map['color']),
-      size: _parseDisplayString(map['cart'] != null ? map['cart']['size'] : map['size']),
+      color: _parseDisplayString(
+          map['cart'] != null ? map['cart']['color'] : map['color']),
+      size: _parseDisplayString(
+          map['cart'] != null ? map['cart']['size'] : map['size']),
       createdAt: map['created_at'] ?? '',
       updatedAt: map['updated_at'] ?? '',
     );

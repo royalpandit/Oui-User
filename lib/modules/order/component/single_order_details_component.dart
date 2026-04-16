@@ -62,21 +62,20 @@ class SingleOrderDetailsComponent extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                // Color & Size chips - hidden
-                // if (orderItem.color.isNotEmpty || orderItem.size.isNotEmpty)
-                //   Padding(
-                //     padding: const EdgeInsets.only(bottom: 6),
-                //     child: Wrap(
-                //       spacing: 6,
-                //       runSpacing: 4,
-                //       children: [
-                //         if (orderItem.size.isNotEmpty)
-                //           _infoChip('SIZE: ${orderItem.size.toUpperCase()}'),
-                //         if (orderItem.color.isNotEmpty)
-                //           _infoChip('COLOR: ${orderItem.color.toUpperCase()}'),
-                //       ],
-                //     ),
-                //   ),
+                if (orderItem.color.isNotEmpty || orderItem.size.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: [
+                        if (orderItem.size.isNotEmpty)
+                          _infoChip('SIZE: ${orderItem.size.toUpperCase()}'),
+                        if (orderItem.color.isNotEmpty)
+                          _infoChip('COLOR: ${orderItem.color.toUpperCase()}'),
+                      ],
+                    ),
+                  ),
                 // Qty & Price
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

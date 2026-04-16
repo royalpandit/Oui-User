@@ -56,6 +56,31 @@ class FilterModelDto extends Equatable {
     return result;
   }
 
+  Map<String, List<String>> toQueryParametersAll() {
+    final result = <String, List<String>>{};
+
+    final brandValues = brands
+        .where((element) => element != -1)
+        .map((e) => e.toString())
+        .toList();
+    if (brandValues.isNotEmpty) {
+      result['brands[]'] = brandValues;
+    }
+
+    final variantValues = variantItems
+        .where((element) => element.trim().isNotEmpty)
+        .map((e) => e.trim())
+        .toList();
+    if (variantValues.isNotEmpty) {
+      result['variantItems[]'] = variantValues;
+    }
+
+    result['min_price'] = [minPrice.toString()];
+    result['max_price'] = [maxPrice.toString()];
+
+    return result;
+  }
+
   factory FilterModelDto.fromMap(Map<String, dynamic> map) {
     return FilterModelDto(
       brands: List<int>.from(map['brands'] as List<int>),

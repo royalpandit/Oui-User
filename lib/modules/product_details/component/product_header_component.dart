@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/remote_urls.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../../../widgets/favorite_button.dart';
-import '../../home/model/product_model.dart';
 import '../model/product_details_product_model.dart';
 
 class ProductHeaderComponent extends StatefulWidget {
   const ProductHeaderComponent({
     super.key,
     required this.product,
-    required this.gallery,
-    this.variantImage,
-    this.selectedImageIndex,
+    required this.images,
+    required this.displayPrice,
   });
 
   final ProductDetailsProductModel product;
-  final List<GalleryModel?> gallery;
-  final String? variantImage;
-  final int? selectedImageIndex;
+  final List<String> images;
+  final double displayPrice;
 
   @override
   State<ProductHeaderComponent> createState() => _ProductHeaderComponentState();
@@ -41,9 +39,7 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
   @override
   void didUpdateWidget(covariant ProductHeaderComponent oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.variantImage != oldWidget.variantImage &&
-        widget.variantImage != null &&
-        widget.variantImage!.isNotEmpty) {
+    if (!listEquals(widget.images, oldWidget.images)) {
       _buildSliderImages();
       _currentIndex = 0;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -51,23 +47,6 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
           _pageController.jumpToPage(0);
         }
       });
-      setState(() {});
-    } else if (widget.selectedImageIndex != oldWidget.selectedImageIndex &&
-        widget.selectedImageIndex != null) {
-      final idx = widget.selectedImageIndex!.clamp(0, allImages.length - 1);
-      if (idx != _currentIndex) {
-        _currentIndex = idx;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_pageController.hasClients) {
-            _pageController.animateToPage(
-              idx,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          }
-        });
-        setState(() {});
-      }
     }
   }
 
@@ -78,28 +57,22 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
   }
 
   void _buildSliderImages() {
-    allImages = [];
-    if (widget.variantImage != null && widget.variantImage!.isNotEmpty) {
-      allImages.add(widget.variantImage!);
-    }
-    if (!allImages.contains(widget.product.thumbImage)) {
+    allImages = widget.images
+        .where((image) => image.trim().isNotEmpty)
+        .toList(growable: true);
+    if (allImages.isEmpty && widget.product.thumbImage.isNotEmpty) {
       allImages.add(widget.product.thumbImage);
     }
-    for (final img in widget.gallery) {
-      if (img != null &&
-          img.image.isNotEmpty &&
-          !allImages.contains(img.image)) {
-        allImages.add(img.image);
-      }
+    if (!allImages.contains(widget.product.thumbImage) &&
+        widget.product.thumbImage.isNotEmpty) {
+      allImages.add(widget.product.thumbImage);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
-    final displayPrice = widget.product.offerPrice > 0
-        ? widget.product.offerPrice
-        : widget.product.price;
+    final displayPrice = widget.displayPrice;
 
     return Container(
       height: 520,
@@ -111,8 +84,7 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
           PageView.builder(
             controller: _pageController,
             itemCount: allImages.length,
-            onPageChanged: (int index) =>
-                setState(() => _currentIndex = index),
+            onPageChanged: (int index) => setState(() => _currentIndex = index),
             itemBuilder: (context, index) {
               return CustomImage(
                 path: RemoteUrls.imageUrl(allImages[index]),

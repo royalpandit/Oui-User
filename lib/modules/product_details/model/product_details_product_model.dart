@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import '../../category/model/category_model.dart';
 import '../../home/model/brand_model.dart';
 import 'avg_review_model.dart';
+import 'variant_detail_model.dart';
 import 'product_variant_model.dart';
 
 class ProductDetailsProductModel extends Equatable {
@@ -36,6 +37,8 @@ class ProductDetailsProductModel extends Equatable {
   final List<AvgReviewModel> avgReview;
   final List<String> sizes;
   final List<String> colors;
+  final List<String> productImages;
+  final List<VariantDetailModel> variantDetails;
 
   const ProductDetailsProductModel({
     required this.id,
@@ -66,6 +69,8 @@ class ProductDetailsProductModel extends Equatable {
     required this.avgReview,
     this.sizes = const [],
     this.colors = const [],
+    this.productImages = const [],
+    this.variantDetails = const [],
   });
 
   ProductDetailsProductModel copyWith({
@@ -97,6 +102,8 @@ class ProductDetailsProductModel extends Equatable {
     List<AvgReviewModel>? avgReview,
     List<String>? sizes,
     List<String>? colors,
+    List<String>? productImages,
+    List<VariantDetailModel>? variantDetails,
   }) {
     return ProductDetailsProductModel(
       id: id ?? this.id,
@@ -127,6 +134,8 @@ class ProductDetailsProductModel extends Equatable {
       avgReview: avgReview ?? this.avgReview,
       sizes: sizes ?? this.sizes,
       colors: colors ?? this.colors,
+      productImages: productImages ?? this.productImages,
+      variantDetails: variantDetails ?? this.variantDetails,
     );
   }
 
@@ -158,8 +167,10 @@ class ProductDetailsProductModel extends Equatable {
       'category': category!.toMap(),
       // 'brand': brand!.toMap(),
       'avg_review': avgReview.map((x) => x.toMap()).toList(),
+      'product_images': json.encode(productImages),
       'sizes': json.encode(sizes),
       'colors': json.encode(colors),
+      'varient_item_details': variantDetails.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -222,9 +233,21 @@ class ProductDetailsProductModel extends Equatable {
               ),
             )
           : [],
+      productImages: _parseStringList(map['product_images']),
       sizes: _parseStringList(map['sizes']),
       colors: _parseStringList(map['colors']),
+      variantDetails: _parseVariantDetails(map),
     );
+  }
+
+  static List<VariantDetailModel> _parseVariantDetails(Map<String, dynamic> map) {
+    final dynamic raw = map['varient_item_details'] ?? map['variant_item_details'];
+    if (raw is List) {
+      return raw
+          .map((e) => VariantDetailModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    }
+    return [];
   }
 
   static List<String> _parseStringList(dynamic value) {
@@ -279,6 +302,8 @@ class ProductDetailsProductModel extends Equatable {
       avgReview,
       sizes,
       colors,
+      productImages,
+      variantDetails,
     ];
   }
 }

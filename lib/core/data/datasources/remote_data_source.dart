@@ -1107,8 +1107,18 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<List<ProductModel>> filterProducts(FilterModelDto dataModel) async {
-    final uri = Uri.parse(RemoteUrls.filterUrl)
-        .replace(queryParameters: dataModel.toMap());
+    final params = dataModel.toQueryParametersAll();
+    final queryParts = <String>[];
+    params.forEach((key, values) {
+      for (final value in values) {
+        queryParts.add(
+          '${Uri.encodeQueryComponent(key)}=${Uri.encodeQueryComponent(value)}',
+        );
+      }
+    });
+    final uri = Uri.parse(RemoteUrls.filterUrl).replace(
+      query: queryParts.isEmpty ? null : queryParts.join('&'),
+    );
 
     final clientMethod = client.get(
       uri,

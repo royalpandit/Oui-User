@@ -9,10 +9,21 @@ abstract class SearchEvent extends Equatable {
 
 class SearchEventSearch extends SearchEvent {
   final String search;
-  const SearchEventSearch(this.search);
+  final List<String> variantItems;
+  final double? minPrice;
+  final double? maxPrice;
+  final int? shortingId;
+
+  const SearchEventSearch(
+    this.search, {
+    this.variantItems = const [],
+    this.minPrice,
+    this.maxPrice,
+    this.shortingId,
+  });
 
   @override
-  List<Object> get props => [search];
+  List<Object> get props => [search, variantItems, minPrice ?? -1, maxPrice ?? -1, shortingId ?? -1];
 }
 
 class SearchEventLoadMore extends SearchEvent {

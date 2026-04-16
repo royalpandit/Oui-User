@@ -11,6 +11,7 @@ class AddToCartModel extends Equatable {
   final String token;
   final String color;
   final String size;
+  final int? variantId;
   final Set<ActiveVariantModel> variantItems;
   const AddToCartModel({
     required this.quantity,
@@ -20,6 +21,7 @@ class AddToCartModel extends Equatable {
     required this.token,
     this.color = '',
     this.size = '',
+    this.variantId,
     required this.variantItems,
   });
 
@@ -31,6 +33,7 @@ class AddToCartModel extends Equatable {
     String? token,
     String? color,
     String? size,
+    int? variantId,
     Set<ActiveVariantModel>? variantItems,
   }) {
     return AddToCartModel(
@@ -41,6 +44,7 @@ class AddToCartModel extends Equatable {
       token: token ?? this.token,
       color: color ?? this.color,
       size: size ?? this.size,
+      variantId: variantId ?? this.variantId,
       variantItems: variantItems ?? this.variantItems,
     );
   }
@@ -55,6 +59,7 @@ class AddToCartModel extends Equatable {
     result.addAll({'token': token});
     if (color.isNotEmpty) result.addAll({'color': color});
     if (size.isNotEmpty) result.addAll({'size': size});
+    if ((variantId ?? 0) > 0) result.addAll({'variant_id': variantId.toString()});
 
     variantItems.toList().asMap().forEach((k, element) {
       if (element.activeVariantsItems.isNotEmpty) {
@@ -75,6 +80,7 @@ class AddToCartModel extends Equatable {
       image: map['image'] ?? '',
       slug: map['slug'] ?? '',
       token: map['token'] ?? '',
+      variantId: map['variant_id'] != null ? int.tryParse(map['variant_id'].toString()) : null,
       variantItems: const {},
     );
   }
@@ -97,6 +103,10 @@ class AddToCartModel extends Equatable {
       image,
       slug,
       token,
+      color,
+      size,
+      variantId ?? 0,
+      variantItems,
     ];
   }
 }

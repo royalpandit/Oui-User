@@ -31,8 +31,34 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     if (event.search.isNotEmpty) {
       queryParams['search'] = event.search;
     }
+    if (event.minPrice != null) {
+      queryParams['min_price'] = event.minPrice!.toString();
+    }
+    if (event.maxPrice != null) {
+      queryParams['max_price'] = event.maxPrice!.toString();
+    }
+    if (event.shortingId != null) {
+      queryParams['shorting_id'] = event.shortingId.toString();
+    }
+
+    final variants = event.variantItems
+        .where((item) => item.trim().isNotEmpty)
+        .map((item) => item.trim())
+        .toList();
+    final queryParts = <String>[];
+    queryParams.forEach((key, value) {
+      queryParts.add(
+        '${Uri.encodeQueryComponent(key)}=${Uri.encodeQueryComponent(value)}',
+      );
+    });
+    for (final item in variants) {
+      queryParts.add(
+        '${Uri.encodeQueryComponent('variantItems[]')}=${Uri.encodeQueryComponent(item)}',
+      );
+    }
+
     final uri = Uri.parse(RemoteUrls.searchProduct).replace(
-      queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      query: queryParts.isEmpty ? null : queryParts.join('&'),
     );
 
     final result = await _searchRepository.search(uri);

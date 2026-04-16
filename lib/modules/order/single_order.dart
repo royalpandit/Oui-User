@@ -265,8 +265,9 @@ class _OrderDetailsBody extends StatelessWidget {
                               width: 12,
                               height: 12,
                               decoration: BoxDecoration(
-                                color:
-                                    isActive ? Colors.white : const Color(0xFF444444),
+                                color: isActive
+                                    ? Colors.white
+                                    : const Color(0xFF444444),
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -306,8 +307,7 @@ class _OrderDetailsBody extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 16),
           decoration: const BoxDecoration(
             border: Border(
-              bottom: BorderSide(
-                  color: Color(0x4C444444), width: 1),
+              bottom: BorderSide(color: Color(0x4C444444), width: 1),
             ),
           ),
           child: Text(
@@ -336,6 +336,9 @@ class _OrderDetailsBody extends StatelessWidget {
   }
 
   Widget _buildProductItem(OrderedProductModel product, BuildContext context) {
+    final selectedSizes = Utils.parseDisplayList(product.size);
+    final selectedColors = Utils.parseDisplayList(product.color);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -374,53 +377,14 @@ class _OrderDetailsBody extends StatelessWidget {
                   ),
                 ),
                 // Color & Size chips (from cart selection)
-                if (product.color.isNotEmpty ||
-                    product.size.isNotEmpty) ...[
+                if (selectedColors.isNotEmpty || selectedSizes.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      if (product.size.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 6),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: const Color(0xFF444444),
-                                width: 1),
-                          ),
-                          child: Text(
-                            'SIZE: ${product.size.toUpperCase()}',
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xFFE2E2E2),
-                              letterSpacing: 1.2,
-                              height: 1.33,
-                            ),
-                          ),
-                        ),
-                      if (product.color.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 6),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: const Color(0xFF444444),
-                                width: 1),
-                          ),
-                          child: Text(
-                            'COLOR: ${product.color.toUpperCase()}',
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xFFE2E2E2),
-                              letterSpacing: 1.2,
-                              height: 1.33,
-                            ),
-                          ),
-                        ),
+                      ...selectedSizes.map(_buildSizeChip),
+                      ...selectedColors.map(_buildColorChip),
                     ],
                   ),
                 ],
@@ -480,6 +444,59 @@ class _OrderDetailsBody extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSizeChip(String size) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFF444444), width: 1),
+      ),
+      child: Text(
+        'SIZE: ${size.toUpperCase()}',
+        style: GoogleFonts.inter(
+          fontSize: 10,
+          fontWeight: FontWeight.w400,
+          color: const Color(0xFFE2E2E2),
+          letterSpacing: 1.2,
+          height: 1.33,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildColorChip(String colorName) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFF444444), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Utils.parseColorLabel(colorName),
+              border: Border.all(color: const Color(0xFF666666), width: 0.5),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'COLOR: ${colorName.toUpperCase()}',
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFFE2E2E2),
+              letterSpacing: 1.2,
+              height: 1.33,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -617,8 +634,7 @@ class _OrderDetailsBody extends StatelessWidget {
           const SizedBox(height: 32),
 
           // Summary rows
-          _buildSummaryRow('SUBTOTAL',
-              Utils.formatPrice(subtotal, context)),
+          _buildSummaryRow('SUBTOTAL', Utils.formatPrice(subtotal, context)),
           const SizedBox(height: 16),
           _buildSummaryRow(
               'SHIPPING',
@@ -690,7 +706,6 @@ class _OrderDetailsBody extends StatelessWidget {
               ),
             ),
           ),
-
 
           const SizedBox(height: 40),
 

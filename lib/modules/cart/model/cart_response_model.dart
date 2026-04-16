@@ -37,9 +37,15 @@ class CartResponseModel extends Equatable {
           ? int.tryParse(map['vendor_detail']['user_id'].toString())
           : null;
     }
+    final dynamic cartProductsRaw = map['cartProducts'] ?? map['cart_products'];
+    final List<CartProductModel> parsedCartProducts = cartProductsRaw is List
+        ? cartProductsRaw
+            .map((x) => CartProductModel.fromMap(x as Map<String, dynamic>))
+            .toList()
+        : <CartProductModel>[];
+
     return CartResponseModel(
-      cartProducts: List<CartProductModel>.from(
-          map['cartProducts']?.map((x) => CartProductModel.fromMap(x))),
+      cartProducts: parsedCartProducts,
       vendorUserId: vendorUserId,
     );
   }

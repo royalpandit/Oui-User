@@ -67,6 +67,42 @@ class ProductCard extends StatelessWidget {
     );
   }
 
+  List<Map<String, String>> _colorEntries() {
+    final entries = <Map<String, String>>[];
+    final seen = <String>{};
+
+    for (final item in productModel.variantDetails) {
+      final key = (item.colorCode.trim().isNotEmpty
+              ? item.colorCode.trim().toLowerCase()
+              : item.color.trim().toLowerCase())
+          .trim();
+      if (key.isEmpty || seen.contains(key)) continue;
+      seen.add(key);
+      entries.add({'name': item.color, 'code': item.colorCode});
+    }
+
+    if (entries.isEmpty) {
+      for (final colorName in productModel.colors) {
+        final key = colorName.trim().toLowerCase();
+        if (key.isEmpty || seen.contains(key)) continue;
+        seen.add(key);
+        entries.add({'name': colorName, 'code': ''});
+      }
+    }
+
+    return entries;
+  }
+
+  Color _parseColorCode(String code) {
+    final raw = code.trim();
+    if (raw.isEmpty) return const Color(0xFF7A7A7A);
+    String hex = raw.startsWith('#') ? raw.substring(1) : raw;
+    if (hex.length == 6) hex = 'FF$hex';
+    final value = int.tryParse(hex, radix: 16);
+    if (value == null) return const Color(0xFF7A7A7A);
+    return Color(value);
+  }
+
   Widget _buildContent(AppSettingCubit appSetting) {
     double flashPrice = 0.0;
     double offerPrice = 0.0;
@@ -143,6 +179,29 @@ class ProductCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 4),
+          Builder(
+            builder: (_) {
+              final colors = _colorEntries();
+              if (colors.isEmpty) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  children: colors.take(4).map((entry) {
+                    return Container(
+                      width: 10,
+                      height: 10,
+                      margin: const EdgeInsets.only(right: 5),
+                      decoration: BoxDecoration(
+                        color: _parseColorCode(entry['code'] ?? ''),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: const Color(0xFF585858), width: 0.5),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
           if (isFlashSale) ...[
             PriceCardWidget(
               price: mainPrice.toString(),

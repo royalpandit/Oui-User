@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../utils/utils.dart';
 import '../../category/model/category_model.dart';
+import '../../product_details/model/variant_detail_model.dart';
 import '../../product_details/model/product_variant_model.dart';
 
 class ProductModel extends Equatable {
@@ -34,6 +35,7 @@ class ProductModel extends Equatable {
   final List<ActiveVariantModel> productVariants;
   final List<String> sizes;
   final List<String> colors;
+  final List<VariantDetailModel> variantDetails;
 
   const ProductModel({
     required this.id,
@@ -63,6 +65,7 @@ class ProductModel extends Equatable {
     required this.rating,
     this.sizes = const [],
     this.colors = const [],
+    this.variantDetails = const [],
   });
 
   ProductModel copyWith({
@@ -93,6 +96,7 @@ class ProductModel extends Equatable {
     List<ActiveVariantModel>? productVariants,
     List<String>? sizes,
     List<String>? colors,
+    List<VariantDetailModel>? variantDetails,
   }) {
     return ProductModel(
       id: id ?? this.id,
@@ -122,6 +126,7 @@ class ProductModel extends Equatable {
       rating: rating ?? this.rating,
       sizes: sizes ?? this.sizes,
       colors: colors ?? this.colors,
+      variantDetails: variantDetails ?? this.variantDetails,
     );
   }
 
@@ -157,6 +162,8 @@ class ProductModel extends Equatable {
         {'active_variants': productVariants.map((x) => x.toMap()).toList()});
     result.addAll({'sizes': json.encode(sizes)});
     result.addAll({'colors': json.encode(colors)});
+    result.addAll(
+      {'varient_item_details': variantDetails.map((x) => x.toMap()).toList()});
 
     return result;
   }
@@ -214,7 +221,18 @@ class ProductModel extends Equatable {
           : [],
       sizes: _parseStringList(map['sizes']),
       colors: _parseStringList(map['colors']),
+      variantDetails: _parseVariantDetails(map),
     );
+  }
+
+  static List<VariantDetailModel> _parseVariantDetails(Map<String, dynamic> map) {
+    final dynamic raw = map['varient_item_details'] ?? map['variant_item_details'];
+    if (raw is List) {
+      return raw
+          .map((e) => VariantDetailModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    }
+    return [];
   }
 
   static List<String> _parseStringList(dynamic value) {
@@ -267,6 +285,7 @@ class ProductModel extends Equatable {
       productVariants,
       sizes,
       colors,
+      variantDetails,
     ];
   }
 }

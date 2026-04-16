@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -77,7 +79,8 @@ class Utils {
   // final icon =  BlocProvider.of<AppSettingCubit>(_).settingModel!.setting!.currencyIcon;
 
   static String _normalizedCurrencyIcon(BuildContext context) {
-    final rawIcon = context.read<AppSettingCubit>().settingModel!.setting!.currencyIcon;
+    final rawIcon =
+        context.read<AppSettingCubit>().settingModel!.setting!.currencyIcon;
     if (rawIcon.trim().isEmpty) return '₹';
     var icon = rawIcon.trim();
     icon = icon.replaceAll(RegExp(r'Rs\.?', caseSensitive: false), '₹');
@@ -111,6 +114,98 @@ class Utils {
     return icon + price.toString();
   }
 
+  static List<String> parseDisplayList(dynamic value) {
+    if (value == null) return [];
+    if (value is List) {
+      return value
+          .map((e) => e.toString().trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
+
+    final text = value.toString().trim();
+    if (text.isEmpty) return [];
+
+    if ((text.startsWith('[') && text.endsWith(']')) ||
+        (text.startsWith('"') && text.endsWith('"'))) {
+      try {
+        final decoded = jsonDecode(text);
+        if (decoded is List) {
+          return decoded
+              .map((e) => e.toString().trim())
+              .where((e) => e.isNotEmpty)
+              .toList();
+        }
+      } catch (_) {}
+    }
+
+    return text
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+  }
+
+  static Color parseColorLabel(String value,
+      {Color fallback = const Color(0xFF7A7A7A)}) {
+    final raw = value.trim();
+    if (raw.isEmpty) return fallback;
+
+    String hex = raw;
+    if (hex.startsWith('#')) hex = hex.substring(1);
+    if (RegExp(r'^[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$').hasMatch(hex)) {
+      if (hex.length == 6) hex = 'FF$hex';
+      final parsed = int.tryParse(hex, radix: 16);
+      if (parsed != null) return Color(parsed);
+    }
+
+    switch (raw.toLowerCase()) {
+      case 'black':
+        return Colors.black;
+      case 'white':
+        return Colors.white;
+      case 'red':
+        return Colors.red;
+      case 'green':
+        return Colors.green;
+      case 'blue':
+        return Colors.blue;
+      case 'yellow':
+        return Colors.yellow;
+      case 'orange':
+        return Colors.orange;
+      case 'pink':
+        return Colors.pink;
+      case 'purple':
+        return Colors.purple;
+      case 'brown':
+        return Colors.brown;
+      case 'grey':
+      case 'gray':
+        return Colors.grey;
+      case 'silver':
+        return const Color(0xFFC0C0C0);
+      case 'gold':
+        return const Color(0xFFFFD700);
+      case 'navy':
+        return const Color(0xFF000080);
+      case 'maroon':
+        return const Color(0xFF800000);
+      case 'teal':
+        return const Color(0xFF008080);
+      case 'cyan':
+        return Colors.cyan;
+      case 'beige':
+        return const Color(0xFFF5F5DC);
+      case 'ivory':
+        return const Color(0xFFFFFFF0);
+      case 'cream':
+        return const Color(0xFFFFFDD0);
+      default:
+        return fallback;
+    }
+  }
+
   static double cartProductPrice(
       BuildContext context, CartProductModel cartProductModel) {
     final appSetting = context.read<AppSettingCubit>();
@@ -121,34 +216,24 @@ class Utils {
     final isFlashSale = appSetting.settingModel!.flashSaleProducts.contains(
         FlashSaleProductsModel(productId: cartProductModel.product.id));
 
-    if (cartProductModel.product.offerPrice != 0) {
-      if (cartProductModel.variants.isNotEmpty) {
-        double p = 0.0;
+    final variantPriceFromApi = cartProductModel.variantPriceAdjustment;
+    final variantPriceFromSelections = cartProductModel.variants.isNotEmpty
+        ? cartProductModel.variants.fold<double>(
+            0.0,
+            (sum, item) => sum + (item.varientItem?.price ?? 0.0),
+          )
+        : 0.0;
+    final appliedVariantPrice = variantPriceFromApi != 0.0
+        ? variantPriceFromApi
+        : variantPriceFromSelections;
 
-        for (var i in cartProductModel.variants) {
-          debugPrint("vItem1: $i");
-          if (i.varientItem != null) {
-            p += i.varientItem!.price;
-          }
-        }
-        offerPrice = p + cartProductModel.product.offerPrice;
-      } else {
-        offerPrice = cartProductModel.product.offerPrice;
-      }
+    if (appliedVariantPrice > 0.0) {
+      productPrice = appliedVariantPrice;
+    } else if (cartProductModel.product.offerPrice != 0) {
+      offerPrice = cartProductModel.product.offerPrice;
       productPrice = offerPrice;
     } else {
-      if (cartProductModel.variants.isNotEmpty) {
-        double p = 0.0;
-        for (var i in cartProductModel.variants) {
-          debugPrint("vItem2: $i");
-          if (i.varientItem != null) {
-            p += i.varientItem!.price;
-          }
-        }
-        mainPrice = p + cartProductModel.product.price;
-      } else {
-        mainPrice = cartProductModel.product.price;
-      }
+      mainPrice = cartProductModel.product.price;
       productPrice = mainPrice;
     }
 
@@ -536,7 +621,8 @@ class Utils {
       ..showSnackBar(
         SnackBar(
           backgroundColor: const Color(0xFF1B1B1B),
-          content: Text(errorMsg, style: const TextStyle(color: Color(0xFFE5E2E1))),
+          content:
+              Text(errorMsg, style: const TextStyle(color: Color(0xFFE5E2E1))),
         ),
       );
   }

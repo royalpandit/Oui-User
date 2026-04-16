@@ -143,15 +143,38 @@ class OrderModel extends Equatable {
   }
 
   factory OrderModel.fromMap(Map<String, dynamic> map) {
+    final orderProducts = map['order_products'] != null
+        ? List<OrderedProductModel>.from(
+            (map['order_products'] as List<dynamic>).map<OrderedProductModel>(
+              (x) => OrderedProductModel.fromMap(x as Map<String, dynamic>),
+            ),
+          )
+        : <OrderedProductModel>[];
+    final shippingCost = map['shipping_cost'] != null
+        ? double.parse(map['shipping_cost'].toString())
+        : 0.0;
+    final couponCoast = map['coupon_coast'] != null
+        ? double.parse(map['coupon_coast'].toString())
+        : 0.0;
+    final serverTotalAmount = map['total_amount'] != null
+        ? double.parse(map['total_amount'].toString())
+        : 0.0;
+    final computedTotalAmount = orderProducts.isNotEmpty
+        ? orderProducts.fold<double>(
+              0.0,
+              (sum, item) => sum + (item.unitPrice * item.qty),
+            ) +
+            shippingCost -
+            couponCoast
+        : serverTotalAmount;
+
     return OrderModel(
       id: map['id'] ?? 0,
       orderId: map['order_id'] ?? "",
       userId: map['user_id'] != null ? int.parse(map['user_id'].toString()) : 0,
       status: map['status'] != null ? int.parse(map['status'].toString()) : 0,
       message: map['message'] ?? '',
-      totalAmount: map['total_amount'] != null
-          ? double.parse(map['total_amount'].toString())
-          : 0,
+      totalAmount: computedTotalAmount,
       productQty: map['product_qty'] != null
           ? int.parse(map['product_qty'].toString())
           : 0,
@@ -161,12 +184,8 @@ class OrderModel extends Equatable {
           : 0,
       paymentApprovalDate: map['payment_approval_date'] ?? "",
       shippingMethod: map['shipping_method'] ?? "",
-      shippingCost: map['shipping_cost'] != null
-          ? double.parse(map['shipping_cost'].toString())
-          : 0,
-      couponCoast: map['coupon_coast'] != null
-          ? double.parse(map['coupon_coast'].toString())
-          : 0,
+      shippingCost: shippingCost,
+      couponCoast: couponCoast,
       orderStatus: map['order_status'] != null
           ? int.parse(map['order_status'].toString())
           : 0,
@@ -180,13 +199,7 @@ class OrderModel extends Equatable {
       additionalInfo: map['additional_info'] ?? "",
       createdAt: map['created_at'] ?? "",
       updatedAt: map['updated_at'] ?? "",
-      orderProducts: map['order_products'] != null
-          ? List<OrderedProductModel>.from(
-              (map['order_products'] as List<dynamic>).map<OrderedProductModel>(
-                (x) => OrderedProductModel.fromMap(x as Map<String, dynamic>),
-              ),
-            )
-          : [],
+      orderProducts: orderProducts,
       orderAddress: map['order_address'] != null
           ? OrderAddressModel.fromMap(map['order_address'])
           : null,

@@ -136,6 +136,30 @@ class HomeHorizontalListProductCard extends StatelessWidget {
                           ? flashPrice.toString()
                           : offerPrice.toString(),
                     ),
+                    const SizedBox(height: 6),
+                    Builder(
+                      builder: (_) {
+                        final codes = _colorCodes();
+                        if (codes.isEmpty) return const SizedBox.shrink();
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Row(
+                            children: codes.take(4).map((code) {
+                              return Container(
+                                width: 10,
+                                height: 10,
+                                margin: const EdgeInsets.only(right: 5),
+                                decoration: BoxDecoration(
+                                  color: _parseColorCode(code),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: const Color(0xFF585858), width: 0.5),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -144,6 +168,29 @@ class HomeHorizontalListProductCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<String> _colorCodes() {
+    final codes = <String>[];
+    final seen = <String>{};
+    for (final item in productModel.variantDetails) {
+      final code = item.colorCode.trim();
+      final key = (code.isNotEmpty ? code : item.color).trim().toLowerCase();
+      if (key.isEmpty || seen.contains(key)) continue;
+      seen.add(key);
+      codes.add(code);
+    }
+    return codes;
+  }
+
+  Color _parseColorCode(String code) {
+    final raw = code.trim();
+    if (raw.isEmpty) return const Color(0xFF7A7A7A);
+    String hex = raw.startsWith('#') ? raw.substring(1) : raw;
+    if (hex.length == 6) hex = 'FF$hex';
+    final value = int.tryParse(hex, radix: 16);
+    if (value == null) return const Color(0xFF7A7A7A);
+    return Color(value);
   }
 
   Widget _buildImageSection() {

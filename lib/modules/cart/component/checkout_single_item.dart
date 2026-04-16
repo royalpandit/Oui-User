@@ -5,64 +5,20 @@ import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
-import '../../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
-import '../../setting/model/website_setup_model.dart';
 import '../model/cart_product_model.dart';
 
 class CheckoutSingleItem extends StatelessWidget {
-  const CheckoutSingleItem(
-      {super.key, required this.product, required this.appSetting});
+  const CheckoutSingleItem({super.key, required this.product});
 
   final CartProductModel product;
-  final AppSettingCubit appSetting;
 
   @override
   Widget build(BuildContext context) {
-
-    double offerPrice = 0.0;
-    double mainPrice = 0.0;
-    final isFlashSale = appSetting.settingModel!.flashSaleProducts
-        .contains(FlashSaleProductsModel(productId: product.product.id));
-
-    if (product.product.offerPrice.toString().isNotEmpty) {
-      if (product.product.productVariants.isNotEmpty) {
-        double p = 0.0;
-        for (var i in product.product.productVariants) {
-          if (i.activeVariantsItems.isNotEmpty) {
-            p += Utils.toDouble(i.activeVariantsItems.first.price.toString());
-          }
-        }
-        offerPrice = p + product.product.offerPrice;
-      } else {
-        offerPrice = product.product.offerPrice;
-      }
-    }
-    if (product.product.productVariants.isNotEmpty) {
-      double p = 0.0;
-      for (var i in product.product.productVariants) {
-        if (i.activeVariantsItems.isNotEmpty) {
-          p += Utils.toDouble(i.activeVariantsItems.first.price.toString());
-        }
-      }
-      mainPrice = p + product.product.offerPrice;
-    } else {
-      mainPrice = product.product.offerPrice;
-    }
-
-    double flashPrice = 0.0;
-    if (isFlashSale) {
-      if (product.product.offerPrice.toString().isNotEmpty) {
-        final discount =
-            appSetting.settingModel!.flashSale.offer / 100 * offerPrice;
-
-        flashPrice = offerPrice - discount;
-      } else {
-        final discount =
-            appSetting.settingModel!.flashSale.offer / 100 * mainPrice;
-
-        flashPrice = mainPrice - discount;
-      }
-    }
+    final selectedColors = _resolvedColors();
+    final selectedSizes = product.selectedSizes
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -106,7 +62,10 @@ class CheckoutSingleItem extends StatelessWidget {
                     product.product.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black),
+                    style: GoogleFonts.inter(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black),
                   ),
                 ),
                 Row(
@@ -132,17 +91,85 @@ class CheckoutSingleItem extends StatelessWidget {
                     ),
                   ],
                 ),
-                Wrap(
-                  children: product.variants
-                      .map(
-                        (e) => Text(
-                          '${e.varientItem!.name} : ${e.varientItem!.price}, ',
-                          style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w500, color: Colors.grey.shade600),
+                if (selectedColors.isNotEmpty || selectedSizes.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        ...selectedSizes.map(
+                          (size) => Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey.shade300, width: 1),
+                            ),
+                            child: Text(
+                              'SIZE: ${size.toUpperCase()}',
+                              style: GoogleFonts.inter(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey.shade700),
+                            ),
+                          ),
                         ),
-                      )
-                      .toList(),
-                )
+                        ...selectedColors.map(_buildColorChip),
+                      ],
+                    ),
+                  ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<String> _resolvedColors() {
+    final colors = <String>{
+      ...product.selectedColors.map((e) => e.trim()).where((e) => e.isNotEmpty),
+    };
+
+    for (final variant in product.variants) {
+      final item = variant.varientItem;
+      if (item == null) continue;
+      final isColorType =
+          item.productVariantName.toLowerCase().contains('color');
+      if (isColorType && item.name.trim().isNotEmpty) {
+        colors.add(item.name.trim());
+      }
+    }
+
+    return colors.toList();
+  }
+
+  Widget _buildColorChip(String colorName) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Utils.parseColorLabel(colorName, fallback: Colors.grey),
+              border: Border.all(color: Colors.grey.shade500, width: 0.5),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'COLOR: ${colorName.toUpperCase()}',
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade700,
             ),
           ),
         ],

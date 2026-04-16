@@ -26,6 +26,8 @@ class CartItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColors = _resolvedColors();
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -128,7 +130,7 @@ class CartItemCard extends StatelessWidget {
 
                 // Selected sizes and colors
                 if (product.selectedSizes.isNotEmpty ||
-                    product.selectedColors.isNotEmpty)
+                    resolvedColors.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 4),
                     child: Wrap(
@@ -141,8 +143,7 @@ class CartItemCard extends StatelessWidget {
                                     horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: const Color(0xFF444444),
-                                      width: 1),
+                                      color: const Color(0xFF444444), width: 1),
                                 ),
                                 child: Text(
                                   'SIZE: ${s.toUpperCase()}',
@@ -154,25 +155,8 @@ class CartItemCard extends StatelessWidget {
                                   ),
                                 ),
                               )),
-                        if (product.selectedColors.isNotEmpty)
-                          ...product.selectedColors.map((c) => Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: const Color(0xFF444444),
-                                      width: 1),
-                                ),
-                                child: Text(
-                                  'COLOR: ${c.toUpperCase()}',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w400,
-                                    color: const Color(0xFFA0A0A0),
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                              )),
+                        if (resolvedColors.isNotEmpty)
+                          ...resolvedColors.map(_buildColorChip),
                       ],
                     ),
                   ),
@@ -218,7 +202,8 @@ class CartItemCard extends StatelessWidget {
                           padding: const EdgeInsets.only(bottom: 4),
                           decoration: const BoxDecoration(
                             border: Border(
-                              bottom: BorderSide(color: Color(0xFF444444), width: 1),
+                              bottom: BorderSide(
+                                  color: Color(0xFF444444), width: 1),
                             ),
                           ),
                           child: Text(
@@ -241,7 +226,8 @@ class CartItemCard extends StatelessWidget {
                               .read<CartCubit>()
                               .removerCartItem(product.id.toString());
                           result.fold(
-                            (failure) => Utils.errorSnackBar(context, failure.message),
+                            (failure) =>
+                                Utils.errorSnackBar(context, failure.message),
                             (success) {
                               onRemove(product.id);
                               Utils.showSnackBar(context, success);
@@ -263,6 +249,57 @@ class CartItemCard extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<String> _resolvedColors() {
+    final colors = <String>{
+      ...product.selectedColors.map((e) => e.trim()).where((e) => e.isNotEmpty),
+    };
+
+    for (final variant in product.variants) {
+      final item = variant.varientItem;
+      if (item == null) continue;
+      final isColorType =
+          item.productVariantName.toLowerCase().contains('color');
+      if (isColorType && item.name.trim().isNotEmpty) {
+        colors.add(item.name.trim());
+      }
+    }
+
+    return colors.toList();
+  }
+
+  Widget _buildColorChip(String colorName) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFF444444), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Utils.parseColorLabel(colorName),
+              border: Border.all(color: const Color(0xFF666666), width: 0.5),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'COLOR: ${colorName.toUpperCase()}',
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFFA0A0A0),
+              letterSpacing: 1,
             ),
           ),
         ],
@@ -307,7 +344,8 @@ class _QuantityControlState extends State<_QuantityControl> {
   Future<void> _increment() async {
     if (_loading) return;
     setState(() => _loading = true);
-    final result = await context.read<CartCubit>().incrementQuantity(widget.productId);
+    final result =
+        await context.read<CartCubit>().incrementQuantity(widget.productId);
     result.fold(
       (failure) => Utils.errorSnackBar(context, failure.message),
       (_) {
@@ -321,7 +359,8 @@ class _QuantityControlState extends State<_QuantityControl> {
   Future<void> _decrement() async {
     if (_loading || _qty <= 1) return;
     setState(() => _loading = true);
-    final result = await context.read<CartCubit>().decrementQuantity(widget.productId);
+    final result =
+        await context.read<CartCubit>().decrementQuantity(widget.productId);
     result.fold(
       (failure) => Utils.errorSnackBar(context, failure.message),
       (_) {

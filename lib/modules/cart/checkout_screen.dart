@@ -11,7 +11,6 @@ import '/widgets/capitalized_word.dart';
 import '../../core/router_name.dart';
 import '../../dummy_data/all_dummy_data.dart';
 import '../../utils/utils.dart';
-import '../animated_splash_screen/controller/app_setting_cubit/app_setting_cubit.dart';
 import '../profile/controllers/address/address_cubit.dart';
 import '../profile/model/address_model.dart';
 import 'component/address_card_component.dart';
@@ -63,13 +62,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              size: 20, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
         title: Text(
           Language.checkout.capitalizeByWord(),
-          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
+          style: GoogleFonts.inter(
+              fontSize: 17, fontWeight: FontWeight.w600, color: Colors.black),
         ),
       ),
       body: BlocConsumer<CheckoutCubit, CheckoutState>(
@@ -81,7 +82,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         builder: (context, state) {
           if (state is CheckoutStateLoading || state is CheckoutStateInitial) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2));
+                child: CircularProgressIndicator(
+                    color: Colors.black, strokeWidth: 2));
           } else if (state is CheckoutStateError) {
             return Center(
               child: Text(
@@ -188,7 +190,8 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
                   controlAffinity: ListTileControlAffinity.leading,
                   title: Text(
                     Language.agreeTermAndCondition.capitalizeByWord(),
-                    style: GoogleFonts.inter(fontSize: 14, color: Colors.black87),
+                    style:
+                        GoogleFonts.inter(fontSize: 14, color: Colors.black87),
                   ),
                   value: agreeTermsCondition == 1 ? true : false,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 12),
@@ -214,8 +217,8 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Colors.grey.shade200)),
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade200)),
       ),
       child: Row(
         children: [
@@ -233,7 +236,10 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
                           context.read<ShippingChargesCubit>().initialPrice;
                       return Text(
                         "${Language.total.capitalizeByWord()}: ${Utils.formatPrice(value, context)}",
-                        style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black),
+                        style: GoogleFonts.inter(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black),
                       );
                     }
                     return const SizedBox();
@@ -249,41 +255,48 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
           const SizedBox(width: 16),
           Flexible(
             child: ElevatedButton(
-            onPressed: () {
-              log('Place Order: billingId=$billingAddressId, shippingId=$shippingAddressId, shippingMethod=$shippingMethod, methodListLen=${shippingMethodList.length}');
-              if (agreeTermsCondition != 1) {
-                Utils.errorSnackBar(context,
-                    Language.agreeTermAndCondition.capitalizeByWord());
-                return;
-              } else if (billingAddressId < 1 && shippingAddressId < 1) {
-                Utils.errorSnackBar(context, 'Please select both billing and shipping address');
-              } else if (billingAddressId < 1) {
-                Utils.errorSnackBar(context, 'Please select a billing address');
-              } else if (shippingAddressId < 1) {
-                Utils.errorSnackBar(context, 'Please select a shipping address');
-              } else if (shippingMethodList.isNotEmpty &&
-                  shippingMethod < 1) {
-                Utils.errorSnackBar(context, 'Please select a shipping method');
-              } else {
-                body['shipping_address_id'] = shippingAddressId.toString();
-                body['billing_address_id'] = billingAddressId.toString();
-                body['shipping_method_id'] = shippingMethod.toString();
-                Navigator.pushNamed(context, RouteNames.placeOrderScreen,
-                    arguments: body);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              onPressed: () {
+                log('Place Order: billingId=$billingAddressId, shippingId=$shippingAddressId, shippingMethod=$shippingMethod, methodListLen=${shippingMethodList.length}');
+                if (agreeTermsCondition != 1) {
+                  Utils.errorSnackBar(context,
+                      Language.agreeTermAndCondition.capitalizeByWord());
+                  return;
+                } else if (billingAddressId < 1 && shippingAddressId < 1) {
+                  Utils.errorSnackBar(context,
+                      'Please select both billing and shipping address');
+                } else if (billingAddressId < 1) {
+                  Utils.errorSnackBar(
+                      context, 'Please select a billing address');
+                } else if (shippingAddressId < 1) {
+                  Utils.errorSnackBar(
+                      context, 'Please select a shipping address');
+                } else if (shippingMethodList.isNotEmpty &&
+                    shippingMethod < 1) {
+                  Utils.errorSnackBar(
+                      context, 'Please select a shipping method');
+                } else {
+                  body['shipping_address_id'] = shippingAddressId.toString();
+                  body['billing_address_id'] = billingAddressId.toString();
+                  body['shipping_method_id'] = shippingMethod.toString();
+                  Navigator.pushNamed(context, RouteNames.placeOrderScreen,
+                      arguments: body);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+              child: Text(
+                Language.placeOrderNow.capitalizeByWord(),
+                style: GoogleFonts.inter(
+                    fontSize: 14, fontWeight: FontWeight.w600),
+              ),
             ),
-            child: Text(
-              Language.placeOrderNow.capitalizeByWord(),
-              style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
-            ),
-          ),
           ),
         ],
       ),
@@ -301,19 +314,26 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(Language.deliveryLocation.capitalizeByWord(),
-                  style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black)),
+                  style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black)),
               InkWell(
                 onTap: () {
                   Navigator.pushNamed(context, RouteNames.addressScreen);
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(Language.add.capitalizeByWord(),
-                      style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white)),
+                      style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white)),
                 ),
               ),
             ],
@@ -322,7 +342,8 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
         const SizedBox(height: 12),
         BlocConsumer<AddressCubit, AddressState>(
           listener: (context, state) {
-            if (state is AddressStateLoaded && state.address.addresses.isNotEmpty) {
+            if (state is AddressStateLoaded &&
+                state.address.addresses.isNotEmpty) {
               final addresses = state.address.addresses;
               if (billingAddressId == 0) {
                 billingAddressId = addresses.first.id;
@@ -349,8 +370,10 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
                 return singleAddressCard(context, state.address.addresses);
               }
             }
-            if (addressCubit.address != null && addressCubit.address!.addresses.isNotEmpty) {
-              return singleAddressCard(context, addressCubit.address!.addresses);
+            if (addressCubit.address != null &&
+                addressCubit.address!.addresses.isNotEmpty) {
+              return singleAddressCard(
+                  context, addressCubit.address!.addresses);
             }
             return const SizedBox();
           },
@@ -389,7 +412,7 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
                                   : Colors.grey.shade100,
                               borderRadius: BorderRadius.circular(10)),
                           padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 10),
+                              horizontal: 14, vertical: 10),
                           child: Text(
                             e.value,
                             style: GoogleFonts.inter(
@@ -509,7 +532,6 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
   }
 
   Widget _buildProductList() {
-    final appSetting = context.read<AppSettingCubit>();
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       sliver: SliverList(
@@ -517,7 +539,6 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
           (context, index) {
             return CheckoutSingleItem(
               product: checkoutResponseModel!.cartProducts[index],
-              appSetting: appSetting,
             );
           },
           childCount: checkoutResponseModel!.cartProducts.length,
@@ -540,7 +561,8 @@ class _LoadedWidgetState extends State<_LoadedWidget> {
           const SizedBox(width: 20),
           Text(
             "$totalProduct ${Language.products.capitalizeByWord()}",
-            style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+            style: GoogleFonts.inter(
+                fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
           ),
         ],
       ),
