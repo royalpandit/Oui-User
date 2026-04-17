@@ -91,7 +91,7 @@ abstract class RemoteDataSource {
 
   Future<String> clearWishList(String token);
 
-  Future<String> addWishList(int id, String token);
+  Future<String> addWishList(int id, int variantId, String token);
 
   Future<SearchResponseModel> searchProduct(Uri uri);
 
@@ -544,6 +544,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return wishlist.map((e) {
         final mapData = e['product'] as Map<String, dynamic>;
         mapData.addAll({"wish_id": e['id']?.toInt() ?? 0});
+        mapData.addAll({"variant_id": e['variant_id']?.toInt() ?? 0});
         return WishListModel.fromMap(mapData);
       }).toList();
     }
@@ -574,8 +575,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<String> addWishList(int id, String token) async {
-    final uri = Uri.parse(RemoteUrls.addWish(id, token));
+  Future<String> addWishList(int id, int variantId, String token) async {
+    final uri = Uri.parse(RemoteUrls.addWish(id, variantId, token));
 
     final headers = demoModeHeader;
     final clientMethod = client.get(uri, headers: headers);

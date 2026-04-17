@@ -10,10 +10,11 @@ import '../../core/router_name.dart';
 import '../../utils/utils.dart';
 import '../../widgets/custom_image.dart';
 import 'controllers/cart/add_to_cart/add_to_cart_cubit.dart';
-import 'model/add_to_cart_model.dart';
 import '../../widgets/please_sign_in_widget.dart';
 import '../home/component/quote_section.dart';
 import '../home/model/home_quote_model.dart';
+import '../product_details/component/bottom_sheet_widget.dart';
+import '../product_details/controller/repository/product_details_repository.dart';
 import '../profile/profile_offer/controllers/wish_list/wish_list_cubit.dart';
 import '../profile/profile_offer/model/wish_list_model.dart';
 import 'component/cart_item_card.dart';
@@ -45,36 +46,50 @@ class _CartScreenState extends State<CartScreen> {
       backgroundColor: const Color(0xFF131313),
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
-        child: BlocConsumer<CartCubit, CartState>(
-          listener: (_, state) {
-            if (state is CartStateDecIncrementLoading) {
-              Utils.loadingDialog(context);
-            } else if (state is CartDecIncState) {
-              Utils.closeDialog(context);
-            } else if (state is CartStateDecIncError) {
-              Utils.closeDialog(context);
-              Utils.errorSnackBar(context, state.message);
-            } else if (state is CartStateRemove) {
-              Utils.closeDialog(context);
-              Utils.showSnackBar(context, state.message);
-            }
-          },
-          builder: (context, state) {
-            if (state is CartStateLoading) {
-              return const CartSkeletonLoader();
-            } else if (state is CartStateError) {
-              if (state.statusCode == 401) {
-                return const PleaseSignInWidget();
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<AddToCartCubit, AddToCartState>(
+              listener: (context, state) {
+                if (state is AddToCartStateAdded) {
+                  Utils.showSnackBar(context, state.message);
+                  context.read<CartCubit>().getCartProducts();
+                } else if (state is AddToCartStateError) {
+                  Utils.errorSnackBar(context, state.message);
+                }
+              },
+            ),
+          ],
+          child: BlocConsumer<CartCubit, CartState>(
+            listener: (_, state) {
+              if (state is CartStateDecIncrementLoading) {
+                Utils.loadingDialog(context);
+              } else if (state is CartDecIncState) {
+                Utils.closeDialog(context);
+              } else if (state is CartStateDecIncError) {
+                Utils.closeDialog(context);
+                Utils.errorSnackBar(context, state.message);
+              } else if (state is CartStateRemove) {
+                Utils.closeDialog(context);
+                Utils.showSnackBar(context, state.message);
               }
-              return Center(
-                child: Text(
-                  state.message,
-                  style: GoogleFonts.inter(fontSize: 14, color: Colors.red.shade300),
-                ),
-              );
-            }
-            return const _CartLoadedBody();
-          },
+            },
+            builder: (context, state) {
+              if (state is CartStateLoading) {
+                return const CartSkeletonLoader();
+              } else if (state is CartStateError) {
+                if (state.statusCode == 401) {
+                  return const PleaseSignInWidget();
+                }
+                return Center(
+                  child: Text(
+                    state.message,
+                    style: GoogleFonts.inter(fontSize: 14, color: Colors.red.shade300),
+                  ),
+                );
+              }
+              return const _CartLoadedBody();
+            },
+          ),
         ),
       ),
     );
@@ -90,6 +105,10 @@ class _CartLoadedBody extends StatefulWidget {
 
 class _CartLoadedBodyState extends State<_CartLoadedBody> {
   final _couponController = TextEditingController();
+  final Map<int, String?> _selectedSizeByProductId = {};
+  final Map<int, String?> _selectedColorKeyByProductId = {};
+  final Map<int, int?> _selectedVariantIdByProductId = {};
+
   late double subTotal;
   late double total;
   late String coupon;
@@ -128,6 +147,44 @@ class _CartLoadedBodyState extends State<_CartLoadedBody> {
       cartCalculation = CartCalculation(subTotal: subTotal.toString(), coupon: coupon, total: total.toString());
       context.read<CartCubit>().saveCartCalculation(cartCalculation!);
     }
+  }
+
+  Future<void> _openVariantSelectionBottomSheet({
+    required int productId,
+    required String slug,
+  }) async {
+    final result = await context.read<ProductDetailsRepository>().getProductDetails(slug);
+
+    await result.fold(
+      (failure) async {
+        if (!mounted) return;
+        Utils.errorSnackBar(context, failure.message);
+      },
+      (data) async {
+        if (!mounted) return;
+        final selection = await showModalBottomSheet<Map<String, String?>>(
+          context: context,
+          backgroundColor: const Color(0xFF1B1B1B),
+          isScrollControlled: true,
+          shape: const RoundedRectangleBorder(),
+          builder: (_) => BottomSheetWidget(
+            product: data.product,
+            initialSize: _selectedSizeByProductId[productId],
+            initialColorKey: _selectedColorKeyByProductId[productId],
+            initialVariantId: _selectedVariantIdByProductId[productId],
+          ),
+        );
+
+        if (selection == null) return;
+
+        setState(() {
+          _selectedSizeByProductId[productId] = selection['size'];
+          _selectedColorKeyByProductId[productId] = selection['color_key'];
+          _selectedVariantIdByProductId[productId] =
+              int.tryParse(selection['variant_id'] ?? '');
+        });
+      },
+    );
   }
 
   @override
@@ -680,7 +737,11 @@ class _CartLoadedBodyState extends State<_CartLoadedBody> {
                   Positioned(
                     left: 8,
                     top: 8,
-                    child: FavoriteButton(productId: item.productId),
+                    child: FavoriteButton(
+                      productId: item.productId,
+                      productSlug: item.slug,
+                      variantId: item.variantId,
+                    ),
                   ),
                 ],
               ),
@@ -719,15 +780,11 @@ class _CartLoadedBodyState extends State<_CartLoadedBody> {
                 const SizedBox(height: 8),
                 GestureDetector(
                   onTap: () {
-                    final addToCart = AddToCartModel(
-                      quantity: 1,
-                      productId: item.productId,
-                      image: item.thumbImage,
+                    final productId = item.productId > 0 ? item.productId : item.id;
+                    _openVariantSelectionBottomSheet(
+                      productId: productId,
                       slug: item.slug,
-                      token: '',
-                      variantItems: const {},
                     );
-                    context.read<AddToCartCubit>().addToCart(addToCart);
                   },
                   child: Text(
                     'ADD TO CART',

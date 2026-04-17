@@ -213,6 +213,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   gallery: productDetailsModel.gallery,
                 ),
                 displayPrice: _displayPrice(productDetailsModel.product),
+                selectedVariantId: _selectedVariantId,
               ),
             ),
             SliverToBoxAdapter(

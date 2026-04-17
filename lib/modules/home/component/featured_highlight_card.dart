@@ -74,7 +74,10 @@ class FeaturedHighlightCard extends StatelessWidget {
                   Positioned(
                     right: 14,
                     top: 14,
-                    child: FavoriteButton(productId: product.id),
+                    child: FavoriteButton(
+                      productId: product.id,
+                      productSlug: product.slug,
+                    ),
                   ),
                 ],
               ),

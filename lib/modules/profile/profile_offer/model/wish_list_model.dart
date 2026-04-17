@@ -14,6 +14,7 @@ class WishListModel extends Equatable {
   final int vendorId;
   final int categoryId;
   final int brandId;
+  final int variantId;
   final int qty;
   final String shortDescription;
   final String longDescription;
@@ -40,6 +41,7 @@ class WishListModel extends Equatable {
     required this.vendorId,
     required this.categoryId,
     required this.brandId,
+    required this.variantId,
     required this.qty,
     required this.shortDescription,
     required this.longDescription,
@@ -67,6 +69,7 @@ class WishListModel extends Equatable {
     int? vendorId,
     int? categoryId,
     int? brandId,
+    int? variantId,
     int? qty,
     String? shortDescription,
     String? longDescription,
@@ -93,6 +96,7 @@ class WishListModel extends Equatable {
       vendorId: vendorId ?? this.vendorId,
       categoryId: categoryId ?? this.categoryId,
       brandId: brandId ?? this.brandId,
+      variantId: variantId ?? this.variantId,
       qty: qty ?? this.qty,
       shortDescription: shortDescription ?? this.shortDescription,
       longDescription: longDescription ?? this.longDescription,
@@ -122,6 +126,7 @@ class WishListModel extends Equatable {
     result.addAll({'vendor_id': vendorId});
     result.addAll({'category_id': categoryId});
     result.addAll({'brand_id': brandId});
+    result.addAll({'variant_id': variantId});
     result.addAll({'qty': qty});
     result.addAll({'short_description': shortDescription});
     result.addAll({'long_description': longDescription});
@@ -159,6 +164,9 @@ class WishListModel extends Equatable {
           : 0,
       brandId:
           map['brand_id'] != null ? int.parse(map['brand_id'].toString()) : 0,
+        variantId: map['variant_id'] != null
+          ? int.parse(map['variant_id'].toString())
+          : 0,
       qty: map['qty'] != null ? int.parse(map['qty'].toString()) : 0,
       shortDescription: map['short_description'] ?? '',
       longDescription: map['long_description'] ?? '',
@@ -208,6 +216,7 @@ class WishListModel extends Equatable {
       vendorId,
       categoryId,
       brandId,
+      variantId,
       qty,
       shortDescription,
       longDescription,

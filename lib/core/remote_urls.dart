@@ -91,8 +91,8 @@ class RemoteUrls {
   static String clearWishList(String token) =>
       '${baseUrl}user/clear-wishlist?token=$token';
 
-  static String addWish(int id, String token) =>
-      '${baseUrl}user/add-to-wishlist/$id?token=$token';
+  static String addWish(int id, int variantId, String token) =>
+      '${baseUrl}user/add-to-wishlist/$id/$variantId?token=$token';
   static const String searchProduct = '${baseUrl}product?';
 
   static String cartProduct(String token) => "${baseUrl}cart?token=$token";

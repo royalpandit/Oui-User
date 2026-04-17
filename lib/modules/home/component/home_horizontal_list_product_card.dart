@@ -213,7 +213,10 @@ class HomeHorizontalListProductCard extends StatelessWidget {
         Positioned(
           top: 8,
           left: 8,
-          child: FavoriteButton(productId: productModel.id),
+          child: FavoriteButton(
+            productId: productModel.id,
+            productSlug: productModel.slug,
+          ),
         ),
       ],
     );

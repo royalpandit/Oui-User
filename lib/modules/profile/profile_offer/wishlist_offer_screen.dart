@@ -8,11 +8,11 @@ import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 import '../../../widgets/favorite_button.dart';
 import '../../cart/controllers/cart/add_to_cart/add_to_cart_cubit.dart';
-import '../../cart/model/add_to_cart_model.dart';
 import '../../home/controller/cubit/home_controller_cubit.dart';
 import '../../home/model/home_quote_model.dart';
 import '../../home/model/product_model.dart';
-import '../../product_details/model/product_variant_model.dart';
+import '../../product_details/component/bottom_sheet_widget.dart';
+import '../../product_details/controller/repository/product_details_repository.dart';
 import 'controllers/wish_list/wish_list_cubit.dart';
 import 'model/wish_list_model.dart';
 
@@ -78,6 +78,9 @@ class _LoadedWidget extends StatefulWidget {
 
 class __LoadedWidgetState extends State<_LoadedWidget> {
   List<WishListModel> productList = [];
+  final Map<int, String?> _selectedSizeByProductId = {};
+  final Map<int, String?> _selectedColorKeyByProductId = {};
+  final Map<int, int?> _selectedVariantIdByProductId = {};
 
   @override
   void initState() {
@@ -187,6 +190,44 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
     );
   }
 
+  Future<void> _openVariantSelectionBottomSheet({
+    required int productId,
+    required String slug,
+  }) async {
+    final result = await context.read<ProductDetailsRepository>().getProductDetails(slug);
+
+    await result.fold(
+      (failure) async {
+        if (!mounted) return;
+        Utils.errorSnackBar(context, failure.message);
+      },
+      (data) async {
+        if (!mounted) return;
+        final selection = await showModalBottomSheet<Map<String, String?>>(
+          context: context,
+          backgroundColor: const Color(0xFF1B1B1B),
+          isScrollControlled: true,
+          shape: const RoundedRectangleBorder(),
+          builder: (_) => BottomSheetWidget(
+            product: data.product,
+            initialSize: _selectedSizeByProductId[productId],
+            initialColorKey: _selectedColorKeyByProductId[productId],
+            initialVariantId: _selectedVariantIdByProductId[productId],
+          ),
+        );
+
+        if (selection == null) return;
+
+        setState(() {
+          _selectedSizeByProductId[productId] = selection['size'];
+          _selectedColorKeyByProductId[productId] = selection['color_key'];
+          _selectedVariantIdByProductId[productId] =
+              int.tryParse(selection['variant_id'] ?? '');
+        });
+      },
+    );
+  }
+
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
@@ -253,7 +294,11 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
                   Positioned(
                     right: 16,
                     top: 16,
-                    child: FavoriteButton(productId: item.id),
+                    child: FavoriteButton(
+                      productId: item.id,
+                      productSlug: item.slug,
+                      variantId: item.variantId,
+                    ),
                   ),
                 ],
               ),
@@ -332,15 +377,11 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
             },
             child: GestureDetector(
               onTap: () {
-                final dataModel = AddToCartModel(
-                  quantity: 1,
-                  productId: item.id,
-                  image: item.thumbImage,
+                final productId = item.productId > 0 ? item.productId : item.id;
+                _openVariantSelectionBottomSheet(
+                  productId: productId,
                   slug: item.slug,
-                  token: '',
-                  variantItems: const <ActiveVariantModel>{},
                 );
-                context.read<AddToCartCubit>().addToCart(dataModel);
               },
               child: Container(
                 width: double.infinity,
@@ -530,7 +571,10 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
                   Positioned(
                     right: 10,
                     top: 10,
-                    child: FavoriteButton(productId: product.id),
+                    child: FavoriteButton(
+                      productId: product.id,
+                      productSlug: product.slug,
+                    ),
                   ),
                 ],
               ),
@@ -564,15 +608,10 @@ class __LoadedWidgetState extends State<_LoadedWidget> {
             // ADD TO BAG
             GestureDetector(
               onTap: () {
-                final dataModel = AddToCartModel(
-                  quantity: 1,
+                _openVariantSelectionBottomSheet(
                   productId: product.id,
-                  image: product.thumbImage,
                   slug: product.slug,
-                  token: '',
-                  variantItems: const <ActiveVariantModel>{},
                 );
-                context.read<AddToCartCubit>().addToCart(dataModel);
               },
               child: Container(
                 width: double.infinity,

@@ -55,7 +55,10 @@ class ProductCard extends StatelessWidget {
                   Positioned(
                     left: 8,
                     top: 8,
-                    child: FavoriteButton(productId: productModel.id),
+                    child: FavoriteButton(
+                      productId: productModel.id,
+                      productSlug: productModel.slug,
+                    ),
                   ),
                 ],
               ),

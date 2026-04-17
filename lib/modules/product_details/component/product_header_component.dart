@@ -14,11 +14,13 @@ class ProductHeaderComponent extends StatefulWidget {
     required this.product,
     required this.images,
     required this.displayPrice,
+    this.selectedVariantId,
   });
 
   final ProductDetailsProductModel product;
   final List<String> images;
   final double displayPrice;
+  final int? selectedVariantId;
 
   @override
   State<ProductHeaderComponent> createState() => _ProductHeaderComponentState();
@@ -206,7 +208,11 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
           Positioned(
             right: 16,
             top: topPadding + 72,
-            child: FavoriteButton(productId: widget.product.id),
+            child: FavoriteButton(
+              productId: widget.product.id,
+              productSlug: widget.product.slug,
+              variantId: widget.selectedVariantId,
+            ),
           ),
         ],
       ),

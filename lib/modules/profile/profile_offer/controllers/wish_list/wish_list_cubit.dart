@@ -82,12 +82,12 @@ class WishListCubit extends Cubit<WishListState> {
       },
     );
   }
-  Future<Either<Failure, String>> addWishList(int id) async {
+  Future<Either<Failure, String>> addWishList(int id, int variantId) async {
     if (_loginBloc.userInfo == null) {
       return left(const ServerFailure("Please login first", 1000));
     }
     final result = await _profileRepository.addWishList(
-        id, _loginBloc.userInfo!.accessToken);
+        id, variantId, _loginBloc.userInfo!.accessToken);
 
     result.fold((failure) {
       emit(WishListStateError(failure.message, failure.statusCode));

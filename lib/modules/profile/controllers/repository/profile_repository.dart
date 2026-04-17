@@ -85,7 +85,7 @@ abstract class ProfileRepository {
 
   Future<Either<Failure, String>> clearWishList(String token);
 
-  Future<Either<Failure, String>> addWishList(int id, String token);
+  Future<Either<Failure, String>> addWishList(int id, int variantId, String token);
 }
 
 class ProfileRepositoryImp extends ProfileRepository {
@@ -304,9 +304,9 @@ class ProfileRepositoryImp extends ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, String>> addWishList(int id, String token) async {
+  Future<Either<Failure, String>> addWishList(int id, int variantId, String token) async {
     try {
-      final result = await remoteDataSource.addWishList(id, token);
+      final result = await remoteDataSource.addWishList(id, variantId, token);
 
       return Right(result);
     } on ServerException catch (e) {

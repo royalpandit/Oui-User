@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '/modules/product_details/controller/repository/product_details_repository.dart';
 import '/modules/profile/profile_offer/controllers/wish_list/wish_list_cubit.dart';
 import '../modules/profile/profile_offer/model/wish_list_model.dart';
 import '../utils/language_string.dart';
@@ -10,9 +11,13 @@ class FavoriteButton extends StatefulWidget {
   const FavoriteButton({
     super.key,
     required this.productId,
+    this.productSlug,
+    this.variantId,
     this.isBg = true,
   });
   final int productId;
+  final String? productSlug;
+  final int? variantId;
   final bool isBg;
 
   @override
@@ -31,9 +36,42 @@ class _FavoriteButtonState extends State<FavoriteButton> {
 
   void _syncFavState() {
     final list = context.read<WishListCubit>().wishList;
-    final match = list.where((e) => e.id == widget.productId).toSet();
+    final match = list.where(_matchesWishlistItem).toSet();
     isFav = match.isNotEmpty;
     wishItem = match;
+  }
+
+  bool _matchesWishlistItem(WishListModel item) {
+    if (item.id != widget.productId) return false;
+    final selectedVariantId = widget.variantId ?? 0;
+    if (selectedVariantId <= 0) return true;
+    return item.variantId <= 0 || item.variantId == selectedVariantId;
+  }
+
+  Future<int> _resolveVariantId() async {
+    final explicitVariantId = widget.variantId ?? 0;
+    if (explicitVariantId > 0) return explicitVariantId;
+
+    final slug = widget.productSlug;
+    if (slug == null || slug.isEmpty) return 0;
+
+    final result = await context.read<ProductDetailsRepository>().getProductDetails(slug);
+    return result.fold(
+      (failure) => 0,
+      (data) => data.product.variantDetails.isNotEmpty
+          ? data.product.variantDetails.first.id
+          : 0,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant FavoriteButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.productId != widget.productId ||
+        oldWidget.variantId != widget.variantId ||
+        oldWidget.productSlug != widget.productSlug) {
+      _syncFavState();
+    }
   }
 
   @override
@@ -45,9 +83,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
         } else if (state is WishListStateSuccess) {
           Utils.showSnackBar(context, state.message);
         } else if (state is WishListStateLoaded) {
-          final match = state.productList
-              .where((e) => e.id == widget.productId)
-              .toSet();
+          final match = state.productList.where(_matchesWishlistItem).toSet();
           setState(() {
             wishItem = match;
             isFav = match.isNotEmpty;
@@ -66,9 +102,10 @@ class _FavoriteButtonState extends State<FavoriteButton> {
               Utils.showSnackBar(context, Language.somethingWentWrong);
             }
           } else {
+            final resolvedVariantId = await _resolveVariantId();
             await context
                 .read<WishListCubit>()
-                .addWishList(widget.productId);
+                .addWishList(widget.productId, resolvedVariantId);
           }
         },
         child: Container(

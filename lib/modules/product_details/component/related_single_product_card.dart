@@ -62,7 +62,10 @@ class RelatedSingleProductCard extends StatelessWidget {
                   Positioned(
                     left: 8.0,
                     top: 8.0,
-                    child: FavoriteButton(productId: productModel.id),
+                    child: FavoriteButton(
+                      productId: productModel.id,
+                      productSlug: productModel.slug,
+                    ),
                   ),
                 ],
               ),
