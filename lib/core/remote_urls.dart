@@ -1,5 +1,5 @@
 class RemoteUrls {
-     static const String rootUrl = "https://oui.corescent.in/";
+     static const String rootUrl = "https://theoui.ai/";
    // Product url
    static const String baseUrl = '${rootUrl}api/';
   static const String homeUrl = baseUrl;

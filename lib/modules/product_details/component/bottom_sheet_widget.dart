@@ -96,7 +96,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
       }
     }
 
-    return variants.first;
+    return null;
   }
 
   void _applyDefaultVariantSelection() {
@@ -353,6 +353,12 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
           const SizedBox(height: 16),
           GestureDetector(
             onTap: () {
+              if (widget.product.variantDetails.isNotEmpty && 
+                  (_selectedColorKey == null || _selectedSize == null)) {
+                Utils.errorSnackBar(context, 'Please select color and size');
+                return;
+              }
+
               final dataModel = AddToCartModel(
                 image: widget.product.thumbImage,
                 productId: widget.product.id,
@@ -470,7 +476,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
     final currentColor = _selectedColorKey;
     final variants = currentColor != null && grouped.containsKey(currentColor)
         ? grouped[currentColor]!
-        : <VariantDetailModel>[];
+        : widget.product.variantDetails;
     final sizes = variants
         .map((e) => e.size.trim())
         .where((e) => e.isNotEmpty)
@@ -626,8 +632,26 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
 
     // In variant-details mode, price comes from the selected variant row.
     if (widget.product.variantDetails.isNotEmpty) {
-      final selectedVariant = _resolveVariant();
-      unitPrice = selectedVariant?.price ?? 0.0;
+      if (_selectedColorKey != null && _selectedSize == null) {
+        final colorVariants = widget.product.variantDetails
+            .where((v) => _colorKey(v) == _selectedColorKey && v.price > 0)
+            .toList();
+        if (colorVariants.isNotEmpty) {
+          unitPrice = colorVariants.first.price;
+          for (var v in colorVariants) {
+            if (v.price < unitPrice) unitPrice = v.price;
+          }
+        } else {
+          unitPrice = widget.product.offerPrice > 0 ? widget.product.offerPrice : widget.product.price;
+        }
+      } else {
+        final selectedVariant = _resolveVariant();
+        if (selectedVariant != null && selectedVariant.price > 0) {
+          unitPrice = selectedVariant.price;
+        } else {
+          unitPrice = widget.product.offerPrice > 0 ? widget.product.offerPrice : widget.product.price;
+        }
+      }
     } else {
       // Legacy variant schema keeps the old combined behavior.
       if (widget.product.offerPrice > 0) {

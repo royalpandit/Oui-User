@@ -14,12 +14,14 @@ class ProductHeaderComponent extends StatefulWidget {
     required this.product,
     required this.images,
     required this.displayPrice,
+    required this.actualPrice,
     this.selectedVariantId,
   });
 
   final ProductDetailsProductModel product;
   final List<String> images;
   final double displayPrice;
+  final double actualPrice;
   final int? selectedVariantId;
 
   @override
@@ -58,6 +60,75 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
     super.dispose();
   }
 
+  void _showFullScreenImage(BuildContext context, int initialIndex) {
+    final PageController fullScreenCtrl = PageController(initialPage: initialIndex);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            iconTheme: const IconThemeData(color: Colors.white),
+            elevation: 0,
+          ),
+          extendBodyBehindAppBar: true,
+          body: Stack(
+            children: [
+              PageView.builder(
+                controller: fullScreenCtrl,
+                itemCount: allImages.length,
+                itemBuilder: (context, index) {
+                  return InteractiveViewer(
+                    minScale: 0.5,
+                    maxScale: 4.0,
+                    child: Center(
+                      child: CustomImage(
+                        path: RemoteUrls.imageUrl(allImages[index]),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              if (allImages.length > 1) ...[
+                Positioned(
+                  left: 16,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+                      onPressed: () {
+                        if (fullScreenCtrl.hasClients && fullScreenCtrl.page != null && fullScreenCtrl.page! > 0) {
+                          fullScreenCtrl.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 16,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 30),
+                      onPressed: () {
+                        if (fullScreenCtrl.hasClients && fullScreenCtrl.page != null && fullScreenCtrl.page! < allImages.length - 1) {
+                          fullScreenCtrl.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _buildSliderImages() {
     allImages = widget.images
         .where((image) => image.trim().isNotEmpty)
@@ -88,9 +159,12 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
             itemCount: allImages.length,
             onPageChanged: (int index) => setState(() => _currentIndex = index),
             itemBuilder: (context, index) {
-              return CustomImage(
-                path: RemoteUrls.imageUrl(allImages[index]),
-                fit: BoxFit.contain,
+              return GestureDetector(
+                onTap: () => _showFullScreenImage(context, index),
+                child: CustomImage(
+                  path: RemoteUrls.imageUrl(allImages[index]),
+                  fit: BoxFit.contain,
+                ),
               );
             },
           ),
@@ -167,6 +241,20 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          if (widget.actualPrice > displayPrice)
+                            Text(
+                              Utils.formatPrice(widget.actualPrice, context),
+                              textAlign: TextAlign.right,
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: const Color(0xFFA3A3A3),
+                                decoration: TextDecoration.lineThrough,
+                                height: 1.0,
+                              ),
+                            ),
+                          if (widget.actualPrice > displayPrice)
+                            const SizedBox(height: 2),
                           Text(
                             Utils.formatPrice(displayPrice, context),
                             textAlign: TextAlign.right,

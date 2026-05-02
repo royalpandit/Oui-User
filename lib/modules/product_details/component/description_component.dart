@@ -56,9 +56,9 @@ class DescriptionComponent extends StatelessWidget {
     final activeColorKey = (selectedColorCode != null &&
             groupedByColor.containsKey(selectedColorCode!.trim().toLowerCase()))
         ? selectedColorCode!.trim().toLowerCase()
-        : (colorGroups.isNotEmpty ? colorGroups.first.key : null);
+        : null;
     final activeColorVariants =
-        activeColorKey != null ? groupedByColor[activeColorKey]! : <VariantDetailModel>[];
+        activeColorKey != null ? groupedByColor[activeColorKey]! : variantDetails;
     final availableSizes = activeColorVariants
         .map((e) => e.size.trim())
         .where((e) => e.isNotEmpty)

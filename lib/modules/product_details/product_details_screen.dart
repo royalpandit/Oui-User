@@ -89,7 +89,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       }
     }
 
-    return variants.first;
+    return null;
   }
 
   void _applyDefaultVariantSelection(ProductDetailsProductModel product) {
@@ -144,24 +144,20 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       }
     }
 
-    if (images.isEmpty) {
-      if (product.thumbImage.isNotEmpty) images.add(product.thumbImage);
-      for (final image in product.productImages) {
-        if (image.trim().isNotEmpty && !images.contains(image)) {
-          images.add(image);
-        }
-      }
-      for (final item in gallery) {
-        if (item != null &&
-            item.image.isNotEmpty &&
-            !images.contains(item.image)) {
-          images.add(item.image);
-        }
+    if (product.thumbImage.isNotEmpty && !images.contains(product.thumbImage)) {
+      images.add(product.thumbImage);
+    }
+    for (final image in product.productImages) {
+      if (image.trim().isNotEmpty && !images.contains(image)) {
+        images.add(image);
       }
     }
-
-    if (images.isEmpty && product.thumbImage.isNotEmpty) {
-      images.add(product.thumbImage);
+    for (final item in gallery) {
+      if (item != null &&
+          item.image.isNotEmpty &&
+          !images.contains(item.image)) {
+        images.add(item.image);
+      }
     }
 
     return images;
@@ -213,6 +209,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   gallery: productDetailsModel.gallery,
                 ),
                 displayPrice: _displayPrice(productDetailsModel.product),
+                actualPrice: productDetailsModel.product.price,
                 selectedVariantId: _selectedVariantId,
               ),
             ),
@@ -285,7 +282,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 GestureDetector(
                   onTap: () {
                     final url =
-                        'https://oui.corescent.in/product/${productDetailsModel.product.slug}';
+                        'https://theoui.ai/product/${productDetailsModel.product.slug}';
                     SharePlus.instance.share(ShareParams(
                         text: '${productDetailsModel.product.name}\n$url'));
                   },
