@@ -120,7 +120,31 @@ class CartProductModel extends Equatable {
             'category_id': map['category_id'] ?? 0,
             'brand_id': map['brand_id'] ?? 0,
             'averageRating': map['averageRating'] ?? '0',
-            'varient_item_details': const [],
+            'gender': map['gender'] ?? '',
+            'cloth_type': map['cloth_type'] ?? map['clothType'] ?? '',
+            'varient_item_details': (map['variant_id'] != null ||
+                    (map['variant_image']?.toString().isNotEmpty ?? false))
+                ? [
+                    {
+                      'id': map['variant_id'] ?? 0,
+                      'product_id': map['product_id'] ?? 0,
+                      'name': map['variant_name'] ?? 'Default Variant',
+                      'color': map['color'] ?? '',
+                      'color_code': map['color_code'] ?? '',
+                      'size': map['size'] is List
+                          ? ((map['size'] as List).isNotEmpty
+                              ? (map['size'] as List).first.toString()
+                              : '')
+                          : (map['size'] ?? '').toString(),
+                      'qty': map['qty'] ?? 0,
+                      'image': map['variant_image'] ?? '',
+                      'is_primary': 1,
+                      'price': map['variant_price'] ??
+                          map['varient_price'] ??
+                          0,
+                    }
+                  ]
+                : const [],
           };
 
     return CartProductModel(

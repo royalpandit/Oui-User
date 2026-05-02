@@ -131,6 +131,21 @@ class _LoadedHomePage extends StatelessWidget {
           sectionTitle: st(0),
         ),
 
+        for (final gender in const ['Male', 'Female', 'Unisex'])
+          if (_buildGenderProducts(h, gender).isNotEmpty)
+            HorizontalProductComponent(
+              productList: _buildGenderProducts(h, gender),
+              category: gender,
+              onTap: () => Navigator.pushNamed(
+                context,
+                RouteNames.allPopulerProductScreen,
+                arguments: {
+                  'app_bar': gender,
+                  'products': _buildGenderProducts(h, gender),
+                },
+              ),
+            ),
+
         // Banner slider
         if (_isVisible(h.sliderVisibilty))
           SliverToBoxAdapter(
@@ -347,6 +362,26 @@ class _LoadedHomePage extends StatelessWidget {
     }
     list.shuffle(Random());
     return list.take(10).toList();
+  }
+
+  List<ProductModel> _buildGenderProducts(HomeModel h, String gender) {
+    final target = gender.trim().toLowerCase();
+    final seen = <int>{};
+    final allProducts = <ProductModel>[
+      ...h.popularCategoryProducts,
+      ...h.featuredCategoryProducts,
+      ...h.topRatedProducts,
+      ...h.newArrivalProducts,
+      ...h.bestProducts,
+      ...h.trendingProducts,
+    ];
+
+    return [
+      for (final product in allProducts)
+        if (product.gender.trim().toLowerCase() == target &&
+            seen.add(product.id))
+          product,
+    ];
   }
 
   List<BannerModel> _buildCombineBanners() {

@@ -11,10 +11,13 @@ class WishListModel extends Equatable {
   final String slug;
   final String thumbImage;
   final String bannerImage;
+  final String variantImage;
   final int vendorId;
   final int categoryId;
   final int brandId;
   final int variantId;
+  final String gender;
+  final String clothType;
   final int qty;
   final String shortDescription;
   final String longDescription;
@@ -38,10 +41,13 @@ class WishListModel extends Equatable {
     required this.slug,
     required this.thumbImage,
     required this.bannerImage,
+    this.variantImage = '',
     required this.vendorId,
     required this.categoryId,
     required this.brandId,
     required this.variantId,
+    this.gender = '',
+    this.clothType = '',
     required this.qty,
     required this.shortDescription,
     required this.longDescription,
@@ -66,10 +72,13 @@ class WishListModel extends Equatable {
     String? slug,
     String? thumbImage,
     String? bannerImage,
+    String? variantImage,
     int? vendorId,
     int? categoryId,
     int? brandId,
     int? variantId,
+    String? gender,
+    String? clothType,
     int? qty,
     String? shortDescription,
     String? longDescription,
@@ -93,10 +102,13 @@ class WishListModel extends Equatable {
       slug: slug ?? this.slug,
       thumbImage: thumbImage ?? this.thumbImage,
       bannerImage: bannerImage ?? this.bannerImage,
+      variantImage: variantImage ?? this.variantImage,
       vendorId: vendorId ?? this.vendorId,
       categoryId: categoryId ?? this.categoryId,
       brandId: brandId ?? this.brandId,
       variantId: variantId ?? this.variantId,
+      gender: gender ?? this.gender,
+      clothType: clothType ?? this.clothType,
       qty: qty ?? this.qty,
       shortDescription: shortDescription ?? this.shortDescription,
       longDescription: longDescription ?? this.longDescription,
@@ -123,10 +135,13 @@ class WishListModel extends Equatable {
     result.addAll({'slug': slug});
     result.addAll({'thumb_image': thumbImage});
     result.addAll({'banner_image': bannerImage});
+    result.addAll({'variant_image': variantImage});
     result.addAll({'vendor_id': vendorId});
     result.addAll({'category_id': categoryId});
     result.addAll({'brand_id': brandId});
     result.addAll({'variant_id': variantId});
+    result.addAll({'gender': gender});
+    result.addAll({'cloth_type': clothType});
     result.addAll({'qty': qty});
     result.addAll({'short_description': shortDescription});
     result.addAll({'long_description': longDescription});
@@ -157,6 +172,7 @@ class WishListModel extends Equatable {
       slug: map['slug'] ?? '',
       thumbImage: map['thumb_image'] ?? '',
       bannerImage: map['banner_image'] ?? '',
+      variantImage: map['variant_image'] ?? '',
       vendorId:
           map['vendor_id'] != null ? int.parse(map['vendor_id'].toString()) : 0,
       categoryId: map['category_id'] != null
@@ -164,9 +180,12 @@ class WishListModel extends Equatable {
           : 0,
       brandId:
           map['brand_id'] != null ? int.parse(map['brand_id'].toString()) : 0,
-        variantId: map['variant_id'] != null
+      variantId: map['variant_id'] != null
           ? int.parse(map['variant_id'].toString())
           : 0,
+      gender: _normalizeGender(map['gender']?.toString() ?? ''),
+      clothType: _normalizeClothType(
+          (map['cloth_type'] ?? map['clothType'])?.toString() ?? ''),
       qty: map['qty'] != null ? int.parse(map['qty'].toString()) : 0,
       shortDescription: map['short_description'] ?? '',
       longDescription: map['long_description'] ?? '',
@@ -192,6 +211,43 @@ class WishListModel extends Equatable {
     );
   }
 
+  static String _normalizeGender(String value) {
+    final normalized = value.trim().toLowerCase();
+    switch (normalized) {
+      case 'male':
+        return 'Male';
+      case 'female':
+        return 'Female';
+      case 'unisex':
+        return 'Unisex';
+      default:
+        return value.trim();
+    }
+  }
+
+  static String _normalizeClothType(String value) {
+    final normalized = value.trim().toLowerCase().replaceAll('-', ' ');
+    switch (normalized) {
+      case 'upper':
+        return 'Upper';
+      case 'lower':
+        return 'Lower';
+      case 'combo':
+        return 'Combo';
+      case 'overall':
+        return 'Overall';
+      case 'upper lower':
+        return 'Upper Lower';
+      default:
+        return value.trim();
+    }
+  }
+
+  String get displayImage {
+    if (variantImage.trim().isNotEmpty) return variantImage.trim();
+    return thumbImage;
+  }
+
   String toJson() => json.encode(toMap());
 
   factory WishListModel.fromJson(String source) =>
@@ -213,10 +269,13 @@ class WishListModel extends Equatable {
       slug,
       thumbImage,
       bannerImage,
+      variantImage,
       vendorId,
       categoryId,
       brandId,
       variantId,
+      gender,
+      clothType,
       qty,
       shortDescription,
       longDescription,

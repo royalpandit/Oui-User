@@ -44,7 +44,7 @@ class CheckoutSingleItem extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: CustomImage(
-                  path: RemoteUrls.imageUrl(product.product.thumbImage),
+                  path: RemoteUrls.imageUrl(product.product.displayImage),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -58,14 +58,34 @@ class CheckoutSingleItem extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 8, bottom: 2.0),
-                  child: Text(
-                    product.product.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.product.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black),
+                      ),
+                      if (_attributeLabel().isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(
+                            _attributeLabel().toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade600,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 Row(
@@ -175,5 +195,15 @@ class CheckoutSingleItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _attributeLabel() {
+    final labels = <String>[
+      if (product.product.gender.trim().isNotEmpty)
+        product.product.gender.trim(),
+      if (product.product.clothType.trim().isNotEmpty)
+        product.product.clothType.trim(),
+    ];
+    return labels.join(' / ');
   }
 }

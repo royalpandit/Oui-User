@@ -40,9 +40,9 @@ Future<void> _initializeFirebaseCrashlytics() async {
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
   await runZonedGuarded<Future<void>>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

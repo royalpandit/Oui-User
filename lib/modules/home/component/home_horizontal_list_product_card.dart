@@ -38,7 +38,10 @@ class HomeHorizontalListProductCard extends StatelessWidget {
     // Price Calculation Logic
     if (productModel.offerPrice.toString().isNotEmpty) {
       double p = 0.0;
-      if (productModel.productVariants.isNotEmpty) {
+      if (productModel.primaryVariant?.price != null &&
+          productModel.primaryVariant!.price > 0) {
+        offerPrice = productModel.primaryVariant!.price;
+      } else if (productModel.productVariants.isNotEmpty) {
         for (var i in productModel.productVariants) {
           if (i.activeVariantsItems.isNotEmpty) {
             p += Utils.toDouble(i.activeVariantsItems.first.price.toString());
@@ -49,7 +52,10 @@ class HomeHorizontalListProductCard extends StatelessWidget {
         offerPrice = double.parse(productModel.offerPrice.toString());
       }
     }
-    if (productModel.productVariants.isNotEmpty) {
+    if (productModel.primaryVariant?.price != null &&
+        productModel.primaryVariant!.price > 0) {
+      mainPrice = productModel.primaryVariant!.price;
+    } else if (productModel.productVariants.isNotEmpty) {
       double p = 0.0;
       for (var i in productModel.productVariants) {
         if (i.activeVariantsItems.isNotEmpty) {
@@ -128,6 +134,20 @@ class HomeHorizontalListProductCard extends StatelessWidget {
                         height: 1.2,
                       ),
                     ),
+                    if (_attributeLabel().isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        _attributeLabel().toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF919191),
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                    ],
                     const Spacer(),
                     // Price
                     PriceCardWidget(
@@ -205,7 +225,7 @@ class HomeHorizontalListProductCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: CustomImage(
-              path: RemoteUrls.imageUrl(productModel.thumbImage),
+              path: RemoteUrls.imageUrl(productModel.displayImage),
               fit: BoxFit.contain,
             ),
           ),
@@ -216,9 +236,18 @@ class HomeHorizontalListProductCard extends StatelessWidget {
           child: FavoriteButton(
             productId: productModel.id,
             productSlug: productModel.slug,
+            variantId: productModel.primaryVariant?.id,
           ),
         ),
       ],
     );
+  }
+
+  String _attributeLabel() {
+    final labels = <String>[
+      if (productModel.gender.trim().isNotEmpty) productModel.gender.trim(),
+      if (productModel.clothType.trim().isNotEmpty) productModel.clothType.trim(),
+    ];
+    return labels.join(' / ');
   }
 }

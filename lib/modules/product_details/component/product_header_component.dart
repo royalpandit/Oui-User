@@ -199,9 +199,9 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (widget.product.category != null)
+                            if (_metadataLabel().isNotEmpty)
                               Text(
-                                widget.product.category!.name.toUpperCase(),
+                                _metadataLabel().toUpperCase(),
                                 style: GoogleFonts.inter(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w400,
@@ -305,6 +305,16 @@ class _ProductHeaderComponentState extends State<ProductHeaderComponent> {
         ],
       ),
     );
+  }
+
+  String _metadataLabel() {
+    final labels = <String>[
+      if (widget.product.gender.trim().isNotEmpty) widget.product.gender.trim(),
+      if (widget.product.clothType.trim().isNotEmpty)
+        widget.product.clothType.trim(),
+      if (widget.product.category != null) widget.product.category!.name,
+    ];
+    return labels.join(' / ');
   }
 
   Widget _buildDotIndicators() {

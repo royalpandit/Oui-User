@@ -89,7 +89,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       }
     }
 
-    return null;
+    return product.primaryVariant;
   }
 
   void _applyDefaultVariantSelection(ProductDetailsProductModel product) {
@@ -144,6 +144,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       }
     }
 
+    final defaultImage = product.displayImage;
+    if (defaultImage.isNotEmpty && !images.contains(defaultImage)) {
+      images.add(defaultImage);
+    }
     if (product.thumbImage.isNotEmpty && !images.contains(product.thumbImage)) {
       images.add(product.thumbImage);
     }
@@ -362,8 +366,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Widget _buildBottomButtons(ProductDetailsModel productDetailsModel) {
     final product = productDetailsModel.product;
     final showTryOn = isClothingCategory(product.category?.slug);
-    final clothImageUrl = RemoteUrls.imageUrl(product.thumbImage);
-    final clothType = clothTypeFromCategorySlug(product.category?.slug);
+    final clothImageUrl = RemoteUrls.imageUrl(product.displayImage);
+    final clothType = product.clothType.trim().isNotEmpty
+        ? product.clothType.trim().toLowerCase()
+        : clothTypeFromCategorySlug(product.category?.slug);
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Container(

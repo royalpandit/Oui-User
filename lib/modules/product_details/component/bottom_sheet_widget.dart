@@ -96,7 +96,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
       }
     }
 
-    return null;
+    return widget.product.primaryVariant;
   }
 
   void _applyDefaultVariantSelection() {
@@ -360,7 +360,9 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
               }
 
               final dataModel = AddToCartModel(
-                image: widget.product.thumbImage,
+                image: _resolveVariant()?.image.trim().isNotEmpty == true
+                    ? _resolveVariant()!.image
+                    : widget.product.displayImage,
                 productId: widget.product.id,
                 slug: widget.product.slug,
                 quantity: quantity,

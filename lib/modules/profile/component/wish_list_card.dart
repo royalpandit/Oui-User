@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/remote_urls.dart';
 import '../../../core/router_name.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
-import '../profile_offer/controllers/wish_list/wish_list_cubit.dart';
 import '../profile_offer/model/wish_list_model.dart';
 
 class WishListCard extends StatefulWidget {
@@ -24,8 +22,6 @@ class WishListCard extends StatefulWidget {
 class _WishListCardState extends State<WishListCard> {
   @override
   Widget build(BuildContext context) {
-    final wishListCubit = context.read<WishListCubit>();
-
     const double height = 120;
     return InkWell(
       onTap: () {
@@ -49,7 +45,7 @@ class _WishListCardState extends State<WishListCard> {
                   .copyWith(right: 6.0),
               // color: Colors.red,
               child: CustomImage(
-                path: RemoteUrls.imageUrl(widget.product.thumbImage),
+                path: RemoteUrls.imageUrl(widget.product.displayImage),
                 fit: BoxFit.contain,
               ),
             ),
@@ -57,12 +53,34 @@ class _WishListCardState extends State<WishListCard> {
             Expanded(
               child: ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: Text(
-                  widget.product.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
-                      height: 1.4, fontSize: 14, fontWeight: FontWeight.w600),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.product.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                          height: 1.4,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    if (_attributeLabel().isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          _attributeLabel().toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade600,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 subtitle: Text(
                   Utils.formatPrice(widget.product.price, context),
@@ -77,5 +95,15 @@ class _WishListCardState extends State<WishListCard> {
         ),
       ),
     );
+  }
+
+  String _attributeLabel() {
+    final labels = <String>[
+      if (widget.product.gender.trim().isNotEmpty)
+        widget.product.gender.trim(),
+      if (widget.product.clothType.trim().isNotEmpty)
+        widget.product.clothType.trim(),
+    ];
+    return labels.join(' / ');
   }
 }

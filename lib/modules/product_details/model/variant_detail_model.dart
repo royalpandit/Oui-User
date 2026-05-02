@@ -12,6 +12,7 @@ class VariantDetailModel extends Equatable {
   final int qty;
   final double price;
   final String image;
+  final int isPrimary;
 
   const VariantDetailModel({
     required this.id,
@@ -23,6 +24,7 @@ class VariantDetailModel extends Equatable {
     required this.qty,
     this.price = 0,
     required this.image,
+    this.isPrimary = 0,
   });
 
   VariantDetailModel copyWith({
@@ -35,6 +37,7 @@ class VariantDetailModel extends Equatable {
     int? qty,
     double? price,
     String? image,
+    int? isPrimary,
   }) {
     return VariantDetailModel(
       id: id ?? this.id,
@@ -46,6 +49,7 @@ class VariantDetailModel extends Equatable {
       qty: qty ?? this.qty,
       price: price ?? this.price,
       image: image ?? this.image,
+      isPrimary: isPrimary ?? this.isPrimary,
     );
   }
 
@@ -60,6 +64,7 @@ class VariantDetailModel extends Equatable {
       'qty': qty,
       'price': price,
       'image': image,
+      'is_primary': isPrimary,
     };
   }
 
@@ -80,6 +85,9 @@ class VariantDetailModel extends Equatable {
               ? double.tryParse(map['varient_price'].toString()) ?? 0
               : 0),
       image: map['image']?.toString() ?? '',
+      isPrimary: map['is_primary'] != null
+          ? int.tryParse(map['is_primary'].toString()) ?? 0
+          : 0,
     );
   }
 
@@ -90,5 +98,5 @@ class VariantDetailModel extends Equatable {
 
   @override
   List<Object> get props =>
-      [id, productId, name, color, colorCode, size, qty, price, image];
+      [id, productId, name, color, colorCode, size, qty, price, image, isPrimary];
 }

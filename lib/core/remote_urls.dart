@@ -191,6 +191,25 @@ class RemoteUrls {
 
   static String sellerDetailsUrl(String slug) => '${baseUrl}sellers/$slug';
 
+    static String sellerProducts(
+        String token, {
+        int? categoryId,
+        int? subCategoryId,
+        String? gender,
+        String? clothType,
+    }) {
+        final query = <String>['token=$token'];
+        if (categoryId != null) query.add('category_id=$categoryId');
+        if (subCategoryId != null) query.add('sub_category_id=$subCategoryId');
+        if (gender != null && gender.trim().isNotEmpty) {
+            query.add('gender=${gender.trim()}');
+    }
+        if (clothType != null && clothType.trim().isNotEmpty) {
+            query.add('cloth_type=${clothType.trim()}');
+        }
+        return '${baseUrl}seller/product?${query.join('&')}';
+    }
+
   // ML URL endpoint — returns try-on base URL from backend
   static const String mlUrlEndpoint = '${baseUrl}admin/ml-url';
 

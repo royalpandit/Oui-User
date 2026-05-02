@@ -47,7 +47,7 @@ class CartItemCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: CustomImage(
-                  path: RemoteUrls.imageUrl(product.product.thumbImage),
+                  path: RemoteUrls.imageUrl(product.product.displayImage),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -66,17 +66,37 @@ class CartItemCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Text(
-                        product.product.name.toUpperCase(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.notoSerif(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
-                          height: 1.33,
-                          letterSpacing: -0.6,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product.product.name.toUpperCase(),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.notoSerif(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                              height: 1.33,
+                              letterSpacing: -0.6,
+                            ),
+                          ),
+                          if (_attributeLabel().isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              _attributeLabel().toUpperCase(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.inter(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFFA0A0A0),
+                                letterSpacing: 1,
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -254,6 +274,16 @@ class CartItemCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _attributeLabel() {
+    final labels = <String>[
+      if (product.product.gender.trim().isNotEmpty)
+        product.product.gender.trim(),
+      if (product.product.clothType.trim().isNotEmpty)
+        product.product.clothType.trim(),
+    ];
+    return labels.join(' / ');
   }
 
   List<String> _resolvedColors() {

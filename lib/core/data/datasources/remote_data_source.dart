@@ -545,6 +545,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         final mapData = e['product'] as Map<String, dynamic>;
         mapData.addAll({"wish_id": e['id']?.toInt() ?? 0});
         mapData.addAll({"variant_id": e['variant_id']?.toInt() ?? 0});
+        mapData.addAll({
+          "variant_image":
+              e['variant_image']?.toString() ?? e['image']?.toString() ?? ''
+        });
         return WishListModel.fromMap(mapData);
       }).toList();
     }

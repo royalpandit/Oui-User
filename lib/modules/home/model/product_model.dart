@@ -30,6 +30,8 @@ class ProductModel extends Equatable {
   final int isFeatured;
   final int status;
   final double rating;
+  final String gender;
+  final String clothType;
   final List<GalleryModel> gallery;
   final CategoriesModel? category;
   final List<ActiveVariantModel> productVariants;
@@ -63,6 +65,8 @@ class ProductModel extends Equatable {
     required this.category,
     required this.productVariants,
     required this.rating,
+    this.gender = '',
+    this.clothType = '',
     this.sizes = const [],
     this.colors = const [],
     this.variantDetails = const [],
@@ -91,6 +95,8 @@ class ProductModel extends Equatable {
     int? isFeatured,
     int? status,
     double? rating,
+    String? gender,
+    String? clothType,
     List<GalleryModel>? gallery,
     CategoriesModel? category,
     List<ActiveVariantModel>? productVariants,
@@ -124,6 +130,8 @@ class ProductModel extends Equatable {
       category: category ?? this.category,
       productVariants: productVariants ?? this.productVariants,
       rating: rating ?? this.rating,
+      gender: gender ?? this.gender,
+      clothType: clothType ?? this.clothType,
       sizes: sizes ?? this.sizes,
       colors: colors ?? this.colors,
       variantDetails: variantDetails ?? this.variantDetails,
@@ -154,6 +162,8 @@ class ProductModel extends Equatable {
     result.addAll({'is_warranty': isWarranty});
     result.addAll({'is_featured': isFeatured});
     result.addAll({'status': status});
+    result.addAll({'gender': gender});
+    result.addAll({'cloth_type': clothType});
     result.addAll({'gallery': gallery.map((x) => x.toMap()).toList()});
     if (category != null) {
       result.addAll({'category': category!.toMap()});
@@ -205,6 +215,12 @@ class ProductModel extends Equatable {
           : 0,
       status: map['status'] != null ? int.parse(map['status'].toString()) : 0,
       rating: Utils.toDouble(map['averageRating']?.toString()),
+        gender: _normalizeGender(map['gender']?.toString() ?? ''),
+        clothType: _normalizeClothType(
+        (map['cloth_type'] ?? map['clothType'] ?? map['clothe_type'])
+            ?.toString() ??
+          '',
+        ),
       gallery: map['gallery'] != null
           ? List<GalleryModel>.from(
               map['gallery']?.map((x) => GalleryModel.fromMap(x)))
@@ -235,6 +251,38 @@ class ProductModel extends Equatable {
     return [];
   }
 
+  static String _normalizeGender(String value) {
+    final normalized = value.trim().toLowerCase();
+    switch (normalized) {
+      case 'male':
+        return 'Male';
+      case 'female':
+        return 'Female';
+      case 'unisex':
+        return 'Unisex';
+      default:
+        return value.trim();
+    }
+  }
+
+  static String _normalizeClothType(String value) {
+    final normalized = value.trim().toLowerCase().replaceAll('-', ' ');
+    switch (normalized) {
+      case 'upper':
+        return 'Upper';
+      case 'lower':
+        return 'Lower';
+      case 'combo':
+        return 'Combo';
+      case 'overall':
+        return 'Overall';
+      case 'upper lower':
+        return 'Upper Lower';
+      default:
+        return value.trim();
+    }
+  }
+
   static List<String> _parseStringList(dynamic value) {
     if (value == null) return [];
     if (value is List) return List<String>.from(value);
@@ -245,6 +293,27 @@ class ProductModel extends Equatable {
       } catch (_) {}
     }
     return [];
+  }
+
+  VariantDetailModel? get primaryVariant {
+    if (variantDetails.isEmpty) return null;
+    for (final item in variantDetails) {
+      if (item.isPrimary == 1) return item;
+    }
+    return variantDetails.first;
+  }
+
+  String get displayImage {
+    final variantImage = primaryVariant?.image.trim() ?? '';
+    if (variantImage.isNotEmpty) return variantImage;
+    return thumbImage;
+  }
+
+  double get displayPrice {
+    final variantPrice = primaryVariant?.price ?? 0;
+    if (variantPrice > 0) return variantPrice;
+    if (offerPrice > 0) return offerPrice;
+    return price;
   }
 
   String toJson() => json.encode(toMap());
@@ -281,6 +350,8 @@ class ProductModel extends Equatable {
       isWarranty,
       isFeatured,
       status,
+      gender,
+      clothType,
       gallery,
       productVariants,
       sizes,
